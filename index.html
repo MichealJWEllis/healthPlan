@@ -212,12 +212,37 @@
     .dot-m{background:var(--green)}
 
     footer{max-width:1100px;margin:0 auto;padding:10px 18px 30px;color:var(--muted);font-size:12px}
+
+    /* AUTH */
+    .auth-gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .auth-box{max-width:360px;width:100%;padding:32px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;text-align:center}
+    .auth-box h2{margin:0 0 8px}
+    .auth-box>p{color:var(--muted);font-size:14px;margin:0 0 24px}
+    .auth-input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:14px;padding:10px 14px;outline:none;margin-bottom:10px;box-sizing:border-box}
+    .auth-input:focus{border-color:var(--accent)}
+    .auth-btn{width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#0b1220;font-size:14px;font-weight:700;cursor:pointer}
+    .auth-msg{font-size:13px;color:var(--muted);margin-top:12px;min-height:18px}
   </style>
 </head>
 <body>
+
+<div id="authGate" style="display:none">
+  <div class="auth-gate">
+    <div class="auth-box">
+      <h2>Health Plan</h2>
+      <p>Enter your email to receive a sign-in link.</p>
+      <input id="loginEmail" class="auth-input" type="email" placeholder="your@email.com" />
+      <button class="auth-btn" onclick="sendMagicLink()">Send Magic Link</button>
+      <p class="auth-msg" id="loginMsg"></p>
+    </div>
+  </div>
+</div>
+
+<div id="appContent" style="display:none">
 <nav class="site-nav">
   <a href="./index.html" class="active">Meal Plan</a>
   <a href="./workout.html">Workout</a>
+  <button class="btn" onclick="signOut()" style="margin-left:auto">Sign out</button>
 </nav>
 
 <header>
@@ -699,7 +724,7 @@
        ===================== -->
   <section class="card section" id="tab-tracker">
     <h2>Daily Tracker</h2>
-    <p class="note">Log each day. All data is saved in your browser — no account needed, works offline.</p>
+    <p class="note">Log each day. Data syncs to the cloud via Supabase.</p>
 
     <div class="checkin-card">
       <h3 id="trackerDate">Today</h3>
@@ -738,12 +763,20 @@
       <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);vertical-align:middle;margin-right:4px"></span>Meal plan
     </p>
     <div id="trackerCalendar"></div>
+
+    <h3 style="margin:18px 0 6px">Weight History</h3>
+    <p class="note" style="margin-bottom:10px">Last 14 recorded entries. Green = loss, red = gain.</p>
+    <div id="weightHistory"></div>
   </section>
 
 </div>
 
 <footer>Anti-Inflammatory Meal System · Paired with MWF Upper Body + T/TH Swimming Program</footer>
 
+</div><!-- /appContent -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
 <script>
   const STORAGE_KEY = 'grocery_checks_v1';
 
@@ -800,18 +833,60 @@
       }
     });
     updateProgress();
-    renderTracker();
+    initAuth();
   });
 
-  /* ── TRACKER ── */
-  const TRACKER_KEY = 'tracker_v1';
+  /* ── AUTH ── */
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  function getTracker() {
-    try { return JSON.parse(localStorage.getItem(TRACKER_KEY)) || {}; } catch { return {}; }
+  let currentSession = null;
+
+  function initAuth() {
+    db.auth.getSession().then(({ data: { session } }) => {
+      session ? showApp(session) : showLogin();
+    });
+
+    db.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) showApp(session);
+      if (event === 'SIGNED_OUT') showLogin();
+    });
   }
-  function saveTracker(d) {
-    try { localStorage.setItem(TRACKER_KEY, JSON.stringify(d)); } catch {}
+
+  function showApp(session) {
+    currentSession = session;
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+    renderTracker();
   }
+
+  function showLogin() {
+    currentSession = null;
+    document.getElementById('authGate').style.display = 'block';
+    document.getElementById('appContent').style.display = 'none';
+  }
+
+  async function sendMagicLink() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const msg = document.getElementById('loginMsg');
+    if (!email) { msg.textContent = 'Enter your email first.'; return; }
+
+    const { error } = await db.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.href }
+    });
+
+    msg.textContent = error ? 'Error: ' + error.message : 'Link sent — check your email.';
+    if (!error) document.getElementById('loginEmail').value = '';
+  }
+
+  async function signOut() {
+    await db.auth.signOut();
+  }
+
+  /* ── TRACKER ── */
+  let trackerCache = null;
+
   function todayISO() {
     const d = new Date();
     return d.getFullYear() + '-' +
@@ -819,23 +894,42 @@
       String(d.getDate()).padStart(2, '0');
   }
 
-  function toggleCheckin(type) {
-    const data = getTracker();
-    const key = todayISO();
-    if (!data[key]) data[key] = {};
-    data[key][type] = !data[key][type];
-    saveTracker(data);
-    renderTracker();
+  async function loadTracker() {
+    const { data, error } = await db
+      .from('daily_logs')
+      .select('date, workout, meal, weight')
+      .order('date', { ascending: false })
+      .limit(90);
+    if (error) { console.error('Supabase fetch error:', error); return {}; }
+    return Object.fromEntries((data || []).map(r => [r.date, {
+      workout: r.workout,
+      meal: r.meal,
+      weight: r.weight
+    }]));
   }
 
-  function saveWeight(val) {
-    const data = getTracker();
+  async function upsertDay(date, patch) {
+    if (!currentSession) return;
+    const { error } = await db
+      .from('daily_logs')
+      .upsert({ date, user_id: currentSession.user.id, ...patch }, { onConflict: 'date,user_id' });
+    if (error) console.error('Supabase upsert error:', error);
+  }
+
+  async function toggleCheckin(type) {
+    const data = trackerCache || {};
     const key = todayISO();
-    if (!data[key]) data[key] = {};
+    const current = !!(data[key] && data[key][type]);
+    await upsertDay(key, { [type]: !current });
+    trackerCache = null;
+    await renderTracker();
+  }
+
+  async function saveWeight(val) {
+    const key = todayISO();
     const w = parseFloat(val);
-    if (!isNaN(w) && w > 50) data[key].weight = w;
-    else delete data[key].weight;
-    saveTracker(data);
+    await upsertDay(key, { weight: (!isNaN(w) && w > 50) ? w : null });
+    trackerCache = null;
   }
 
   function calcStreak(data, type) {
@@ -851,8 +945,9 @@
     return streak;
   }
 
-  function renderTracker() {
-    const data = getTracker();
+  async function renderTracker() {
+    if (!trackerCache) trackerCache = await loadTracker();
+    const data = trackerCache;
     const today = todayISO();
     const todayData = data[today] || {};
 
@@ -876,7 +971,7 @@
     const start = new Date();
     start.setHours(0, 0, 0, 0);
     start.setDate(start.getDate() - 27);
-    start.setDate(start.getDate() - start.getDay()); // align to Sunday
+    start.setDate(start.getDate() - start.getDay());
 
     const end = new Date();
     end.setHours(0, 0, 0, 0);
@@ -896,6 +991,37 @@
     }
     html += '</div>';
     document.getElementById('trackerCalendar').innerHTML = html;
+
+    renderWeightHistory(data);
+  }
+
+  function renderWeightHistory(data) {
+    const entries = Object.entries(data)
+      .filter(([, v]) => v.weight != null)
+      .sort(([a], [b]) => b.localeCompare(a))
+      .slice(0, 14);
+
+    const el = document.getElementById('weightHistory');
+    if (!entries.length) {
+      el.innerHTML = '<p class="note">No weight entries yet. Log your weight above.</p>';
+      return;
+    }
+
+    let html = '<table class="tbl"><thead><tr><th>Date</th><th>Weight (lbs)</th><th>Change</th></tr></thead><tbody>';
+    for (let i = 0; i < entries.length; i++) {
+      const [date, val] = entries[i];
+      const prev = entries[i + 1];
+      let change = '<span style="color:var(--muted)">—</span>';
+      if (prev && prev[1].weight != null) {
+        const diff = (val.weight - prev[1].weight).toFixed(1);
+        const color = diff > 0 ? '#f87171' : diff < 0 ? '#4ade80' : 'var(--muted)';
+        const sign = diff > 0 ? '+' : '';
+        change = '<span style="color:' + color + '">' + sign + diff + '</span>';
+      }
+      html += '<tr><td>' + date + '</td><td>' + val.weight + '</td><td>' + change + '</td></tr>';
+    }
+    html += '</tbody></table>';
+    el.innerHTML = html;
   }
 </script>
 </body>
