@@ -213,6 +213,17 @@
 
     footer{max-width:1100px;margin:0 auto;padding:10px 18px 30px;color:var(--muted);font-size:12px}
 
+    /* WEIGHT TRACKER */
+    .weight-section{margin-top:20px}
+    .weight-entry-row{display:flex;gap:8px;margin-bottom:14px}
+    .weight-entry-input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:16px;padding:10px 14px;outline:none;min-width:0}
+    .weight-entry-input:focus{border-color:var(--accent)}
+    .weight-log-btn{padding:10px 24px;border-radius:8px;border:none;background:var(--accent);color:#0b1220;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+    .wstat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+    .wstat{text-align:center;padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02)}
+    .wstat-val{font-size:26px;font-weight:700;color:var(--accent);line-height:1}
+    .wstat-label{font-size:12px;color:var(--muted);margin-top:4px}
+
     /* AUTH */
     .auth-gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
     .auth-box{max-width:360px;width:100%;padding:32px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;text-align:center}
@@ -740,10 +751,6 @@
           <span class="checkin-status" id="statusMeal">Tap to log</span>
         </button>
       </div>
-      <div class="weight-row">
-        <label for="weightInput">Weight (lbs)</label>
-        <input id="weightInput" type="number" step="0.1" min="50" max="500" placeholder="e.g. 175.5" onchange="saveWeight(this.value)" />
-      </div>
     </div>
 
     <div class="streak-row">
@@ -764,9 +771,15 @@
     </p>
     <div id="trackerCalendar"></div>
 
-    <h3 style="margin:18px 0 6px">Weight History</h3>
-    <p class="note" style="margin-bottom:10px">Last 14 recorded entries. Green = loss, red = gain.</p>
-    <div id="weightHistory"></div>
+    <div class="weight-section">
+      <h3 style="margin:0 0 12px">Weight Tracker</h3>
+      <div class="weight-entry-row">
+        <input id="weightInput" class="weight-entry-input" type="number" step="0.1" min="50" max="500" placeholder="Enter weight (lbs)" />
+        <button class="weight-log-btn" onclick="logWeight()">Log</button>
+      </div>
+      <div class="wstat-row" id="weightStats"></div>
+      <canvas id="weightChart"></canvas>
+    </div>
   </section>
 
 </div>
@@ -776,6 +789,7 @@
 </div><!-- /appContent -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="./config.js"></script>
 <script>
   const STORAGE_KEY = 'grocery_checks_v1';
@@ -858,6 +872,7 @@
     document.getElementById('authGate').style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
     renderTracker();
+    renderWeightChart();
   }
 
   function showLogin() {
@@ -925,13 +940,6 @@
     await renderTracker();
   }
 
-  async function saveWeight(val) {
-    const key = todayISO();
-    const w = parseFloat(val);
-    await upsertDay(key, { weight: (!isNaN(w) && w > 50) ? w : null });
-    trackerCache = null;
-  }
-
   function calcStreak(data, type) {
     let streak = 0;
     const d = new Date();
@@ -962,9 +970,6 @@
     document.getElementById('statusWorkout').textContent = todayData.workout ? 'Done ✓' : 'Tap to log';
     document.getElementById('statusMeal').textContent = todayData.meal ? 'Done ✓' : 'Tap to log';
 
-    const wi = document.getElementById('weightInput');
-    if (todayData.weight && wi !== document.activeElement) wi.value = todayData.weight;
-
     document.getElementById('workoutStreak').textContent = calcStreak(data, 'workout');
     document.getElementById('mealStreak').textContent = calcStreak(data, 'meal');
 
@@ -991,37 +996,115 @@
     }
     html += '</div>';
     document.getElementById('trackerCalendar').innerHTML = html;
-
-    renderWeightHistory(data);
   }
 
-  function renderWeightHistory(data) {
-    const entries = Object.entries(data)
-      .filter(([, v]) => v.weight != null)
-      .sort(([a], [b]) => b.localeCompare(a))
-      .slice(0, 14);
+  /* ── WEIGHT TRACKER ── */
+  let weightChartInstance = null;
 
-    const el = document.getElementById('weightHistory');
-    if (!entries.length) {
-      el.innerHTML = '<p class="note">No weight entries yet. Log your weight above.</p>';
-      return;
-    }
+  async function loadWeightLogs() {
+    const { data, error } = await db
+      .from('weight_logs')
+      .select('id, logged_at, weight')
+      .order('logged_at', { ascending: true })
+      .limit(100);
+    if (error) { console.error('Weight fetch error:', error); return []; }
+    return data || [];
+  }
 
-    let html = '<table class="tbl"><thead><tr><th>Date</th><th>Weight (lbs)</th><th>Change</th></tr></thead><tbody>';
-    for (let i = 0; i < entries.length; i++) {
-      const [date, val] = entries[i];
-      const prev = entries[i + 1];
-      let change = '<span style="color:var(--muted)">—</span>';
-      if (prev && prev[1].weight != null) {
-        const diff = (val.weight - prev[1].weight).toFixed(1);
-        const color = diff > 0 ? '#f87171' : diff < 0 ? '#4ade80' : 'var(--muted)';
-        const sign = diff > 0 ? '+' : '';
-        change = '<span style="color:' + color + '">' + sign + diff + '</span>';
+  async function logWeight() {
+    const input = document.getElementById('weightInput');
+    const w = parseFloat(input.value);
+    if (isNaN(w) || w < 50 || w > 500) return;
+    if (!currentSession) return;
+
+    const { error } = await db.from('weight_logs').insert({
+      user_id: currentSession.user.id,
+      weight: w
+    });
+    if (error) { console.error('Weight insert error:', error); return; }
+
+    input.value = '';
+    await renderWeightChart();
+  }
+
+  async function renderWeightChart() {
+    const logs = await loadWeightLogs();
+    renderWeightStats(logs);
+
+    const labels = logs.map(l => {
+      const d = new Date(l.logged_at);
+      return (d.getMonth() + 1) + '/' + d.getDate();
+    });
+    const weights = logs.map(l => parseFloat(l.weight));
+    const pointColors = weights.map((w, i) => {
+      if (i === 0) return '#6ea8ff';
+      return w < weights[i - 1] ? '#4ade80' : w > weights[i - 1] ? '#f87171' : '#6ea8ff';
+    });
+
+    const ctx = document.getElementById('weightChart').getContext('2d');
+    if (weightChartInstance) weightChartInstance.destroy();
+
+    if (!weights.length) return;
+
+    const minW = Math.min(...weights);
+    const maxW = Math.max(...weights);
+
+    weightChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          data: weights,
+          borderColor: '#6ea8ff',
+          backgroundColor: 'rgba(110,168,255,0.07)',
+          pointBackgroundColor: pointColors,
+          pointBorderColor: pointColors,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          tension: 0.35,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ctx.parsed.y + ' lbs'
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { color: '#9fb0d0', font: { size: 11 } }
+          },
+          y: {
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { color: '#9fb0d0', callback: v => v + ' lbs' },
+            min: Math.floor(minW - 3),
+            max: Math.ceil(maxW + 3)
+          }
+        }
       }
-      html += '<tr><td>' + date + '</td><td>' + val.weight + '</td><td>' + change + '</td></tr>';
-    }
-    html += '</tbody></table>';
-    el.innerHTML = html;
+    });
+  }
+
+  function renderWeightStats(logs) {
+    const el = document.getElementById('weightStats');
+    if (!logs.length) { el.innerHTML = ''; return; }
+
+    const first = parseFloat(logs[0].weight);
+    const current = parseFloat(logs[logs.length - 1].weight);
+    const diff = (current - first).toFixed(1);
+    const sign = diff > 0 ? '+' : '';
+    const color = diff < 0 ? '#4ade80' : diff > 0 ? '#f87171' : 'var(--muted)';
+
+    el.innerHTML =
+      '<div class="wstat"><div class="wstat-val">' + first + '</div><div class="wstat-label">Start (lbs)</div></div>' +
+      '<div class="wstat"><div class="wstat-val">' + current + '</div><div class="wstat-label">Current (lbs)</div></div>' +
+      '<div class="wstat"><div class="wstat-val" style="color:' + color + '">' + sign + diff + '</div><div class="wstat-label">Total Change</div></div>';
   }
 </script>
 </body>
