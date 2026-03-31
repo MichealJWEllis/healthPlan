@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MWF Upper + Core/Abs Plan (No Knee Loading) — Arms + Pull-up/Dip Focus</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --muted:#9fb0d0;
+      --text:#e9eefc;
+      --accent:#6ea8ff;
+      --line:rgba(255,255,255,.10);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:linear-gradient(180deg, #070b14 0%, var(--bg) 100%);
+      color:var(--text);
+      line-height:1.35;
+    }
+    header{
+      padding:28px 18px 14px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    h1{margin:0 0 8px; font-size:clamp(22px, 2.4vw, 32px)}
+    .sub{color:var(--muted); margin:0; max-width:95ch}
+    .wrap{max-width:1100px; margin:0 auto; padding:14px 18px 40px; display:grid; gap:14px}
+
+    .pill-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .pill{
+      border:1px solid var(--line);
+      color:var(--muted);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      background:rgba(255,255,255,.03);
+    }
+
+    .card{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      box-shadow:0 10px 24px rgba(0,0,0,.25);
+    }
+    .card h2{margin:0 0 6px; font-size:18px}
+    .card h3{margin:14px 0 8px; font-size:15px; color:var(--accent)}
+    .note{color:var(--muted); font-size:13px; margin:0}
+
+    .rules{display:grid; gap:8px; margin-top:10px}
+    .rule{
+      border:1px dashed var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(255,255,255,.02);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .rule strong{color:var(--text)}
+
+    .workout-title{
+      display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .workout-title .meta{color:var(--muted); font-size:12px}
+
+    .grid{display:grid; grid-template-columns: repeat(12, 1fr); gap:12px}
+    .col-6{grid-column:span 12}
+    @media (min-width: 860px){ .col-6{grid-column:span 6} }
+
+    .pair{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:rgba(255,255,255,.015);
+      margin-top:12px;
+    }
+    .pair-title{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .pair-title h3{margin:0; color:var(--accent); font-size:15px}
+    .pair-title .meta{color:var(--muted); font-size:12px}
+
+    .exercise{
+      display:grid;
+      grid-template-columns:1fr 128px;
+      grid-template-areas:"head imgs" "cue imgs";
+      column-gap:12px;
+      row-gap:6px;
+      align-items:start;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:rgba(255,255,255,.02);
+    }
+    .exercise-head{
+      grid-area:head;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .exercise-name{font-weight:700; font-size:15px; margin:0}
+    .exercise-meta{color:var(--muted); font-size:12px; margin:3px 0 0}
+
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px; font-size:12px;
+      border:1px solid var(--line); background:rgba(255,255,255,.03);
+      color:var(--muted); white-space:nowrap;
+    }
+    .badge.push{border-color:rgba(110,168,255,.35); color:#cfe0ff}
+    .badge.pull{border-color:rgba(45,212,191,.35); color:#b9fff1}
+    .badge.core{border-color:rgba(251,191,36,.35); color:#ffe5aa}
+
+    .cue{grid-area:cue;margin:0;color:var(--muted);font-size:13px;align-self:end}
+    .img-row{grid-area:imgs;display:flex;flex-direction:column;gap:8px}
+    .img{
+      width:128px;
+      aspect-ratio:4/3;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      object-fit:cover;
+      display:block;
+    }
+    .hint{font-size:11px;color:var(--muted)}
+
+    .example{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .example strong{color:var(--text)}
+
+    /* Core stack: full-width, images side by side on the right */
+    .core-stack{display:flex;flex-direction:column;gap:12px;width:100%}
+    .core-stack .exercise{grid-template-columns:1fr 272px}
+    .core-stack .img-row{flex-direction:row;width:272px}
+    .core-stack .img{width:128px;aspect-ratio:4/3}
+
+    @media(max-width:620px){
+      .exercise{
+        grid-template-columns:1fr;
+        grid-template-areas:"head" "imgs" "cue";
+      }
+      .img-row{flex-direction:row;width:100%}
+      .img{width:calc(50% - 4px);aspect-ratio:16/10}
+      .core-stack .exercise{grid-template-columns:1fr}
+      .core-stack .img-row{flex-direction:row;width:100%}
+      .core-stack .img{width:calc(50% - 4px)}
+    }
+
+    /* SITE NAV */
+    .site-nav{max-width:1100px;margin:0 auto;padding:16px 18px 0;display:flex;gap:8px;flex-wrap:wrap}
+    .site-nav a{padding:8px 18px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);text-decoration:none;transition:all .2s}
+    .site-nav a:hover{background:rgba(255,255,255,.07)}
+    .site-nav a.active{background:var(--accent);color:#0b1220;border-color:var(--accent)}
+
+    footer{max-width:1100px; margin:0 auto; padding:10px 18px 30px; color:var(--muted); font-size:12px}
+    code{color:#d7e3ff}
+  </style>
+</head>
+
+<body>
+<nav class="site-nav">
+  <a href="./index.html">Meal Plan</a>
+  <a href="./workout.html" class="active">Workout</a>
+</nav>
+<header>
+  <h1>MWF Upper + Core/Abs Plan (No Knee Loading)</h1>
+  <p class="sub">
+    Focus: <strong>more defined arms</strong> and <strong>faster pull-up/dip progress</strong>. Knee-loading/bending is removed entirely.
+    Format: <strong>Push → Pull supersets</strong> + <strong>Arm superset</strong> + <strong>Core/Abs block</strong> (no floor transitions).
+  </p>
+  <div class="pill-row">
+    <span class="pill">Mon / Wed / Fri</span>
+    <span class="pill">No knee loading/bending</span>
+    <span class="pill">Anchors: Pull-ups • Dips (every session)</span>
+    <span class="pill">Row rotates M/W/F</span>
+    <span class="pill">Arms: 3 sets each day</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="card">
+    <h2>How the supersets work</h2>
+    <p class="note">
+      A <strong>superset</strong> is two exercises done <strong>back-to-back</strong> before you rest. It does <strong>not</strong> add extra exercises.
+      Rest 45–75 sec after each Push→Pull pair (60–90 sec on heavier sets).
+    </p>
+
+    <div class="example">
+      <strong>“3 sets each” example:</strong><br/>
+      Set 1: Push (set 1) → Pull (set 1) → <strong>Rest 45–75 sec</strong><br/>
+      Set 2: Push (set 2) → Pull (set 2) → <strong>Rest 45–75 sec</strong><br/>
+      Set 3: Push (set 3) → Pull (set 3) → <strong>Rest 45–75 sec</strong>
+    </div>
+
+    <h3>Fast pull-up/dip progress rules</h3>
+    <div class="rules">
+      <div class="rule"><strong>Monday (strength):</strong> heavier assistance, lower reps.</div>
+      <div class="rule"><strong>Wednesday (volume):</strong> lighter assistance, more reps.</div>
+      <div class="rule"><strong>Friday (quality):</strong> moderate assistance + add a brief hold or slow lower.</div>
+      <div class="rule"><strong>Micro-progression:</strong> reduce assistance one notch OR add 1 rep total each week.</div>
+    </div>
+  </section>
+
+  <!-- =========================
+       WORKOUT A (MONDAY)
+       ========================= -->
+  <section class="card">
+    <div class="workout-title">
+      <h2>Workout A (Monday) — Strength bias</h2>
+      <div class="meta">3 Push/Pull Pairs • Arms Pair • Core/Abs (3)</div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Superset Pair 1 (Anchors — Strength)</h3>
+        <div class="meta">3 sets each • 4–6 rep focus</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Assisted Dips (machine)</p>
+              <p class="exercise-meta">3 × 4–6</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/assisteddips.jpg" alt="Assisted dips image 1 (add your own)" />
+            <img class="img" src="./workout_images/assisteddips2.jpg" alt="Assisted dips image 2 (add your own)" />
+          </div>
+          <p class="cue">Stop 1 rep before failure. Optional: last rep = 2–3 sec lower.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Assisted Pull-ups (neutral grip if possible)</p>
+              <p class="exercise-meta">3 × 4–6</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/assisted-pull-up.jpg" alt="Assisted pull-ups image 1 (add your own)" />
+            <img class="img" src="./workout_images/assisted-pull-up2.jpg" alt="Assisted pull-ups image 2 (add your own)" />
+          </div>
+          <p class="cue">Optional: 1 sec hold at top on last rep of each set.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Superset Pair 2 (Row Rotation — Seated Cable Row)</h3>
+        <div class="meta">3 sets each • Moderate reps</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Incline Dumbbell Bench Press</p>
+              <p class="exercise-meta">3 × 6–10</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/inclinedumbellpress.jpg" alt="Incline DB bench image 1 (add your own)" />
+            <img class="img" src="./workout_images/inclinedumbellpress2.jpg" alt="Incline DB bench image 2 (add your own)" />
+          </div>
+          <p class="cue">Shoulder blades set; controlled lower; smooth press.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Seated Cable Row (pause)</p>
+              <p class="exercise-meta">3 × 8–12 <span class="hint">(1-sec pause at torso)</span></p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/seatedCableRow.jpg" alt="Seated cable row image 1 (add your own)" />
+            <img class="img" src="./workout_images/seatedCableRow2.jpg" alt="Seated cable row image 2 (add your own)" />
+          </div>
+          <p class="cue">Tall posture; pull with elbows; pause; slow return to stretch.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Superset Pair 3 (Rotation)</h3>
+        <div class="meta">3 sets each • Shoulder/upper-back balance</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Seated Dumbbell Shoulder Press</p>
+              <p class="exercise-meta">3 × 6–10</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/seatedDumbbellShoulderPress.jpg" alt="Seated DB shoulder press image 1 (add your own)" />
+            <img class="img" src="./workout_images/seatedDumbbellShoulderPress2.jpg" alt="Seated DB shoulder press image 2 (add your own)" />
+          </div>
+          <p class="cue">Ribs down; press under control; no shrugging.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Reverse Fly (machine or cables)</p>
+              <p class="exercise-meta">3 × 12–15</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/reverseFly.jpg" alt="Reverse fly image 1 (add your own)" />
+            <img class="img" src="./workout_images/reverseFly2.jpg" alt="Reverse fly image 2 (add your own)" />
+          </div>
+          <p class="cue">Move from shoulders; slight elbow bend; slow return; no shrugging.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Arms Superset (3 sets each)</h3>
+        <div class="meta">Rest 45–60 sec • Chase the pump, keep form strict</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Rope Triceps Pressdown (cable)</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/tricep-rope-pushdown.jpg" alt="Triceps pressdown image 1 (add your own)" />
+            <img class="img" src="./workout_images/Tricep-pushdown-movement.jpg" alt="Triceps pressdown image 2 (add your own)" />
+          </div>
+          <p class="cue">Elbows pinned; full extension; 1-sec squeeze; slow return.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Cable Curl (straight bar or EZ attachment)</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/cable_curl1.jpg" alt="Cable curl image 1 (add your own)" />
+            <img class="img" src="./workout_images/cable_curl2.jpg" alt="Cable curl image 2 (add your own)" />
+          </div>
+          <p class="cue">Upper arm still; curl to full squeeze; 2–3 sec negative.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Core/Abs (3 exercises) — stacked</h3>
+        <div class="meta">3 sets each • No floor transitions</div>
+      </div>
+      <div class="core-stack">
+        <div class="exercise">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Standing Pallof Press (cable)</p>
+              <p class="exercise-meta">3 × 10–12 / side</p>
+            </div>
+            <span class="badge core">Core</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/pallofPress.jpg" alt="Standing Pallof press image 1 (add your own)" />
+            <img class="img" src="./workout_images/2pallofPress.jpg" alt="Standing Pallof press image 2 (add your own)" />
+          </div>
+          <p class="cue">Ribs down; glutes lightly on; resist rotation as you press.</p>
+        </div>
+
+        <div class="exercise">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Standing Cable Crunch (rope)</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge core">Core</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/standingCableCrunch.jpg" alt="Standing cable crunch image 1 (add your own)" />
+            <img class="img" src="./workout_images/standingCableCrunch2.jpg" alt="Standing cable crunch image 2 (add your own)" />
+          </div>
+          <p class="cue">Exhale hard; ribs toward pelvis; control return; avoid big hip hinge.</p>
+        </div>
+
+        <div class="exercise">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Suitcase Carry</p>
+              <p class="exercise-meta">3 × 30–45 sec / side</p>
+            </div>
+            <span class="badge core">Core</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/suitcase.jpg" alt="Suitcase carry image 1 (add your own)" />
+            <img class="img" src="./workout_images/suitcase2.jpg" alt="Suitcase carry image 2 (add your own)" />
+          </div>
+          <p class="cue">Walk tall; don’t lean; ribcage stacked over hips; controlled steps.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =========================
+       WORKOUT B (WEDNESDAY)
+       ========================= -->
+  <section class="card">
+    <div class="workout-title">
+      <h2>Workout B (Wednesday) — Volume + density</h2>
+      <div class="meta">3 Push/Pull Pairs • Arms Pair • Core/Abs (3)</div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Superset Pair 1 (Anchors — Volume)</h3>
+        <div class="meta">3 sets each • 6–10 rep focus</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Assisted Dips (machine)</p>
+              <p class="exercise-meta">3 × 6–10</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/assisteddips.jpg" alt="Assisted dips image 1 (add your own)" />
+            <img class="img" src="./workout_images/assisteddips2.jpg" alt="Assisted dips image 2 (add your own)" />
+          </div>
+          <p class="cue">Smooth reps; controlled depth; stop 1–2 reps before failure.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Assisted Pull-ups (volume)</p>
+              <p class="exercise-meta">3 × 6–10</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/assisted-pull-up.jpg" alt="Assisted pull-ups image 1 (add your own)" />
+            <img class="img" src="./workout_images/assisted-pull-up2.jpg" alt="Assisted pull-ups image 2 (add your own)" />
+          </div>
+          <p class="cue">Clean reps; full range; no swinging; control the lower.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Superset Pair 2 (Row Rotation — Chest-Supported Row)</h3>
+        <div class="meta">3 sets each • Keep form strict</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Cable Chest Press</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/cableChestPress.jpg" alt="Cable chest press image 1 (add your own)" />
+            <img class="img" src="./workout_images/cableChestPress2.jpg" alt="Cable chest press image 2 (add your own)" />
+          </div>
+          <p class="cue">Smooth reps; shoulder blades set; don’t over-arch.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Chest-Supported Row</p>
+              <p class="exercise-meta">3 × 8–12</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/chest-supported-row1.jpg" alt="Chest-supported row image 1 (add your own)" />
+            <img class="img" src="./workout_images/chest-supported-row2.jpg" alt="Chest-supported row image 2 (add your own)" />
+          </div>
+          <p class="cue">Pause at top; pull elbows back; keep neck relaxed.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Superset Pair 3 (Rotation)</h3>
+        <div class="meta">3 sets each • Rear delts/upper back support your pull-ups</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Pec Deck / Machine Fly</p>
+              <p class="exercise-meta">3 × 12–15</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/peckdeck.jpg" alt="Pec deck image 1 (add your own)" />
+            <img class="img" src="./workout_images/peckdeck2.jpg" alt="Pec deck image 2 (add your own)" />
+          </div>
+          <p class="cue">Chest up; controlled stretch; squeeze; no shoulder shrug.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Face Pull</p>
+              <p class="exercise-meta">3 × 12–15</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/facepull.jpg" alt="Face pull image 1 (add your own)" />
+            <img class="img" src="./workout_images/facepull2.jpg" alt="Face pull image 2 (add your own)" />
+          </div>
+          <p class="cue">Elbows high; squeeze rear delts; slow return; no shrugging.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Arms Superset (3 sets each)</h3>
+        <div class="meta">Different angle for more growth stimulus</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Overhead Cable Triceps Extension (rope)</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/overhead_cable_tri_extension1.jpg" alt="Overhead triceps extension image 1 (add your own)" />
+            <img class="img" src="./workout_images/cable-overhead-tricep-extension2.jpg" alt="Overhead triceps extension image 2 (add your own)" />
+          </div>
+          <p class="cue">Big stretch behind head; elbows steady; extend smoothly.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Dumbbell Hammer Curl</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/hammerCurl.jpg" alt="Hammer curl image 1 (add your own)" />
+            <img class="img" src="./workout_images/hammerCurl2.jpg" alt="Hammer curl image 2 (add your own)" />
+          </div>
+          <p class="cue">Wrists neutral; upper arm still; slow negative; no swinging.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Core/Abs (3 exercises) — stacked</h3>
+        <div class="meta">3 sets each • No floor transitions</div>
+      </div>
+      <div class="core-stack">
+        <div class="exercise">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Cable Woodchop</p>
+              <p class="exercise-meta">3 × 10–12 / side</p>
+            </div>
+            <span class="badge core">Core</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/cableWoodChop.jpg" alt="Cable woodchop image 1 (add your own)" />
+            <img class="img" src="./workout_images/cablewoodchop2.jpg" alt="Cable woodchop image 2 (add your own)" />
+          </div>
+          <p class="cue">Rotate under control; ribs stacked; don’t yank.</p>
+        </div>
+
+        <div class="exercise">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Ab Crunch Machine</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge core">Core</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/abCrunchMachine.jpg" alt="Ab crunch machine image 1 (add your own)" />
+            <img class="img" src="./workout_images/abCrunchMachine2.jpg" alt="Ab crunch machine image 2 (add your own)" />
+          </div>
+          <p class="cue">Exhale; curl ribs toward pelvis; pause briefly; control return.</p>
+        </div>
+
+        <div class="exercise">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Farmer Carry</p>
+              <p class="exercise-meta">3 × 30–45 sec</p>
+            </div>
+            <span class="badge core">Core</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/farmerCarry.jpg" alt="Farmer carry image 1 (add your own)" />
+            <img class="img" src="./workout_images/farmerCarry2.jpg" alt="Farmer carry image 2 (add your own)" />
+          </div>
+          <p class="cue">Walk tall; ribs stacked; controlled breathing; no leaning.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =========================
+       WORKOUT C (FRIDAY)
+       ========================= -->
+  <section class="card">
+    <div class="workout-title">
+      <h2>Workout C (Friday) — Quality + skill</h2>
+      <div class="meta">3 Push/Pull Pairs • Arms Pair • Core/Abs (3)</div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Superset Pair 1 (Anchors — Quality)</h3>
+        <div class="meta">3 sets each • Add hold or slow lower</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Assisted Dips (moderate assistance)</p>
+              <p class="exercise-meta">3 × 5–8</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/assisteddips.jpg" alt="Assisted dips image 1 (add your own)" />
+            <img class="img" src="./workout_images/assisteddips2.jpg" alt="Assisted dips image 2 (add your own)" />
+          </div>
+          <p class="cue">Optional: 1–2 sec pause at bottom on first 1–2 reps.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Assisted Pull-ups (moderate assistance)</p>
+              <p class="exercise-meta">3 × 5–8</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/assisted-pull-up.jpg" alt="Assisted pull-ups image 1 (add your own)" />
+            <img class="img" src="./workout_images/assisted-pull-up2.jpg" alt="Assisted pull-ups image 2 (add your own)" />
+          </div>
+          <p class="cue">Optional: last rep = 3–5 sec slow lower.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Superset Pair 2 (Row Rotation — 1-Arm Cable Row)</h3>
+        <div class="meta">3 sets each • Also hits arms/grip</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Machine Chest Press (or DB press if preferred)</p>
+              <p class="exercise-meta">3 × 6–10</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/machineChestPress.jpg" alt="Machine chest press image 1 (add your own)" />
+            <img class="img" src="./workout_images/machineChestPress2.jpg" alt="Machine chest press image 2 (add your own)" />
+          </div>
+          <p class="cue">Smooth press; control return; keep shoulders down/back.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">1-Arm Cable Row (split stance)</p>
+              <p class="exercise-meta">3 × 8–12 / side</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/oneArmCableRow.jpg" alt="One-arm cable row image 1 (add your own)" />
+            <img class="img" src="./workout_images/oneArmCableRow2.jpg" alt="One-arm cable row image 2 (add your own)" />
+          </div>
+          <p class="cue">Pull toward hip; pause; control stretch; avoid twisting.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Superset Pair 3 (Rotation)</h3>
+        <div class="meta">3 sets each • Triceps + lats combo</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Rope Triceps Pressdown (cable)</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/Tricep-pushdown-movement.jpg" alt="Triceps pressdown image 1 (add your own)" />
+            <img class="img" src="./workout_images/tricep-rope-pushdown.jpg" alt="Triceps pressdown image 2 (add your own)" />
+          </div>
+          <p class="cue">Elbows pinned; full extension; 1-sec squeeze; slow return.</p>
+        </div>
+
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Straight-Arm Pulldown</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/straightArmPulldown.jpg" alt="Straight-arm pulldown image 1 (add your own)" />
+            <img class="img" src="./workout_images/straightArmPulldown2.jpg" alt="Straight-arm pulldown image 2 (add your own)" />
+          </div>
+          <p class="cue">Ribs down; pull to thighs; feel lats; slow return.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Arms Superset (3 sets each)</h3>
+        <div class="meta">Different biceps angle to round out growth</div>
+      </div>
+      <div class="grid">
+        <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Cable Overhead Triceps Extension (rope)</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge push">Push</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/overhead_cable_tri_extension1.jpg" alt="Overhead triceps extension image 1 (add your own)" />
+            <img class="img" src="./workout_images/cable-overhead-tricep-extension2.jpg" alt="Overhead triceps extension image 2 (add your own)" />
+          </div>
+          <p class="cue">Big stretch; elbows steady; extend smoothly; don’t flare ribs.</p>
+        </div>
+
+          <div class="exercise col-6">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Incline Dumbbell Curl</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge pull">Pull</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/inclineCurl.jpg" alt="Incline curl image 1 (add your own)" />
+            <img class="img" src="./workout_images/inclineCurl2.jpg" alt="Incline curl image 2 (add your own)" />
+          </div>
+          <p class="cue">Full stretch at bottom; curl without swinging; slow negative.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="pair-title">
+        <h3>Core/Abs (3 exercises) — stacked</h3>
+        <div class="meta">3 sets each • No floor transitions</div>
+      </div>
+      <div class="core-stack">
+        <div class="exercise">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Standing Pallof Press (alternate angle)</p>
+              <p class="exercise-meta">3 × 10–12 / side</p>
+            </div>
+            <span class="badge core">Core</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/pallofPress.jpg" alt="Standing Pallof press image 1 (add your own)" />
+            <img class="img" src="./workout_images/2pallofPress.jpg" alt="Standing Pallof press image 2 (add your own)" />
+          </div>
+          <p class="cue">Change stance/cable height slightly; resist rotation; ribs down.</p>
+        </div>
+
+        <div class="exercise">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Standing Cable Crunch (rope)</p>
+              <p class="exercise-meta">3 × 10–15</p>
+            </div>
+            <span class="badge core">Core</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/standingCableCrunch.jpg" alt="Standing cable crunch image 1 (add your own)" />
+            <img class="img" src="./workout_images/standingCableCrunch2.jpg" alt="Standing cable crunch image 2 (add your own)" />
+          </div>
+          <p class="cue">Exhale hard; ribs toward pelvis; control return; avoid big hip hinge.</p>
+        </div>
+
+        <div class="exercise">
+          <div class="exercise-head">
+            <div>
+              <p class="exercise-name">Farmer Carry</p>
+              <p class="exercise-meta">3 × 30–45 sec</p>
+            </div>
+            <span class="badge core">Core</span>
+          </div>
+          <div class="img-row">
+            <img class="img" src="./workout_images/farmerCarry.jpg" alt="Farmer carry image 1 (add your own)" />
+            <img class="img" src="./workout_images/farmerCarry2.jpg" alt="Farmer carry image 2 (add your own)" />
+          </div>
+          <p class="cue">Walk tall; ribs stacked; controlled breathing; no leaning.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+<footer>
+  Tip: After you add images, you can print this page or save it as a PDF from your browser.
+</footer>
+</body>
+</html>
