@@ -888,7 +888,7 @@
 
     const { error } = await db.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.href }
+      options: { emailRedirectTo: window.location.origin + window.location.pathname }
     });
 
     msg.textContent = error ? 'Error: ' + error.message : 'Link sent — check your email.';
