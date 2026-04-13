@@ -232,18 +232,29 @@
     .auth-input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:14px;padding:10px 14px;outline:none;margin-bottom:10px;box-sizing:border-box}
     .auth-input:focus{border-color:var(--accent)}
     .auth-btn{width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#0b1220;font-size:14px;font-weight:700;cursor:pointer}
+    .auth-btn:disabled{opacity:.5;cursor:not-allowed}
     .auth-msg{font-size:13px;color:var(--muted);margin-top:12px;min-height:18px}
+    .auth-loading{min-height:100vh;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px}
+    .inapp-warn{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);border-radius:8px;padding:12px;font-size:13px;color:#fef3c7;margin-bottom:16px;text-align:left;line-height:1.5}
   </style>
 </head>
 <body>
+
+<div id="loadingGate" style="display:flex">
+  <div class="auth-loading">Checking session…</div>
+</div>
 
 <div id="authGate" style="display:none">
   <div class="auth-gate">
     <div class="auth-box">
       <h2>Health Plan</h2>
       <p>Enter your email to receive a sign-in link.</p>
-      <input id="loginEmail" class="auth-input" type="email" placeholder="your@email.com" />
-      <button class="auth-btn" onclick="sendMagicLink()">Send Magic Link</button>
+      <div id="inappWarn" class="inapp-warn" style="display:none">
+        You're in your email app's browser — the sign-in link may not work here.<br>
+        <strong>Open the link in Safari or Chrome instead.</strong>
+      </div>
+      <input id="loginEmail" class="auth-input" type="email" placeholder="your@email.com" autocomplete="email" />
+      <button id="loginBtn" class="auth-btn" onclick="sendMagicLink()">Send Magic Link</button>
       <p class="auth-msg" id="loginMsg"></p>
     </div>
   </div>
@@ -856,19 +867,35 @@
 
   let currentSession = null;
 
-  function initAuth() {
-    db.auth.getSession().then(({ data: { session } }) => {
-      session ? showApp(session) : showLogin();
-    });
+  function isInAppBrowser() {
+    const ua = navigator.userAgent || '';
+    // Matches Gmail (GSA), Outlook iOS, Facebook, Instagram, LinkedIn, Twitter, Snapchat
+    if (/GSA\/|Outlook-iOS|FBAN|FBAV|Instagram|LinkedInApp|Snapchat|Twitter/.test(ua)) return true;
+    // On iPhone/iPad, real browsers (Safari, Chrome, Firefox, Edge) all include "Safari" in their UA.
+    // Generic WebView-based in-app browsers do not.
+    if (/iPhone|iPad/.test(ua) && !/Safari/.test(ua)) return true;
+    return false;
+  }
 
+  function initAuth() {
+    if (isInAppBrowser()) {
+      document.getElementById('inappWarn').style.display = 'block';
+    }
+
+    // INITIAL_SESSION fires on startup (existing session or none).
+    // SIGNED_IN fires after a magic link is consumed.
     db.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) showApp(session);
-      if (event === 'SIGNED_OUT') showLogin();
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+        session ? showApp(session) : showLogin();
+      } else if (event === 'SIGNED_OUT') {
+        showLogin();
+      }
     });
   }
 
   function showApp(session) {
     currentSession = session;
+    document.getElementById('loadingGate').style.display = 'none';
     document.getElementById('authGate').style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
     renderTracker();
@@ -877,6 +904,7 @@
 
   function showLogin() {
     currentSession = null;
+    document.getElementById('loadingGate').style.display = 'none';
     document.getElementById('authGate').style.display = 'block';
     document.getElementById('appContent').style.display = 'none';
   }
@@ -884,14 +912,19 @@
   async function sendMagicLink() {
     const email = document.getElementById('loginEmail').value.trim();
     const msg = document.getElementById('loginMsg');
+    const btn = document.getElementById('loginBtn');
     if (!email) { msg.textContent = 'Enter your email first.'; return; }
+
+    btn.disabled = true;
+    msg.textContent = 'Sending…';
 
     const { error } = await db.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: window.location.origin + window.location.pathname }
     });
 
-    msg.textContent = error ? 'Error: ' + error.message : 'Link sent — check your email.';
+    btn.disabled = false;
+    msg.textContent = error ? 'Error: ' + error.message : 'Link sent — open it in Safari or Chrome.';
     if (!error) document.getElementById('loginEmail').value = '';
   }
 
