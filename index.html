@@ -828,6 +828,15 @@
     document.getElementById('progressLabel').textContent = checked + ' / ' + items.length + ' items';
   }
 
+  function applyGroceryState(state) {
+    allItems().forEach(el => {
+      const checked = !!state[el.dataset.id];
+      el.querySelector('input[type=checkbox]').checked = checked;
+      el.classList.toggle('checked', checked);
+    });
+    updateProgress();
+  }
+
   function toggle(el) {
     const cb = el.querySelector('input[type=checkbox]');
     cb.checked = !cb.checked;
@@ -836,11 +845,13 @@
     state[el.dataset.id] = cb.checked;
     saveState(state);
     updateProgress();
+    saveGroceryToDb(state);
   }
 
   function resetAll() {
     if (!confirm('Reset all checkboxes for a new week?')) return;
     saveState({});
+    saveGroceryToDb({});
     allItems().forEach(el => {
       el.querySelector('input[type=checkbox]').checked = false;
       el.classList.remove('checked');
@@ -849,15 +860,8 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    const state = getState();
-    allItems().forEach((el, i) => {
-      el.dataset.id = 'item_' + i;
-      if (state['item_' + i]) {
-        el.querySelector('input[type=checkbox]').checked = true;
-        el.classList.add('checked');
-      }
-    });
-    updateProgress();
+    allItems().forEach((el, i) => { el.dataset.id = 'item_' + i; });
+    applyGroceryState(getState()); // show localStorage immediately while auth loads
     initAuth();
   });
 
@@ -900,6 +904,7 @@
     document.getElementById('appContent').style.display = 'block';
     renderTracker();
     renderWeightChart();
+    syncGroceryFromDb();
   }
 
   function showLogin() {
@@ -930,6 +935,29 @@
 
   async function signOut() {
     await db.auth.signOut();
+  }
+
+  /* ── GROCERY DB SYNC ── */
+  async function syncGroceryFromDb() {
+    if (!currentSession) return;
+    const { data, error } = await db
+      .from('grocery_checks')
+      .select('checks')
+      .eq('user_id', currentSession.user.id)
+      .maybeSingle();
+    if (error || !data) return;
+    const checks = data.checks || {};
+    saveState(checks);
+    applyGroceryState(checks);
+  }
+
+  async function saveGroceryToDb(state) {
+    if (!currentSession) return;
+    await db.from('grocery_checks').upsert({
+      user_id: currentSession.user.id,
+      checks: state,
+      updated_at: new Date().toISOString()
+    });
   }
 
   /* ── TRACKER ── */
