@@ -1,1172 +1,1767 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Anti-Inflammatory Meal System</title>
   <style>
-    :root{
-      --bg:#0b1220;--muted:#9fb0d0;--text:#e9eefc;
-      --accent:#6ea8ff;--green:#4ade80;--yellow:#fbbf24;
-      --line:rgba(255,255,255,.10);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      background:linear-gradient(180deg,#070b14 0%,var(--bg) 100%);
-      color:var(--text);line-height:1.4;
-    }
-    header{padding:28px 18px 14px;max-width:1100px;margin:0 auto}
-    h1{margin:0 0 8px;font-size:clamp(20px,2.4vw,30px)}
-    .sub{color:var(--muted);margin:0;font-size:14px}
-    .wrap{max-width:1100px;margin:0 auto;padding:14px 18px 40px;display:grid;gap:14px}
-
-    .pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    .pill{border:1px solid var(--line);color:var(--muted);padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.03)}
-
-    .card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 24px rgba(0,0,0,.25)}
-    .card h2{margin:0 0 4px;font-size:18px}
-    .card h3{margin:18px 0 10px;font-size:15px;color:var(--accent)}
-    .card h3:first-of-type{margin-top:10px}
-    .note{color:var(--muted);font-size:13px;margin:0 0 14px}
-
-    /* NAV TABS */
-    .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0}
-    .tab{
-      padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
-      border:1px solid var(--line);background:rgba(255,255,255,.03);
-      color:var(--muted);cursor:pointer;transition:all .2s;
-    }
-    .tab:hover{background:rgba(255,255,255,.07)}
-    .tab.active{background:var(--accent);color:#0b1220;border-color:var(--accent)}
-
-    .section{display:none}
-    .section.active{display:block}
-
-    /* THE RULE BANNER */
-    .rule-banner{
-      display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;
-    }
-    @media(max-width:600px){.rule-banner{grid-template-columns:1fr}}
-    .rule-block{
-      padding:14px 16px;border-radius:14px;border:1px solid var(--line);
-      background:rgba(255,255,255,.02);
-    }
-    .rule-block .day-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-    .rule-block .rule-text{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
-    .rule-block .rule-sub{font-size:12px;color:var(--muted)}
-    .rule-block.highlight{border-color:rgba(110,168,255,.3);background:rgba(110,168,255,.05)}
-
-    /* WEEKDAY SCHEDULE */
-    .day-row{
-      display:grid;grid-template-columns:110px 1fr;gap:0;
-      border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:10px;
-    }
-    .day-label-col{
-      background:rgba(255,255,255,.04);padding:14px 12px;
-      display:flex;flex-direction:column;justify-content:center;align-items:center;
-      border-right:1px solid var(--line);
-    }
-    .day-name{font-weight:700;font-size:15px;color:var(--text)}
-    .day-sub{font-size:11px;color:var(--muted);margin-top:2px}
-    .day-meal{padding:14px 16px}
-    .meal-title{font-weight:700;font-size:14px;color:var(--accent);margin-bottom:6px}
-    .meal-items{display:flex;flex-wrap:wrap;gap:6px}
-    .meal-tag{
-      font-size:12px;padding:4px 10px;border-radius:999px;
-      border:1px solid var(--line);color:var(--muted);background:rgba(255,255,255,.02);
-    }
-    .meal-tag.protein{border-color:rgba(110,168,255,.3);color:#cfe0ff}
-    .meal-tag.veg{border-color:rgba(74,222,128,.3);color:#bbf7d0}
-    .meal-tag.base{border-color:rgba(251,191,36,.3);color:#fef3c7}
-    .meal-tag.fat{border-color:rgba(244,114,182,.3);color:#fce7f3}
-    .meal-tag.finish{border-color:rgba(167,139,250,.3);color:#ede9fe}
-    .reheat-note{margin-top:8px;font-size:12px;color:var(--muted);padding-top:8px;border-top:1px solid var(--line)}
-
-    /* WEEKEND */
-    .weekend-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media(max-width:640px){.weekend-grid{grid-template-columns:1fr}}
-    .weekend-day{border:1px solid var(--line);border-radius:14px;overflow:hidden}
-    .weekend-day-header{
-      padding:10px 14px;background:rgba(255,255,255,.04);
-      border-bottom:1px solid var(--line);font-weight:700;font-size:14px;
-    }
-    .weekend-meal{padding:12px 14px;border-bottom:1px solid var(--line)}
-    .weekend-meal:last-child{border-bottom:none}
-    .wm-time{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
-    .wm-desc{font-size:13px;color:var(--text)}
-    .wm-sub{font-size:12px;color:var(--muted);margin-top:2px}
-
-    /* SUNDAY PREP */
-    .prep-item{
-      display:flex;gap:14px;align-items:flex-start;
-      padding:12px 14px;border:1px solid var(--line);border-radius:14px;
-      background:rgba(255,255,255,.02);margin-bottom:10px;
-    }
-    .prep-num{
-      width:28px;height:28px;border-radius:50%;background:var(--accent);
-      color:#0b1220;font-weight:700;font-size:13px;flex-shrink:0;
-      display:flex;align-items:center;justify-content:center;
-    }
-    .prep-body{flex:1}
-    .prep-title{font-weight:700;font-size:14px;margin-bottom:3px}
-    .prep-desc{font-size:13px;color:var(--muted)}
-    .prep-desc strong{color:var(--text)}
-    .prep-time{font-size:11px;color:var(--accent);margin-top:4px;font-weight:600}
-    .feeds{
-      display:inline-block;margin-left:8px;
-      font-size:11px;padding:2px 8px;border-radius:999px;
-      border:1px solid rgba(74,222,128,.3);color:#4ade80;background:rgba(74,222,128,.05);
+    :root {
+      --bg: #0b1220;
+      --muted: #9fb0d0;
+      --text: #e9eefc;
+      --accent: #6ea8ff;
+      --green: #4ade80;
+      --yellow: #fbbf24;
+      --line: rgba(255, 255, 255, .10);
     }
 
-    .parallel-note{
-      padding:12px 14px;border-radius:14px;margin-bottom:14px;
-      border:1px dashed var(--line);background:rgba(255,255,255,.02);
-      font-size:13px;color:var(--muted);
+    * {
+      box-sizing: border-box
     }
-    .parallel-note strong{color:var(--text)}
 
-    /* GROCERY */
-    .reset-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px}
-    .progress-wrap{display:flex;align-items:center;gap:10px;flex:1;min-width:180px}
-    .progress-track{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
-    .progress-fill{height:100%;border-radius:999px;background:var(--green);transition:width .3s ease}
-    .progress-label{font-size:12px;color:var(--muted);white-space:nowrap}
-    .btn{padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);font-size:13px;cursor:pointer;transition:background .2s}
-    .btn:hover{background:rgba(255,255,255,.10)}
-    .btn.danger{border-color:rgba(255,100,100,.3);color:#ffaaaa}
-    .btn.danger:hover{background:rgba(255,80,80,.1)}
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(180deg, #070b14 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.4;
+    }
 
-    .cat-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
-    .cat-label:first-of-type{margin-top:4px}
-    .grocery-grid{display:grid;grid-template-columns:1fr;gap:0 24px}
-    @media(min-width:700px){.grocery-grid{grid-template-columns:1fr 1fr}}
+    header {
+      padding: 28px 18px 14px;
+      max-width: 1100px;
+      margin: 0 auto
+    }
 
-    .item{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-radius:12px;border:1px solid transparent;transition:background .15s,border-color .15s,opacity .2s;cursor:pointer}
-    .item:hover{background:rgba(255,255,255,.03);border-color:var(--line)}
-    .item.checked{opacity:.45}
-    .item.checked .item-name{text-decoration:line-through;color:var(--muted)}
-    .item input[type=checkbox]{width:18px;height:18px;flex-shrink:0;margin-top:1px;accent-color:var(--green);cursor:pointer}
-    .item-body{flex:1;min-width:0}
-    .item-name{font-size:14px;font-weight:600}
-    .item-meta{font-size:12px;color:var(--muted);margin-top:2px}
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(20px, 2.4vw, 30px)
+    }
 
-    /* AVOID */
-    .avoid-row{padding:8px 0;font-size:13px;color:var(--muted);border-bottom:1px solid var(--line)}
-    .avoid-row:last-child{border-bottom:none}
-    .no{color:#f87171}
+    .sub {
+      color: var(--muted);
+      margin: 0;
+      font-size: 14px
+    }
 
-    /* RECIPES */
-    .recipe{border:1px solid var(--line);border-radius:16px;padding:14px;background:rgba(255,255,255,.015);margin-bottom:12px}
-    .recipe:last-child{margin-bottom:0}
-    .recipe h3{margin:0 0 4px;font-size:15px;color:var(--accent)}
-    .recipe .timing{font-size:12px;color:var(--muted);margin:0 0 10px}
-    .recipe ol{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
-    .recipe ol li{margin-bottom:5px;line-height:1.5}
-    .recipe .tip{margin-top:10px;padding:8px 12px;border-radius:10px;border:1px dashed var(--line);background:rgba(255,255,255,.02);font-size:12px;color:var(--muted)}
-    .recipe .tip strong{color:var(--text)}
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 18px 40px;
+      display: grid;
+      gap: 14px
+    }
 
-    /* SUPPLEMENT TABLE */
-    .tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
-    .tbl th{text-align:left;padding:8px 10px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line)}
-    .tbl td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--muted)}
-    .tbl td:first-child{color:var(--text);font-weight:500}
-    .tbl tr:last-child td{border-bottom:none}
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px
+    }
 
-    /* SITE NAV */
-    .site-nav{max-width:1100px;margin:0 auto;padding:16px 18px 0;display:flex;gap:8px;flex-wrap:wrap}
-    .site-nav a{padding:8px 18px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);text-decoration:none;transition:all .2s}
-    .site-nav a:hover{background:rgba(255,255,255,.07)}
-    .site-nav a.active{background:var(--accent);color:#0b1220;border-color:var(--accent)}
+    .pill {
+      border: 1px solid var(--line);
+      color: var(--muted);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(255, 255, 255, .03)
+    }
 
-    /* TRACKER */
-    .checkin-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:rgba(255,255,255,.02);margin-bottom:14px}
-    .checkin-card h3{margin:0 0 14px;font-size:15px;color:var(--text)}
-    .checkin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-    @media(max-width:400px){.checkin-grid{grid-template-columns:1fr}}
-    .checkin-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;transition:all .2s;width:100%}
-    .checkin-btn:hover{background:rgba(255,255,255,.07)}
-    .checkin-btn.done{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.07)}
-    .checkin-icon{font-size:24px}
-    .checkin-label{font-size:13px;font-weight:600;color:var(--muted)}
-    .checkin-status{font-size:12px;font-weight:700;color:var(--muted)}
-    .checkin-btn.done .checkin-status{color:var(--green)}
-    .weight-row{display:flex;align-items:center;gap:10px}
-    .weight-row label{font-size:13px;color:var(--muted);flex-shrink:0}
-    .weight-row input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:14px;padding:8px 12px;outline:none;min-width:0}
-    .weight-row input:focus{border-color:var(--accent)}
-    .streak-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-    .streak-block{text-align:center;padding:16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02)}
-    .streak-num{font-size:36px;font-weight:700;color:var(--accent);line-height:1}
-    .streak-label{font-size:12px;color:var(--muted);margin-top:6px}
-    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-    .cal-head{text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding:4px 0;letter-spacing:.05em}
-    .cal-day{aspect-ratio:1;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px}
-    .cal-today{border-color:rgba(110,168,255,.4);background:rgba(110,168,255,.07)}
-    .cal-date{font-size:11px;color:var(--muted)}
-    .cal-today .cal-date{color:var(--accent);font-weight:700}
-    .cal-dots{display:flex;gap:3px;min-height:8px}
-    .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
-    .dot-w{background:var(--accent)}
-    .dot-m{background:var(--green)}
+    .card {
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .25)
+    }
 
-    footer{max-width:1100px;margin:0 auto;padding:10px 18px 30px;color:var(--muted);font-size:12px}
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 18px
+    }
 
-    /* WEIGHT TRACKER */
-    .weight-section{margin-top:20px}
-    .weight-entry-row{display:flex;gap:8px;margin-bottom:14px}
-    .weight-entry-input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:16px;padding:10px 14px;outline:none;min-width:0}
-    .weight-entry-input:focus{border-color:var(--accent)}
-    .weight-log-btn{padding:10px 24px;border-radius:8px;border:none;background:var(--accent);color:#0b1220;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
-    .wstat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
-    .wstat{text-align:center;padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02)}
-    .wstat-val{font-size:26px;font-weight:700;color:var(--accent);line-height:1}
-    .wstat-label{font-size:12px;color:var(--muted);margin-top:4px}
+    .card h3 {
+      margin: 18px 0 10px;
+      font-size: 15px;
+      color: var(--accent)
+    }
 
-    /* AUTH */
-    .auth-gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .auth-box{max-width:360px;width:100%;padding:32px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;text-align:center}
-    .auth-box h2{margin:0 0 8px}
-    .auth-box>p{color:var(--muted);font-size:14px;margin:0 0 24px}
-    .auth-input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:14px;padding:10px 14px;outline:none;margin-bottom:10px;box-sizing:border-box}
-    .auth-input:focus{border-color:var(--accent)}
-    .auth-btn{width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#0b1220;font-size:14px;font-weight:700;cursor:pointer}
-    .auth-btn:disabled{opacity:.5;cursor:not-allowed}
-    .auth-msg{font-size:13px;color:var(--muted);margin-top:12px;min-height:18px}
-    .auth-loading{min-height:100vh;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px}
-    .inapp-warn{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);border-radius:8px;padding:12px;font-size:13px;color:#fef3c7;margin-bottom:16px;text-align:left;line-height:1.5}
+    .card h3:first-of-type {
+      margin-top: 10px
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0 0 14px
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 0
+    }
+
+    .tab {
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .03);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .tab:hover {
+      background: rgba(255, 255, 255, .07)
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: #0b1220;
+      border-color: var(--accent)
+    }
+
+    .section {
+      display: none
+    }
+
+    .section.active {
+      display: block
+    }
+
+    .rule-banner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    @media(max-width:600px) {
+      .rule-banner {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .rule-block {
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .02);
+    }
+
+    .rule-block .day-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px
+    }
+
+    .rule-block .rule-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px
+    }
+
+    .rule-block .rule-sub {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .rule-block.highlight {
+      border-color: rgba(110, 168, 255, .3);
+      background: rgba(110, 168, 255, .05)
+    }
+
+    .day-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .day-label-col {
+      background: rgba(255, 255, 255, .04);
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-right: 1px solid var(--line);
+    }
+
+    .day-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text)
+    }
+
+    .day-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .day-meal {
+      padding: 14px 16px
+    }
+
+    .meal-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--accent);
+      margin-bottom: 6px
+    }
+
+    .meal-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px
+    }
+
+    .meal-tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255, 255, 255, .02);
+    }
+
+    .meal-tag.protein {
+      border-color: rgba(110, 168, 255, .3);
+      color: #cfe0ff
+    }
+
+    .meal-tag.veg {
+      border-color: rgba(74, 222, 128, .3);
+      color: #bbf7d0
+    }
+
+    .meal-tag.base {
+      border-color: rgba(251, 191, 36, .3);
+      color: #fef3c7
+    }
+
+    .meal-tag.fat {
+      border-color: rgba(244, 114, 182, .3);
+      color: #fce7f3
+    }
+
+    .meal-tag.finish {
+      border-color: rgba(167, 139, 250, .3);
+      color: #ede9fe
+    }
+
+    .reheat-note {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      padding-top: 8px;
+      border-top: 1px solid var(--line)
+    }
+
+    .weekend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    @media(max-width:640px) {
+      .weekend-grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .weekend-day {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden
+    }
+
+    .weekend-day-header {
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, .04);
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .weekend-meal {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .weekend-meal:last-child {
+      border-bottom: none
+    }
+
+    .wm-time {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      margin-bottom: 4px
+    }
+
+    .wm-desc {
+      font-size: 13px;
+      color: var(--text)
+    }
+
+    .wm-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .prep-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .02);
+      margin-bottom: 10px;
+    }
+
+    .prep-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #0b1220;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .prep-body {
+      flex: 1
+    }
+
+    .prep-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 3px
+    }
+
+    .prep-desc {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .prep-desc strong {
+      color: var(--text)
+    }
+
+    .prep-time {
+      font-size: 11px;
+      color: var(--accent);
+      margin-top: 4px;
+      font-weight: 600
+    }
+
+    .feeds {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(74, 222, 128, .3);
+      color: #4ade80;
+      background: rgba(74, 222, 128, .05);
+    }
+
+    .parallel-note {
+      padding: 12px 14px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      border: 1px dashed var(--line);
+      background: rgba(255, 255, 255, .02);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .parallel-note strong {
+      color: var(--text)
+    }
+
+    .reset-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 180px
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .08);
+      overflow: hidden
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--green);
+      transition: width .3s ease
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .05);
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background .2s
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, .10)
+    }
+
+    .btn.danger {
+      border-color: rgba(255, 100, 100, .3);
+      color: #ffaaaa
+    }
+
+    .btn.danger:hover {
+      background: rgba(255, 80, 80, .1)
+    }
+
+    .cat-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 18px 0 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .cat-label:first-of-type {
+      margin-top: 4px
+    }
+
+    .grocery-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0 24px
+    }
+
+    @media(min-width:700px) {
+      .grocery-grid {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: background .15s, border-color .15s, opacity .2s;
+      cursor: pointer
+    }
+
+    .item:hover {
+      background: rgba(255, 255, 255, .03);
+      border-color: var(--line)
+    }
+
+    .item.checked {
+      opacity: .45
+    }
+
+    .item.checked .item-name {
+      text-decoration: line-through;
+      color: var(--muted)
+    }
+
+    .item input[type=checkbox] {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      accent-color: var(--green);
+      cursor: pointer
+    }
+
+    .item-body {
+      flex: 1;
+      min-width: 0
+    }
+
+    .item-name {
+      font-size: 14px;
+      font-weight: 600
+    }
+
+    .item-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .avoid-row {
+      padding: 8px 0;
+      font-size: 13px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .avoid-row:last-child {
+      border-bottom: none
+    }
+
+    .no {
+      color: #f87171
+    }
+
+    .recipe {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(255, 255, 255, .015);
+      margin-bottom: 12px
+    }
+
+    .recipe:last-child {
+      margin-bottom: 0
+    }
+
+    .recipe h3 {
+      margin: 0 0 4px;
+      font-size: 15px;
+      color: var(--accent)
+    }
+
+    .recipe .timing {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 10px
+    }
+
+    .recipe ol {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .recipe ol li {
+      margin-bottom: 5px;
+      line-height: 1.5
+    }
+
+    .recipe .tip {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px dashed var(--line);
+      background: rgba(255, 255, 255, .02);
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .recipe .tip strong {
+      color: var(--text)
+    }
+
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 8px
+    }
+
+    .tbl th {
+      text-align: left;
+      padding: 8px 10px;
+      color: var(--muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .tbl td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, .05);
+      color: var(--muted)
+    }
+
+    .tbl td:first-child {
+      color: var(--text);
+      font-weight: 500
+    }
+
+    .tbl tr:last-child td {
+      border-bottom: none
+    }
+
+    footer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 10px 18px 30px;
+      color: var(--muted);
+      font-size: 12px
+    }
   </style>
 </head>
+
 <body>
 
-<div id="loadingGate" style="display:flex">
-  <div class="auth-loading">Checking session…</div>
-</div>
-
-<div id="authGate" style="display:none">
-  <div class="auth-gate">
-    <div class="auth-box">
-      <h2>Health Plan</h2>
-      <p>Enter your email to receive a sign-in link.</p>
-      <div id="inappWarn" class="inapp-warn" style="display:none">
-        You're in your email app's browser — the sign-in link may not work here.<br>
-        <strong>Open the link in Safari or Chrome instead.</strong>
-      </div>
-      <input id="loginEmail" class="auth-input" type="email" placeholder="your@email.com" autocomplete="email" />
-      <button id="loginBtn" class="auth-btn" onclick="sendMagicLink()">Send Magic Link</button>
-      <p class="auth-msg" id="loginMsg"></p>
-    </div>
-  </div>
-</div>
-
-<div id="appContent" style="display:none">
-<nav class="site-nav">
-  <a href="./index.html" class="active">Meal Plan</a>
-  <a href="./workout.html">Workout</a>
-  <button class="btn" onclick="signOut()" style="margin-left:auto">Sign out</button>
-</nav>
-
-<header>
-  <h1>Anti-Inflammatory Meal System</h1>
-  <p class="sub">Mediterranean framework · OMAD weekdays · Structured weekends · Joint inflammation &amp; weight loss</p>
-  <div class="pill-row">
-    <span class="pill">No seed oils</span>
-    <span class="pill">No refined sugar</span>
-    <span class="pill">No processed meats</span>
-    <span class="pill">No brown rice or grains</span>
-    <span class="pill">Olive oil only</span>
-    <span class="pill">Omega-3 priority</span>
-  </div>
-</header>
-
-<div class="wrap">
-
-  <!-- TABS -->
-  <div class="card" style="padding:14px">
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('schedule')">📅 Weekly Schedule</div>
-      <div class="tab" onclick="switchTab('prep')">🥘 Sunday Prep</div>
-      <div class="tab" onclick="switchTab('grocery')">🛒 Grocery List</div>
-      <div class="tab" onclick="switchTab('recipes')">👨‍🍳 Recipes</div>
-      <div class="tab" onclick="switchTab('tracker')">📊 Tracker</div>
-    </div>
-  </div>
-
-  <!-- =====================
-       TAB: SCHEDULE
-       ===================== -->
-  <section class="card section active" id="tab-schedule">
-    <h2>Weekly Eating Schedule</h2>
-    <p class="note">Everything Monday–Friday is prepped Sunday. Pull from fridge, assemble in 2 minutes, done.</p>
-
-    <div class="rule-banner">
-      <div class="rule-block highlight">
-        <div class="day-label">Mon – Fri</div>
-        <div class="rule-text">One Meal a Day · 5–7pm</div>
-        <div class="rule-sub">Morning drink + water/coffee/tea only until your meal. No snacking.</div>
-      </div>
-      <div class="rule-block highlight">
-        <div class="day-label">Sat – Sun</div>
-        <div class="rule-text">Three Meals · No Snacking</div>
-        <div class="rule-sub">Breakfast 9am · Lunch 1pm · Dinner 6pm. Same food quality as weekdays.</div>
-      </div>
-    </div>
-
-    <h3>Every Morning (7 Days a Week)</h3>
-    <div style="padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02);font-size:13px;color:var(--muted);margin-bottom:18px">
-      <strong style="color:var(--text);display:block;margin-bottom:4px">🌅 Turmeric Drink — before anything else</strong>
-      Turmeric · ginger · cayenne pepper · black pepper · lemon juice · olive oil · honey (small amount). This is your anti-inflammatory foundation every single day.
-    </div>
-
-    <h3>Monday – Friday · Your One Meal Each Day</h3>
-    <p class="note">Everything below is already made from Sunday prep. You are just pulling containers from the fridge and plating.</p>
-
-    <!-- MON -->
-    <div class="day-row">
-      <div class="day-label-col"><div class="day-name">MON</div><div class="day-sub">5–7pm</div></div>
-      <div class="day-meal">
-        <div class="meal-title">Salmon + Greens + Roasted Vegetables</div>
-        <div class="meal-items">
-          <span class="meal-tag base">Spinach or arugula base</span>
-          <span class="meal-tag protein">Baked salmon (Sunday prep)</span>
-          <span class="meal-tag veg">Roasted cauliflower + asparagus</span>
-          <span class="meal-tag fat">½ avocado</span>
-          <span class="meal-tag finish">Blueberries</span>
-        </div>
-        <div class="reheat-note">⚡ Reheat salmon + vegetables in a pan with a little olive oil. Plate over fresh greens. Done.</div>
-      </div>
-    </div>
-
-    <!-- TUE -->
-    <div class="day-row">
-      <div class="day-label-col"><div class="day-name">TUE</div><div class="day-sub">5–7pm</div></div>
-      <div class="day-meal">
-        <div class="meal-title">Sardine or Tuna Salad Bowl</div>
-        <div class="meal-items">
-          <span class="meal-tag base">Arugula or spinach base</span>
-          <span class="meal-tag protein">1 can sardines or tuna (no reheating needed)</span>
-          <span class="meal-tag veg">Roasted sweet potato (Sunday prep)</span>
-          <span class="meal-tag fat">Walnuts</span>
-          <span class="meal-tag finish">Tart cherries</span>
-        </div>
-        <div class="reheat-note">⚡ Reheat sweet potato in pan. Open canned fish directly onto greens. Add dressing from fridge jar. Done.</div>
-      </div>
-    </div>
-
-    <!-- WED -->
-    <div class="day-row">
-      <div class="day-label-col"><div class="day-name">WED</div><div class="day-sub">5–7pm</div></div>
-      <div class="day-meal">
-        <div class="meal-title">Eggs + Lentils + Greens</div>
-        <div class="meal-items">
-          <span class="meal-tag base">Spinach base</span>
-          <span class="meal-tag protein">3 hard boiled eggs (Sunday prep)</span>
-          <span class="meal-tag veg">Lentils (Sunday prep) + roasted bell peppers</span>
-          <span class="meal-tag fat">½ avocado</span>
-          <span class="meal-tag finish">Blueberries</span>
-        </div>
-        <div class="reheat-note">⚡ Reheat lentils + bell peppers in pan. Slice hard boiled eggs. Plate everything over greens. Done.</div>
-      </div>
-    </div>
-
-    <!-- THU -->
-    <div class="day-row">
-      <div class="day-label-col"><div class="day-name">THU</div><div class="day-sub">5–7pm</div></div>
-      <div class="day-meal">
-        <div class="meal-title">Tuna + Sweet Potato + Greens</div>
-        <div class="meal-items">
-          <span class="meal-tag base">Kale or arugula base</span>
-          <span class="meal-tag protein">1 can tuna (no reheating needed)</span>
-          <span class="meal-tag veg">Roasted sweet potato + cauliflower (Sunday prep)</span>
-          <span class="meal-tag fat">Walnuts</span>
-          <span class="meal-tag finish">Tart cherries</span>
-        </div>
-        <div class="reheat-note">⚡ Reheat vegetables in pan. Open tuna. Plate over greens with dressing jar. Done.</div>
-      </div>
-    </div>
-
-    <!-- FRI -->
-    <div class="day-row">
-      <div class="day-label-col"><div class="day-name">FRI</div><div class="day-sub">5–7pm</div></div>
-      <div class="day-meal">
-        <div class="meal-title">Lentil Bowl + Eggs + Greens</div>
-        <div class="meal-items">
-          <span class="meal-tag base">Spinach base</span>
-          <span class="meal-tag protein">3 hard boiled eggs (Sunday prep)</span>
-          <span class="meal-tag veg">Lentils + roasted asparagus (Sunday prep)</span>
-          <span class="meal-tag fat">½ avocado</span>
-          <span class="meal-tag finish">Blueberries or pomegranate seeds</span>
-        </div>
-        <div class="reheat-note">⚡ Reheat lentils + asparagus in pan. Slice eggs over the top. Done. End the week strong.</div>
-      </div>
-    </div>
-
-    <h3>Saturday &amp; Sunday</h3>
-    <div class="weekend-grid">
-      <div class="weekend-day">
-        <div class="weekend-day-header">Saturday</div>
-        <div class="weekend-meal">
-          <div class="wm-time">Breakfast · 9am</div>
-          <div class="wm-desc">3 scrambled eggs + ½ avocado + wilted spinach</div>
-          <div class="wm-sub">Cooked fresh in olive oil. Black coffee or green tea.</div>
-        </div>
-        <div class="weekend-meal">
-          <div class="wm-time">Lunch · 1pm</div>
-          <div class="wm-desc">Large salad + canned tuna or sardines</div>
-          <div class="wm-sub">Arugula · cucumber · cherry tomatoes · red onion · walnuts · dressing jar.</div>
-        </div>
-        <div class="weekend-meal">
-          <div class="wm-time">Dinner · 6pm</div>
-          <div class="wm-desc">Baked salmon + roasted vegetables + lentils</div>
-          <div class="wm-sub">Cook fresh. This is also your Sunday prep salmon batch.</div>
-        </div>
-      </div>
-      <div class="weekend-day">
-        <div class="weekend-day-header">Sunday</div>
-        <div class="weekend-meal">
-          <div class="wm-time">Breakfast · 9am</div>
-          <div class="wm-desc">Anti-inflammatory smoothie + 2 boiled eggs</div>
-          <div class="wm-sub">Spinach · blueberries · tart cherries · olive oil · turmeric · almond milk. Blend, drink immediately.</div>
-        </div>
-        <div class="weekend-meal">
-          <div class="wm-time">Lunch · 1pm</div>
-          <div class="wm-desc">Black bean bowl</div>
-          <div class="wm-sub">Roasted sweet potato base · seasoned black beans · roasted bell peppers · avocado · dressing.</div>
-        </div>
-        <div class="weekend-meal">
-          <div class="wm-time">After Lunch · Meal Prep</div>
-          <div class="wm-desc">🥘 Run Sunday prep now</div>
-          <div class="wm-sub">Everything for Mon–Fri gets made here. See Sunday Prep tab.</div>
-        </div>
-        <div class="weekend-meal">
-          <div class="wm-time">Dinner · 6pm</div>
-          <div class="wm-desc">Chicken breast + roasted vegetables + greens</div>
-          <div class="wm-sub">Baked chicken in olive oil + garlic. Use leftover roasted vegetables from prep.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =====================
-       TAB: SUNDAY PREP
-       ===================== -->
-  <section class="card section" id="tab-prep">
-    <h2>Sunday Meal Prep</h2>
-    <p class="note">Do this after Sunday lunch. Everything runs simultaneously. You are actively working about 15 minutes — the rest is hands-off oven and stove time.</p>
-
-    <div class="parallel-note">
-      <strong>How to run this efficiently:</strong> Start the oven first. Get lentils on the stove. While those cook, prep and load the sheet pans. Put eggs on last since they're quickest. Everything finishes within the same 30–35 minute window.
-    </div>
-
-    <div class="prep-item">
-      <div class="prep-num">1</div>
-      <div class="prep-body">
-        <div class="prep-title">Bake Salmon Fillets <span class="feeds">feeds Mon + Sat dinner</span></div>
-        <div class="prep-desc">Bake <strong>2–3 fillets</strong> at 400°F · 12–15 min · olive oil, garlic, lemon, salt, pepper, red pepper flakes. Monday you reheat in a pan with olive oil. Saturday you cook one fresh for dinner.</div>
-        <div class="prep-time">⏱ 15 min hands-off</div>
-      </div>
-    </div>
-
-    <div class="prep-item">
-      <div class="prep-num">2</div>
-      <div class="prep-body">
-        <div class="prep-title">Sheet Pan Vegetables <span class="feeds">feeds Mon–Fri sides</span></div>
-        <div class="prep-desc">Two sheet pans at 425°F. <strong>Pan 1:</strong> cauliflower florets + asparagus spears. <strong>Pan 2:</strong> cubed sweet potato (takes 30 min, start first). Toss everything in olive oil, salt, pepper, garlic powder, turmeric. Single layer only — no piling. Flip halfway.</div>
-        <div class="prep-time">⏱ 25–30 min hands-off</div>
-      </div>
-    </div>
-
-    <div class="prep-item">
-      <div class="prep-num">3</div>
-      <div class="prep-body">
-        <div class="prep-title">Roasted Bell Peppers <span class="feeds">feeds Wed + Thu</span></div>
-        <div class="prep-desc">Slice <strong>2–3 bell peppers</strong> into strips. Toss with olive oil, salt, smoked paprika. Can share the sheet pan with cauliflower — they take the same time.</div>
-        <div class="prep-time">⏱ 20–25 min hands-off</div>
-      </div>
-    </div>
-
-    <div class="prep-item">
-      <div class="prep-num">4</div>
-      <div class="prep-body">
-        <div class="prep-title">Cook Lentils <span class="feeds">feeds Wed + Fri</span></div>
-        <div class="prep-desc">Rinse <strong>1 cup dry lentils</strong>. Sauté garlic in olive oil 1 min. Add 1 tsp cumin + 1 tsp turmeric. Add lentils + 1 can diced tomatoes + 2.5 cups water. Boil then simmer covered 25–30 min. Finish with lemon + olive oil.</div>
-        <div class="prep-time">⏱ 30 min hands-off after setup</div>
-      </div>
-    </div>
-
-    <div class="prep-item">
-      <div class="prep-num">5</div>
-      <div class="prep-body">
-        <div class="prep-title">Hard Boil 6 Eggs <span class="feeds">feeds Wed + Fri + backup</span></div>
-        <div class="prep-desc">Cold water start. Bring to boil. <strong>Off heat, lid on, 11 minutes.</strong> Transfer immediately to ice water. Peel when cool. Store unpeeled or peeled — both last 5 days in fridge.</div>
-        <div class="prep-time">⏱ 15 min hands-off</div>
-      </div>
-    </div>
-
-    <div class="prep-item">
-      <div class="prep-num">6</div>
-      <div class="prep-body">
-        <div class="prep-title">Salad Dressing Jar <span class="feeds">feeds all week</span></div>
-        <div class="prep-desc">Into a jar: <strong>3 tbsp olive oil · 1 tbsp red wine vinegar · 1 tsp Dijon mustard · 1 minced garlic clove · salt + pepper.</strong> Seal and shake until emulsified. Lasts all week in fridge.</div>
-        <div class="prep-time">⏱ 3 min active</div>
-      </div>
-    </div>
-
-    <div class="prep-item">
-      <div class="prep-num">7</div>
-      <div class="prep-body">
-        <div class="prep-title">Wash &amp; Dry Greens <span class="feeds">feeds all week</span></div>
-        <div class="prep-desc">Wash <strong>spinach + arugula</strong>. Dry thoroughly in a salad spinner or pat with paper towels. Store in a container lined with paper towel. Wet greens go bad fast — drying them makes them last 5–6 days.</div>
-        <div class="prep-time">⏱ 5 min active</div>
-      </div>
-    </div>
-
-    <div style="margin-top:6px;padding:14px 16px;border-radius:14px;border:1px solid rgba(74,222,128,.25);background:rgba(74,222,128,.05);font-size:13px;color:var(--muted)">
-      <strong style="color:#4ade80;display:block;margin-bottom:4px">What's in your fridge after prep</strong>
-      Cooked salmon · roasted cauliflower · roasted asparagus · roasted sweet potato · roasted bell peppers · cooked lentils · 6 hard boiled eggs · washed greens · dressing jar. That's Monday through Friday handled. Every meal is a 2-minute plate job.
-    </div>
-  </section>
-
-  <!-- =====================
-       TAB: GROCERY LIST
-       ===================== -->
-  <section class="card section" id="tab-grocery">
-    <h2>Weekly Grocery List</h2>
-    <p class="note">Check off items as you shop. Resets each week. Shop Saturday or Sunday morning before prep.</p>
-
-    <div class="reset-bar">
-      <div class="progress-wrap">
-        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-        <span class="progress-label" id="progressLabel">0 / 0 items</span>
-      </div>
-      <button class="btn danger" onclick="resetAll()">↺ Reset for new week</button>
-    </div>
-
-    <div class="grocery-grid" id="groceryGrid">
-      <div>
-        <div class="cat-label">Proteins</div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Wild-caught salmon fillets</div><div class="item-meta">2–3 fillets · fresh or frozen, not farmed</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Sardines in olive oil (canned)</div><div class="item-meta">4–6 cans · best budget omega-3 source</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Wild tuna in water (canned)</div><div class="item-meta">4 cans · albacore or skipjack</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Pasture-raised eggs</div><div class="item-meta">1 dozen · Vital Farms or similar</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Chicken breast</div><div class="item-meta">1.5 lbs · plain, no marinade · Sunday dinner</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Lentils (dry, green or red)</div><div class="item-meta">1 bag</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Black beans (canned)</div><div class="item-meta">2 cans · Sunday lunch bowl</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Grass-fed ground beef (optional)</div><div class="item-meta">1 lb · 1×/week max if desired</div></div></div>
-
-        <div class="cat-label">Fats &amp; Pantry</div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Extra virgin olive oil</div><div class="item-meta">Large bottle · your only cooking fat</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Walnuts (raw)</div><div class="item-meta">1 bag · not roasted in vegetable oil</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Almonds (raw)</div><div class="item-meta">1 bag</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Sourdough bread</div><div class="item-meta">1 loaf · real sourdough only (flour, water, salt, starter)</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Red wine vinegar</div><div class="item-meta">1 bottle · dressing</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Dijon mustard</div><div class="item-meta">1 jar · dressing emulsifier</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Canned diced tomatoes</div><div class="item-meta">2 cans · lentil recipe</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Unsweetened almond milk</div><div class="item-meta">Sunday smoothie base</div></div></div>
-
-        <div class="cat-label">Spices</div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Turmeric (ground)</div><div class="item-meta">Restock if low</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Black pepper</div><div class="item-meta">Always paired with turmeric</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Fresh ginger root</div><div class="item-meta">Morning drink + cooking</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Cumin</div><div class="item-meta">Lentils and beans</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Smoked paprika</div><div class="item-meta">Chicken and bell peppers</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Garlic powder</div><div class="item-meta">Sheet pan vegetables</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Red pepper flakes</div><div class="item-meta">Salmon + anti-inflammatory</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Sea salt or Himalayan pink salt</div><div class="item-meta">No iodized table salt</div></div></div>
-      </div>
-
-      <div>
-        <div class="cat-label">Vegetables</div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Baby spinach</div><div class="item-meta">Large bag · meal base all week</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Arugula</div><div class="item-meta">1 bag · alternating base with spinach</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Kale</div><div class="item-meta">1 bunch · Thu base</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Asparagus</div><div class="item-meta">1 bunch · sheet pan Sunday</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Cauliflower</div><div class="item-meta">1 head · sheet pan Sunday</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Sweet potato</div><div class="item-meta">4–5 medium · sheet pan Sunday · carb base</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Bell peppers (red/yellow)</div><div class="item-meta">3–4 · sheet pan Sunday</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Beets</div><div class="item-meta">3–4 fresh or pre-cooked</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Cucumber</div><div class="item-meta">2 · raw in salads</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Cherry tomatoes</div><div class="item-meta">1 pint · salads</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Red onion</div><div class="item-meta">1 · raw in salads</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Garlic (fresh)</div><div class="item-meta">1 head · use in everything</div></div></div>
-
-        <div class="cat-label">Fruits</div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Blueberries (frozen)</div><div class="item-meta">1 large bag · Mon, Wed, Fri finish</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Tart cherries (frozen)</div><div class="item-meta">1 bag · Tue, Thu finish + Sunday smoothie</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Lemons</div><div class="item-meta">4–5 · morning drink + cooking + dressing</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Avocados</div><div class="item-meta">4–5 · buy some ripe, some firm</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Pomegranate seeds</div><div class="item-meta">1 container · Fri finish + Sunday bowl</div></div></div>
-
-        <div class="cat-label">Morning Drink Ingredients</div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Lemons (already above)</div><div class="item-meta">Shared with cooking use</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Cayenne pepper</div><div class="item-meta">Morning drink</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Raw honey</div><div class="item-meta">Small amount only · morning drink</div></div></div>
-
-        <div class="cat-label">Drinks</div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Green tea bags</div><div class="item-meta">Replace one coffee daily</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Ginger herbal tea</div><div class="item-meta">Evening wind-down</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Tart cherry juice (unsweetened)</div><div class="item-meta">4oz max · occasional</div></div></div>
-        <div class="item" onclick="toggle(this)"><input type="checkbox"/><div class="item-body"><div class="item-name">Sparkling water (plain)</div><div class="item-meta">Weekend substitute</div></div></div>
-      </div>
-    </div>
-
-    <h3 style="margin-top:20px">Never Buy / Never Cook With</h3>
-    <div class="grocery-grid">
-      <div>
-        <div class="avoid-row"><span class="no">✕</span> &nbsp;Canola · vegetable · soybean · corn oil</div>
-        <div class="avoid-row"><span class="no">✕</span> &nbsp;White bread · white flour · white pasta</div>
-        <div class="avoid-row"><span class="no">✕</span> &nbsp;Brown rice</div>
-        <div class="avoid-row"><span class="no">✕</span> &nbsp;Refined sugar · candy</div>
-      </div>
-      <div>
-        <div class="avoid-row"><span class="no">✕</span> &nbsp;Deli meats · hot dogs · sausage</div>
-        <div class="avoid-row"><span class="no">✕</span> &nbsp;Soda · juice · energy drinks · alcohol</div>
-        <div class="avoid-row"><span class="no">✕</span> &nbsp;Farmed (Atlantic) salmon</div>
-        <div class="avoid-row"><span class="no">✕</span> &nbsp;Anything with seed oils in the ingredients</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =====================
-       TAB: RECIPES
-       ===================== -->
-  <section class="card section" id="tab-recipes">
-    <h2>Cooking Instructions</h2>
-    <p class="note">Reference only. You run these on Sunday during prep — not during the week.</p>
-
-    <div class="recipe">
-      <h3>1 · Baked Salmon</h3>
-      <div class="timing">15 min · Sunday prep batch · Monday dinner + Saturday dinner</div>
-      <ol>
-        <li>Preheat oven to 400°F. Line baking sheet with parchment.</li>
-        <li>Rub salmon with 1 tbsp olive oil on both sides.</li>
-        <li>Press 1–2 minced garlic cloves onto the top.</li>
-        <li>Season with salt, pepper, red pepper flakes. Squeeze half a lemon over.</li>
-        <li>Bake 12–15 min until it flakes easily with a fork.</li>
-        <li>Drizzle more olive oil after it comes out.</li>
-      </ol>
-      <div class="tip"><strong>To reheat Monday:</strong> pan on medium-low, small amount of olive oil, 3–4 min per side. Do not microwave — it dries out.</div>
-    </div>
-
-    <div class="recipe">
-      <h3>2 · Sheet Pan Vegetables</h3>
-      <div class="timing">25–30 min · Sunday prep · feeds Mon–Fri sides</div>
-      <ol>
-        <li>Preheat oven to 425°F.</li>
-        <li><strong>Start sweet potato first</strong> — cube it, toss in olive oil + salt + pepper, roast 30 min on its own sheet.</li>
-        <li>Cut cauliflower into florets, asparagus into 2-inch pieces, bell peppers into strips.</li>
-        <li>Toss each in olive oil, salt, pepper, garlic powder, turmeric.</li>
-        <li>Spread in a <strong>single layer only</strong> — piling causes steaming, not roasting.</li>
-        <li>Roast 20–25 min, flip halfway through.</li>
-      </ol>
-      <div class="tip"><strong>Storage:</strong> separate containers per vegetable makes plating faster all week. Reheat in a pan with olive oil — never microwave.</div>
-    </div>
-
-    <div class="recipe">
-      <h3>3 · Anti-Inflammatory Lentils</h3>
-      <div class="timing">30 min · Sunday prep · feeds Wed + Fri</div>
-      <ol>
-        <li>Rinse 1 cup dry lentils in cold water.</li>
-        <li>Heat 1 tbsp olive oil in medium pot over medium heat.</li>
-        <li>Add 3 minced garlic cloves — sauté 1 min until fragrant.</li>
-        <li>Add 1 tsp cumin + 1 tsp turmeric — stir 30 seconds.</li>
-        <li>Add lentils + 1 can diced tomatoes + 2.5 cups water.</li>
-        <li>Boil then reduce to simmer, cover, cook 25–30 min until soft.</li>
-        <li>Finish with salt + squeeze of lemon + drizzle of olive oil.</li>
-      </ol>
-      <div class="tip"><strong>Storage:</strong> 5 days in fridge. Freezes well. Reheat in a pan with a splash of water to loosen.</div>
-    </div>
-
-    <div class="recipe">
-      <h3>4 · Salad Dressing Jar</h3>
-      <div class="timing">3 min · Sunday prep · lasts all week</div>
-      <ol>
-        <li>3 tbsp extra virgin olive oil</li>
-        <li>1 tbsp red wine vinegar</li>
-        <li>1 tsp Dijon mustard</li>
-        <li>1 minced garlic clove · salt + pepper</li>
-        <li>Seal jar and shake until emulsified. Done.</li>
-      </ol>
-    </div>
-
-    <div class="recipe">
-      <h3>5 · Hard Boiled Eggs</h3>
-      <div class="timing">15 min hands-off · Sunday prep · feeds Wed + Fri</div>
-      <ol>
-        <li>Place 6 eggs in a pot, cover with cold water.</li>
-        <li>Bring to a full boil over medium-high heat.</li>
-        <li>Turn off heat. Lid on. <strong>11 minutes exactly.</strong></li>
-        <li>Transfer immediately to ice water. Let sit 5 min.</li>
-        <li>Store in fridge up to 5 days. Peel as needed.</li>
-      </ol>
-    </div>
-
-    <div class="recipe">
-      <h3>6 · Anti-Inflammatory Smoothie</h3>
-      <div class="timing">5 min · Sunday breakfast only</div>
-      <ol>
-        <li>1 cup unsweetened almond milk</li>
-        <li>Large handful frozen spinach</li>
-        <li>½ cup frozen blueberries + ½ cup frozen tart cherries</li>
-        <li>1 tbsp extra virgin olive oil</li>
-        <li>½ tsp turmeric + pinch black pepper + pinch ground ginger</li>
-        <li>Optional: 1 tbsp ground flaxseed</li>
-        <li>Blend until smooth. Drink immediately.</li>
-      </ol>
-      <div class="tip"><strong>No banana. No sweetener. No protein powder with seed oils.</strong> If needed, add 2–3 frozen mango chunks only.</div>
-    </div>
-
-    <div class="recipe">
-      <h3>7 · Black Bean Bowl</h3>
-      <div class="timing">15 min · Sunday lunch</div>
-      <ol>
-        <li>Drain and rinse 1 can black beans.</li>
-        <li>Heat in pan with olive oil, cumin, smoked paprika, garlic, salt — 5 min.</li>
-        <li>Build bowl: roasted sweet potato base (from Sunday prep) + seasoned black beans + roasted bell peppers + avocado.</li>
-        <li>Dress with dressing jar. Top with pomegranate seeds if available.</li>
-      </ol>
-    </div>
-
-    <div class="recipe">
-      <h3>8 · Scrambled Eggs (Weekend Breakfast)</h3>
-      <div class="timing">10 min · Saturday breakfast · cooked fresh</div>
-      <ol>
-        <li>Whisk 3 eggs with salt + pepper.</li>
-        <li>Heat pan over medium-low with 1 tsp olive oil.</li>
-        <li>Pour eggs in, add handful of spinach immediately.</li>
-        <li>Stir slowly and remove from heat while still slightly wet — they finish off the heat.</li>
-        <li>Add turmeric + red pepper flakes after plating.</li>
-      </ol>
-    </div>
-  </section>
-
-  <!-- =====================
-       TAB: TRACKER
-       ===================== -->
-  <section class="card section" id="tab-tracker">
-    <h2>Daily Tracker</h2>
-    <p class="note">Log each day. Data syncs to the cloud via Supabase.</p>
-
-    <div class="checkin-card">
-      <h3 id="trackerDate">Today</h3>
-      <div class="checkin-grid">
-        <button class="checkin-btn" id="btnWorkout" onclick="toggleCheckin('workout')">
-          <span class="checkin-icon">💪</span>
-          <span class="checkin-label">Workout Done</span>
-          <span class="checkin-status" id="statusWorkout">Tap to log</span>
-        </button>
-        <button class="checkin-btn" id="btnMeal" onclick="toggleCheckin('meal')">
-          <span class="checkin-icon">🥗</span>
-          <span class="checkin-label">Meal Plan</span>
-          <span class="checkin-status" id="statusMeal">Tap to log</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="streak-row">
-      <div class="streak-block">
-        <div class="streak-num" id="workoutStreak">0</div>
-        <div class="streak-label">Workout Streak</div>
-      </div>
-      <div class="streak-block">
-        <div class="streak-num" id="mealStreak">0</div>
-        <div class="streak-label">Meal Streak</div>
-      </div>
-    </div>
-
-    <h3 style="margin-bottom:6px">Past 4 Weeks</h3>
-    <p class="note" style="margin-bottom:10px">
-      <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);vertical-align:middle;margin-right:4px"></span>Workout &nbsp;
-      <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);vertical-align:middle;margin-right:4px"></span>Meal plan
+  <header>
+    <h1>Anti-Inflammatory Meal System</h1>
+    <p class="sub">Mediterranean framework · OMAD weekdays · Structured weekends · Joint inflammation &amp; weight loss
     </p>
-    <div id="trackerCalendar"></div>
-
-    <div class="weight-section">
-      <h3 style="margin:0 0 12px">Weight Tracker</h3>
-      <div class="weight-entry-row">
-        <input id="weightInput" class="weight-entry-input" type="number" step="0.1" min="50" max="500" placeholder="Enter weight (lbs)" />
-        <button class="weight-log-btn" onclick="logWeight()">Log</button>
-      </div>
-      <div class="wstat-row" id="weightStats"></div>
-      <canvas id="weightChart"></canvas>
+    <div class="pill-row">
+      <span class="pill">No seed oils</span>
+      <span class="pill">No refined sugar</span>
+      <span class="pill">No processed meats</span>
+      <span class="pill">No brown rice or grains</span>
+      <span class="pill">Olive oil only</span>
+      <span class="pill">Omega-3 priority</span>
     </div>
-  </section>
+  </header>
 
-</div>
+  <div class="wrap">
 
-<footer>Anti-Inflammatory Meal System · Paired with MWF Upper Body + T/TH Swimming Program</footer>
+    <div class="card" style="padding:14px">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('schedule')">📅 Weekly Schedule</div>
+        <div class="tab" onclick="switchTab('prep')">🥘 Sunday Prep</div>
+        <div class="tab" onclick="switchTab('grocery')">🛒 Grocery List</div>
+        <div class="tab" onclick="switchTab('recipes')">👨‍🍳 Recipes</div>
+      </div>
+    </div>
 
-</div><!-- /appContent -->
+    <section class="card section active" id="tab-schedule">
+      <h2>Weekly Eating Schedule</h2>
+      <p class="note">Everything Monday–Friday is prepped Sunday. Pull from fridge, assemble in 2 minutes, done.</p>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-<script src="./config.js"></script>
-<script>
-  const STORAGE_KEY = 'grocery_checks_v1';
+      <div class="rule-banner">
+        <div class="rule-block highlight">
+          <div class="day-label">Mon – Fri</div>
+          <div class="rule-text">One Meal a Day · 5–7pm</div>
+          <div class="rule-sub">Morning drink + water/coffee/tea only until your meal. No snacking.</div>
+        </div>
+        <div class="rule-block highlight">
+          <div class="day-label">Sat – Sun</div>
+          <div class="rule-text">Three Meals · No Snacking</div>
+          <div class="rule-sub">Breakfast 9am · Lunch 1pm · Dinner 6pm. Same food quality as weekdays.</div>
+        </div>
+      </div>
 
-  function switchTab(name) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    event.currentTarget.classList.add('active');
-  }
+      <h3>Every Morning (7 Days a Week)</h3>
+      <div
+        style="padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02);font-size:13px;color:var(--muted);margin-bottom:18px">
+        <strong style="color:var(--text);display:block;margin-bottom:4px">🌅 Turmeric Drink — before anything
+          else</strong>
+        Turmeric · ginger · cayenne pepper · black pepper · lemon juice · olive oil · honey (small amount). This is your
+        anti-inflammatory foundation every single day.
+      </div>
 
-  function getState() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
-  }
-  function saveState(s) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {}
-  }
-  function allItems() { return document.querySelectorAll('.item'); }
+      <h3>Monday – Friday · Your One Meal Each Day</h3>
+      <p class="note">Everything below is already made from Sunday prep. Pull from fridge, reheat in a pan, plate. 2
+        minutes max.</p>
 
-  function updateProgress() {
-    const items = allItems();
-    const checked = document.querySelectorAll('.item.checked').length;
-    const pct = items.length ? Math.round((checked / items.length) * 100) : 0;
-    document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('progressLabel').textContent = checked + ' / ' + items.length + ' items';
-  }
+      <div
+        style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02)">
+        <span style="font-size:13px;color:var(--muted);flex-shrink:0">Current week:</span>
+        <div style="display:flex;gap:8px">
+          <button id="btnWeekA" onclick="setWeek('A')"
+            style="padding:7px 20px;border-radius:999px;border:1px solid rgba(110,168,255,.4);background:rgba(110,168,255,.15);color:#cfe0ff;font-size:13px;font-weight:700;cursor:pointer">Week
+            A</button>
+          <button id="btnWeekB" onclick="setWeek('B')"
+            style="padding:7px 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer">Week
+            B</button>
+        </div>
+        <span id="weekLabel" style="font-size:12px;color:var(--muted);margin-left:4px">Alternates every Sunday</span>
+      </div>
 
-  function applyGroceryState(state) {
-    allItems().forEach(el => {
-      const checked = !!state[el.dataset.id];
-      el.querySelector('input[type=checkbox]').checked = checked;
-      el.classList.toggle('checked', checked);
-    });
-    updateProgress();
-  }
+      <div
+        style="padding:12px 16px;border:1px solid rgba(74,222,128,.25);border-radius:14px;background:rgba(74,222,128,.05);font-size:13px;color:var(--muted);margin-bottom:14px">
+        <strong style="color:#4ade80;display:block;margin-bottom:4px">🥗 Your Default Fallback — Any Day, Either
+          Week</strong>
+        Spinach + arugula + sardines in olive oil + walnuts + baby tomatoes + cucumber + fruit (blueberries or tart
+        cherries). Squeeze of lemon + drizzle of olive oil + pinch of black pepper over the top. If you don't feel like
+        thinking about food — make this. It's always the right call.
+      </div>
 
-  function toggle(el) {
-    const cb = el.querySelector('input[type=checkbox]');
-    cb.checked = !cb.checked;
-    el.classList.toggle('checked', cb.checked);
-    const state = getState();
-    state[el.dataset.id] = cb.checked;
-    saveState(state);
-    updateProgress();
-    saveGroceryToDb(state);
-  }
+      <div id="weekA">
+        <div
+          style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">
+          Week A · Salmon + Fish + Eggs</div>
 
-  function resetAll() {
-    if (!confirm('Reset all checkboxes for a new week?')) return;
-    saveState({});
-    saveGroceryToDb({});
-    allItems().forEach(el => {
-      el.querySelector('input[type=checkbox]').checked = false;
-      el.classList.remove('checked');
-    });
-    updateProgress();
-  }
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">MON</div>
+            <div class="day-sub">5–7pm</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Salmon + Greens + Roasted Vegetables</div>
+            <div class="meal-items">
+              <span class="meal-tag base">Spinach or arugula base</span>
+              <span class="meal-tag protein">Baked salmon (Sunday prep)</span>
+              <span class="meal-tag veg">Roasted cauliflower + asparagus</span>
+              <span class="meal-tag fat">½ avocado</span>
+              <span class="meal-tag finish">Blueberries</span>
+            </div>
+            <div class="reheat-note">⚡ Reheat salmon + vegetables in pan with olive oil. Plate over fresh greens.</div>
+          </div>
+        </div>
 
-  document.addEventListener('DOMContentLoaded', () => {
-    allItems().forEach((el, i) => { el.dataset.id = 'item_' + i; });
-    applyGroceryState(getState()); // show localStorage immediately while auth loads
-    initAuth();
-  });
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">TUE</div>
+            <div class="day-sub">5–7pm</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Sardine or Tuna Salad Bowl</div>
+            <div class="meal-items">
+              <span class="meal-tag base">Arugula or spinach base</span>
+              <span class="meal-tag protein">1 can sardines or tuna — no reheating needed</span>
+              <span class="meal-tag veg">Roasted sweet potato (Sunday prep)</span>
+              <span class="meal-tag fat">Walnuts</span>
+              <span class="meal-tag finish">Tart cherries</span>
+            </div>
+            <div class="reheat-note">⚡ Reheat sweet potato in pan. Open can directly onto greens. Add dressing jar.
+            </div>
+          </div>
+        </div>
 
-  /* ── AUTH ── */
-  const { createClient } = supabase;
-  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">WED</div>
+            <div class="day-sub">5–7pm</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Eggs + Lentils + Greens</div>
+            <div class="meal-items">
+              <span class="meal-tag base">Spinach base</span>
+              <span class="meal-tag protein">3 hard boiled eggs (Sunday prep)</span>
+              <span class="meal-tag veg">Lentils + roasted bell peppers (Sunday prep)</span>
+              <span class="meal-tag fat">½ avocado</span>
+              <span class="meal-tag finish">Blueberries</span>
+            </div>
+            <div class="reheat-note">⚡ Reheat lentils + peppers in pan. Slice eggs over greens.</div>
+          </div>
+        </div>
 
-  let currentSession = null;
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">THU</div>
+            <div class="day-sub">5–7pm</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Tuna + Sweet Potato + Greens</div>
+            <div class="meal-items">
+              <span class="meal-tag base">Kale or arugula base</span>
+              <span class="meal-tag protein">1 can tuna — no reheating needed</span>
+              <span class="meal-tag veg">Roasted sweet potato + cauliflower (Sunday prep)</span>
+              <span class="meal-tag fat">Walnuts</span>
+              <span class="meal-tag finish">Tart cherries</span>
+            </div>
+            <div class="reheat-note">⚡ Reheat vegetables in pan. Open tuna. Plate over greens with dressing jar.</div>
+          </div>
+        </div>
 
-  function isInAppBrowser() {
-    const ua = navigator.userAgent || '';
-    // Matches Gmail (GSA), Outlook iOS, Facebook, Instagram, LinkedIn, Twitter, Snapchat
-    if (/GSA\/|Outlook-iOS|FBAN|FBAV|Instagram|LinkedInApp|Snapchat|Twitter/.test(ua)) return true;
-    // On iPhone/iPad, real browsers (Safari, Chrome, Firefox, Edge) all include "Safari" in their UA.
-    // Generic WebView-based in-app browsers do not.
-    if (/iPhone|iPad/.test(ua) && !/Safari/.test(ua)) return true;
-    return false;
-  }
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">FRI</div>
+            <div class="day-sub">5–7pm</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Lentil Bowl + Eggs + Greens</div>
+            <div class="meal-items">
+              <span class="meal-tag base">Spinach base</span>
+              <span class="meal-tag protein">3 hard boiled eggs (Sunday prep)</span>
+              <span class="meal-tag veg">Lentils + roasted asparagus (Sunday prep)</span>
+              <span class="meal-tag fat">½ avocado</span>
+              <span class="meal-tag finish">Blueberries or pomegranate seeds</span>
+            </div>
+            <div class="reheat-note">⚡ Reheat lentils + asparagus in pan. Slice eggs over the top. End the week strong.
+            </div>
+          </div>
+        </div>
+      </div>
 
-  function initAuth() {
-    if (isInAppBrowser()) {
-      document.getElementById('inappWarn').style.display = 'block';
+      <div id="weekB" style="display:none">
+        <div
+          style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">
+          Week B · Chicken + Carrots + Mushrooms</div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">MON</div>
+            <div class="day-sub">5–7pm</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Chicken + Roasted Carrots + Greens</div>
+            <div class="meal-items">
+              <span class="meal-tag base">Spinach or arugula base</span>
+              <span class="meal-tag protein">Sliced baked chicken breast (Sunday prep)</span>
+              <span class="meal-tag veg">Roasted carrots + cauliflower (Sunday prep)</span>
+              <span class="meal-tag fat">½ avocado</span>
+              <span class="meal-tag finish">Blueberries</span>
+            </div>
+            <div class="reheat-note">⚡ Reheat chicken + vegetables in pan with olive oil. Plate over fresh greens.</div>
+          </div>
+        </div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">TUE</div>
+            <div class="day-sub">5–7pm</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Sardines + Mushrooms + Sweet Potato</div>
+            <div class="meal-items">
+              <span class="meal-tag base">Arugula base</span>
+              <span class="meal-tag protein">1 can sardines — no reheating needed</span>
+              <span class="meal-tag veg">Sautéed mushrooms + roasted sweet potato (Sunday prep)</span>
+              <span class="meal-tag fat">Walnuts</span>
+              <span class="meal-tag finish">Tart cherries</span>
+            </div>
+            <div class="reheat-note">⚡ Reheat mushrooms + sweet potato in pan. Open sardines onto greens. Add dressing.
+            </div>
+          </div>
+        </div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">WED</div>
+            <div class="day-sub">5–7pm</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Chicken + Black Beans + Greens</div>
+            <div class="meal-items">
+              <span class="meal-tag base">Kale base</span>
+              <span class="meal-tag protein">Sliced baked chicken breast (Sunday prep)</span>
+              <span class="meal-tag veg">Seasoned black beans + roasted carrots (Sunday prep)</span>
+              <span class="meal-tag fat">½ avocado</span>
+              <span class="meal-tag finish">Blueberries</span>
+            </div>
+            <div class="reheat-note">⚡ Reheat chicken + beans + carrots in pan. Plate over kale with dressing.</div>
+          </div>
+        </div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">THU</div>
+            <div class="day-sub">5–7pm</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Tuna + Mushrooms + Sweet Potato</div>
+            <div class="meal-items">
+              <span class="meal-tag base">Spinach base</span>
+              <span class="meal-tag protein">1 can tuna — no reheating needed</span>
+              <span class="meal-tag veg">Sautéed mushrooms + roasted sweet potato (Sunday prep)</span>
+              <span class="meal-tag fat">Walnuts</span>
+              <span class="meal-tag finish">Tart cherries</span>
+            </div>
+            <div class="reheat-note">⚡ Reheat mushrooms + sweet potato in pan. Open tuna. Plate over spinach.</div>
+          </div>
+        </div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">FRI</div>
+            <div class="day-sub">5–7pm</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Chicken + Lentils + Roasted Carrots</div>
+            <div class="meal-items">
+              <span class="meal-tag base">Arugula base</span>
+              <span class="meal-tag protein">Sliced baked chicken breast (Sunday prep)</span>
+              <span class="meal-tag veg">Lentils + roasted carrots (Sunday prep)</span>
+              <span class="meal-tag fat">½ avocado</span>
+              <span class="meal-tag finish">Pomegranate seeds</span>
+            </div>
+            <div class="reheat-note">⚡ Reheat everything in pan. Plate over arugula. End Week B strong.</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Saturday &amp; Sunday</h3>
+      <p class="note">Two weekend options — rotate these the same way you rotate the weekdays.</p>
+      <div class="weekend-grid">
+        <div class="weekend-day">
+          <div class="weekend-day-header">Saturday · Option A</div>
+          <div class="weekend-meal">
+            <div class="wm-time">Breakfast · 9am</div>
+            <div class="wm-desc">3 scrambled eggs + ½ avocado + wilted spinach</div>
+            <div class="wm-sub">Cooked fresh in olive oil. Black coffee or green tea.</div>
+          </div>
+          <div class="weekend-meal">
+            <div class="wm-time">Lunch · 1pm</div>
+            <div class="wm-desc">Large salad + canned tuna or sardines</div>
+            <div class="wm-sub">Arugula · cucumber · cherry tomatoes · red onion · walnuts · dressing jar.</div>
+          </div>
+          <div class="weekend-meal">
+            <div class="wm-time">Dinner · 6pm</div>
+            <div class="wm-desc">Baked salmon + roasted vegetables + lentils</div>
+            <div class="wm-sub">Cook fresh. Roast cauliflower + asparagus alongside.</div>
+          </div>
+        </div>
+
+        <div class="weekend-day">
+          <div class="weekend-day-header">Saturday · Option B</div>
+          <div class="weekend-meal">
+            <div class="wm-time">Breakfast · 9am</div>
+            <div class="wm-desc">Egg + mushroom scramble</div>
+            <div class="wm-sub">3 eggs + sautéed mushrooms + spinach in olive oil. Add turmeric + red pepper flakes.</div>
+          </div>
+          <div class="weekend-meal">
+            <div class="wm-time">Lunch · 1pm</div>
+            <div class="wm-desc">Chicken + roasted carrot bowl</div>
+            <div class="wm-sub">Sliced chicken over arugula · roasted carrots · walnuts · dressing jar · pomegranate
+              seeds.
+            </div>
+          </div>
+          <div class="weekend-meal">
+            <div class="wm-time">Dinner · 6pm</div>
+            <div class="wm-desc">Baked salmon + sweet potato + greens</div>
+            <div class="wm-sub">Cook fresh. Roast sweet potato alongside. Dress greens with dressing jar.</div>
+          </div>
+        </div>
+
+        <div class="weekend-day">
+          <div class="weekend-day-header">Sunday · Option A</div>
+          <div class="weekend-meal">
+            <div class="wm-time">Breakfast · 9am</div>
+            <div class="wm-desc">Anti-inflammatory smoothie + 2 boiled eggs</div>
+            <div class="wm-sub">Spinach · blueberries · tart cherries · olive oil · turmeric · almond milk. Blend, drink
+              immediately.</div>
+          </div>
+          <div class="weekend-meal">
+            <div class="wm-time">Lunch · 1pm</div>
+            <div class="wm-desc">Black bean bowl</div>
+            <div class="wm-sub">Roasted sweet potato base · seasoned black beans · roasted bell peppers · avocado ·
+              dressing.</div>
+          </div>
+          <div class="weekend-meal">
+            <div class="wm-time">After Lunch</div>
+            <div class="wm-desc">🥘 Run Sunday prep now</div>
+            <div class="wm-sub">See Sunday Prep tab. Takes 45 min, mostly hands-off.</div>
+          </div>
+          <div class="weekend-meal">
+            <div class="wm-time">Dinner · 6pm</div>
+            <div class="wm-desc">Chicken breast + roasted vegetables + greens</div>
+            <div class="wm-sub">Baked chicken in olive oil + garlic. Use vegetables already roasting during prep.</div>
+          </div>
+        </div>
+
+        <div class="weekend-day">
+          <div class="weekend-day-header">Sunday · Option B</div>
+          <div class="weekend-meal">
+            <div class="wm-time">Breakfast · 9am</div>
+            <div class="wm-desc">Savory egg bowl</div>
+            <div class="wm-sub">3 poached eggs over sautéed mushrooms + spinach. Drizzle olive oil. Red pepper flakes.</div>
+          </div>
+          <div class="weekend-meal">
+            <div class="wm-time">Lunch · 1pm</div>
+            <div class="wm-desc">Lentil + roasted carrot bowl</div>
+            <div class="wm-sub">Warm lentils · roasted carrots · arugula · walnuts · dressing · pomegranate seeds.</div>
+          </div>
+          <div class="weekend-meal">
+            <div class="wm-time">After Lunch</div>
+            <div class="wm-desc">🥘 Run Sunday prep now</div>
+            <div class="wm-sub">See Sunday Prep tab. Takes 45 min, mostly hands-off.</div>
+          </div>
+          <div class="weekend-meal">
+            <div class="wm-time">Dinner · 6pm</div>
+            <div class="wm-desc">Baked salmon + mushrooms + sweet potato</div>
+            <div class="wm-sub">Cook fresh salmon. Sauté mushrooms in olive oil + garlic. Reheat sweet potato from prep.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card section" id="tab-prep">
+      <h2>Sunday Meal Prep</h2>
+      <p class="note">Do this after Sunday lunch. Everything runs simultaneously. You are actively working about 15
+        minutes — the rest is hands-off oven and stove time.</p>
+
+      <div class="parallel-note">
+        <strong>How to run this efficiently:</strong> Start the oven first. Get lentils on the stove. While those cook,
+        prep and load the sheet pans. Eggs go on last. Everything finishes within the same 30–35 minute window.
+      </div>
+
+      <div
+        style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02)">
+        <span style="font-size:13px;color:var(--muted);flex-shrink:0">Prep for:</span>
+        <div style="display:flex;gap:8px">
+          <button id="btnPrepA" onclick="setPrepWeek('A')"
+            style="padding:7px 20px;border-radius:999px;border:1px solid rgba(110,168,255,.4);background:rgba(110,168,255,.15);color:#cfe0ff;font-size:13px;font-weight:700;cursor:pointer">Week
+            A</button>
+          <button id="btnPrepB" onclick="setPrepWeek('B')"
+            style="padding:7px 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer">Week
+            B</button>
+        </div>
+      </div>
+
+      <div id="prepA">
+        <div class="prep-item">
+          <div class="prep-num">1</div>
+          <div class="prep-body">
+            <div class="prep-title">Bake Salmon Fillets <span class="feeds">feeds Mon + Sat dinner</span></div>
+            <div class="prep-desc">Bake <strong>2–3 fillets</strong> at 400°F · 12–15 min · olive oil, garlic, lemon,
+              salt, pepper, red pepper flakes. Reheat Monday in a pan with olive oil. Cook one fresh Saturday.</div>
+            <div class="prep-time">⏱ 15 min hands-off</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">2</div>
+          <div class="prep-body">
+            <div class="prep-title">Sheet Pan Vegetables <span class="feeds">feeds Mon–Fri sides</span></div>
+            <div class="prep-desc">425°F. <strong>Pan 1:</strong> cauliflower florets + asparagus spears. <strong>Pan
+                2:</strong> cubed sweet potato (30 min, start first). Toss in olive oil, salt, pepper, garlic powder,
+              turmeric. Single layer only. Flip halfway.</div>
+            <div class="prep-time">⏱ 25–30 min hands-off</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">3</div>
+          <div class="prep-body">
+            <div class="prep-title">Roasted Bell Peppers <span class="feeds">feeds Wed + Thu</span></div>
+            <div class="prep-desc">Slice <strong>2–3 bell peppers</strong> into strips. Toss with olive oil, salt, smoked
+              paprika. Share the sheet pan with cauliflower — same cook time.</div>
+            <div class="prep-time">⏱ 20–25 min hands-off</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">4</div>
+          <div class="prep-body">
+            <div class="prep-title">Cook Lentils <span class="feeds">feeds Wed + Fri</span></div>
+            <div class="prep-desc">Rinse <strong>1 cup dry lentils</strong>. Sauté garlic in olive oil 1 min. Add 1 tsp
+              cumin + 1 tsp turmeric. Add lentils + 1 can diced tomatoes + 2.5 cups water. Boil then simmer covered 25–30
+              min. Finish with lemon + olive oil.</div>
+            <div class="prep-time">⏱ 30 min hands-off after setup</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">5</div>
+          <div class="prep-body">
+            <div class="prep-title">Hard Boil 6 Eggs <span class="feeds">feeds Wed + Fri + backup</span></div>
+            <div class="prep-desc">Cold water start. Bring to boil. <strong>Off heat, lid on, 11 minutes.</strong> Ice
+              water immediately. Store up to 5 days.</div>
+            <div class="prep-time">⏱ 15 min hands-off</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">6</div>
+          <div class="prep-body">
+            <div class="prep-title">Salad Dressing Jar <span class="feeds">feeds all week</span></div>
+            <div class="prep-desc"><strong>3 tbsp olive oil · 1 tbsp red wine vinegar · 1 tsp Dijon mustard · 1 minced
+                garlic clove · salt + pepper.</strong> Seal and shake. Done.</div>
+            <div class="prep-time">⏱ 3 min active</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">7</div>
+          <div class="prep-body">
+            <div class="prep-title">Wash &amp; Dry Greens <span class="feeds">feeds all week</span></div>
+            <div class="prep-desc">Wash spinach + arugula. Dry thoroughly — wet greens go bad fast. Store in container
+              lined with paper towel. Lasts 5–6 days.</div>
+            <div class="prep-time">⏱ 5 min active</div>
+          </div>
+        </div>
+
+        <div
+          style="margin-top:6px;padding:14px 16px;border-radius:14px;border:1px solid rgba(74,222,128,.25);background:rgba(74,222,128,.05);font-size:13px;color:var(--muted)">
+          <strong style="color:#4ade80;display:block;margin-bottom:4px">Week A fridge after prep</strong>
+          Cooked salmon · roasted cauliflower · roasted asparagus · roasted sweet potato · roasted bell peppers · cooked
+          lentils · 6 hard boiled eggs · washed greens · dressing jar.
+        </div>
+      </div>
+
+      <div id="prepB" style="display:none">
+        <div class="prep-item">
+          <div class="prep-num">1</div>
+          <div class="prep-body">
+            <div class="prep-title">Bake Chicken Thighs <span class="feeds">feeds Mon + Wed + Fri</span></div>
+            <div class="prep-desc">Bake <strong>2–3 boneless skinless thighs</strong> at 400°F · 25–30 min · olive oil,
+              garlic powder, smoked paprika, salt, pepper. Thighs are more forgiving than breasts — hard to overcook. Let
+              rest 5 min before slicing. Store sliced.</div>
+            <div class="prep-time">⏱ 25 min hands-off</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">2</div>
+          <div class="prep-body">
+            <div class="prep-title">Roasted Carrots <span class="feeds">feeds Mon + Wed + Fri</span></div>
+            <div class="prep-desc">Peel and slice <strong>4–5 carrots</strong> into coins or spears. Toss with olive oil,
+              salt, pepper, cumin, smoked paprika. Roast at 425°F for 25–30 min until caramelized. Single layer only.
+            </div>
+            <div class="prep-time">⏱ 25–30 min hands-off</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">3</div>
+          <div class="prep-body">
+            <div class="prep-title">Sautéed Mushrooms <span class="feeds">feeds Tue + Thu</span></div>
+            <div class="prep-desc">Slice <strong>8oz mushrooms</strong>. Heat olive oil in pan over medium-high. Add
+              mushrooms in a single layer — <strong>do not stir for 2 min</strong> so they brown, not steam. Add garlic,
+              salt, pepper, thyme if you have it. Cook 5–7 min total. Store in fridge.</div>
+            <div class="prep-time">⏱ 10 min active</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">4</div>
+          <div class="prep-body">
+            <div class="prep-title">Roasted Cauliflower + Sweet Potato <span class="feeds">feeds Mon + Tue + Thu</span>
+            </div>
+            <div class="prep-desc">Same as Week A. 425°F. Cauliflower on one pan, sweet potato cubed on another (30 min).
+              Olive oil, salt, pepper, garlic powder, turmeric. Single layer, flip halfway.</div>
+            <div class="prep-time">⏱ 25–30 min hands-off</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">5</div>
+          <div class="prep-body">
+            <div class="prep-title">Cook Lentils <span class="feeds">feeds Fri</span></div>
+            <div class="prep-desc">Same as Week A. Rinse 1 cup lentils · sauté garlic · add cumin + turmeric · add lentils
+              + tomatoes + water · simmer 25–30 min · finish with lemon + olive oil.</div>
+            <div class="prep-time">⏱ 30 min hands-off after setup</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">6</div>
+          <div class="prep-body">
+            <div class="prep-title">Salad Dressing Jar <span class="feeds">feeds all week</span></div>
+            <div class="prep-desc"><strong>3 tbsp olive oil · 1 tbsp red wine vinegar · 1 tsp Dijon mustard · 1 minced
+                garlic clove · salt + pepper.</strong> Seal and shake. Done.</div>
+            <div class="prep-time">⏱ 3 min active</div>
+          </div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-num">7</div>
+          <div class="prep-body">
+            <div class="prep-title">Wash &amp; Dry Greens <span class="feeds">feeds all week</span></div>
+            <div class="prep-desc">Wash spinach + arugula + kale. Dry thoroughly. Store in container lined with paper
+              towel. Lasts 5–6 days.</div>
+            <div class="prep-time">⏱ 5 min active</div>
+          </div>
+        </div>
+
+        <div
+          style="margin-top:6px;padding:14px 16px;border-radius:14px;border:1px solid rgba(74,222,128,.25);background:rgba(74,222,128,.05);font-size:13px;color:var(--muted)">
+          <strong style="color:#4ade80;display:block;margin-bottom:4px">Week B fridge after prep</strong>
+          Sliced baked chicken · roasted carrots · sautéed mushrooms · roasted cauliflower · roasted sweet potato · cooked
+          lentils · washed greens · dressing jar.
+        </div>
+      </div>
+    </section>
+
+    <section class="card section" id="tab-grocery">
+      <h2>Weekly Grocery List</h2>
+      <p class="note">Check off items as you shop. Resets each week. Shop Saturday or Sunday morning before prep.</p>
+
+      <div class="reset-bar">
+        <div class="progress-wrap">
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+          <span class="progress-label" id="progressLabel">0 / 0 items</span>
+        </div>
+        <button class="btn danger" onclick="resetAll()">↺ Reset for new week</button>
+      </div>
+
+      <div class="grocery-grid" id="groceryGrid">
+        <div>
+          <div class="cat-label">Proteins</div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Wild-caught salmon fillets</div>
+              <div class="item-meta">2–3 fillets · fresh or frozen, not farmed</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Sardines in olive oil (canned)</div>
+              <div class="item-meta">4–6 cans · best budget omega-3 source</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Wild tuna in water (canned)</div>
+              <div class="item-meta">4 cans · albacore or skipjack</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Pasture-raised eggs</div>
+              <div class="item-meta">1 dozen · Vital Farms or similar</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Chicken thighs (boneless, skinless)</div>
+              <div class="item-meta">1.5 lbs · plain, no marinade · Week B</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Lentils (dry, green or red)</div>
+              <div class="item-meta">1 bag</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Black beans (canned)</div>
+              <div class="item-meta">2 cans · Sunday lunch bowl</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Grass-fed ground beef (optional)</div>
+              <div class="item-meta">1 lb · 1×/week max if desired</div>
+            </div>
+          </div>
+
+          <div class="cat-label">Fats &amp; Pantry</div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Extra virgin olive oil</div>
+              <div class="item-meta">Large bottle · your only cooking fat</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Walnuts (raw)</div>
+              <div class="item-meta">1 bag · not roasted in vegetable oil</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Almonds (raw)</div>
+              <div class="item-meta">1 bag</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Sourdough bread</div>
+              <div class="item-meta">1 loaf · real sourdough only (flour, water, salt, starter)</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Red wine vinegar</div>
+              <div class="item-meta">1 bottle · dressing</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Dijon mustard</div>
+              <div class="item-meta">1 jar · dressing emulsifier</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Canned diced tomatoes</div>
+              <div class="item-meta">2 cans · lentil recipe</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Unsweetened almond milk</div>
+              <div class="item-meta">Sunday smoothie base</div>
+            </div>
+          </div>
+
+          <div class="cat-label">Spices</div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Turmeric (ground)</div>
+              <div class="item-meta">Restock if low</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Black pepper</div>
+              <div class="item-meta">Always paired with turmeric</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Fresh ginger root</div>
+              <div class="item-meta">Morning drink + cooking</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Cumin</div>
+              <div class="item-meta">Lentils and beans</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Smoked paprika</div>
+              <div class="item-meta">Chicken and bell peppers</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Garlic powder</div>
+              <div class="item-meta">Sheet pan vegetables</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Red pepper flakes</div>
+              <div class="item-meta">Salmon + anti-inflammatory</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Sea salt or Himalayan pink salt</div>
+              <div class="item-meta">No iodized table salt</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="cat-label">Vegetables</div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Baby spinach</div>
+              <div class="item-meta">Large bag · meal base all week</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Arugula</div>
+              <div class="item-meta">1 bag · alternating base with spinach</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Kale</div>
+              <div class="item-meta">1 bunch · Thu base</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Asparagus</div>
+              <div class="item-meta">1 bunch · sheet pan Sunday</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Cauliflower</div>
+              <div class="item-meta">1 head · sheet pan Sunday</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Sweet potato</div>
+              <div class="item-meta">4–5 medium · sheet pan Sunday · carb base</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Bell peppers (red/yellow)</div>
+              <div class="item-meta">3–4 · sheet pan Sunday</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Carrots</div>
+              <div class="item-meta">4–5 · Week B roasted side</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Mushrooms (cremini or white)</div>
+              <div class="item-meta">8oz · Week B Tue + Thu</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Beets</div>
+              <div class="item-meta">3–4 fresh or pre-cooked</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Cucumber</div>
+              <div class="item-meta">2 · raw in salads</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Cherry tomatoes</div>
+              <div class="item-meta">1 pint · salads</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Red onion</div>
+              <div class="item-meta">1 · raw in salads</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Garlic (fresh)</div>
+              <div class="item-meta">1 head · use in everything</div>
+            </div>
+          </div>
+
+          <div class="cat-label">Fruits</div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Blueberries (frozen)</div>
+              <div class="item-meta">1 large bag · Mon, Wed, Fri finish</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Tart cherries (frozen)</div>
+              <div class="item-meta">1 bag · Tue, Thu finish + Sunday smoothie</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Lemons</div>
+              <div class="item-meta">4–5 · morning drink + cooking + dressing</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Avocados</div>
+              <div class="item-meta">4–5 · buy some ripe, some firm</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Pomegranate seeds</div>
+              <div class="item-meta">1 container · Fri finish + Sunday bowl</div>
+            </div>
+          </div>
+
+          <div class="cat-label">Morning Drink Ingredients</div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Lemons (already above)</div>
+              <div class="item-meta">Shared with cooking use</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Cayenne pepper</div>
+              <div class="item-meta">Morning drink</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Raw honey</div>
+              <div class="item-meta">Small amount only · morning drink</div>
+            </div>
+          </div>
+
+          <div class="cat-label">Drinks</div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Green tea bags</div>
+              <div class="item-meta">Replace one coffee daily</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Ginger herbal tea</div>
+              <div class="item-meta">Evening wind-down</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Tart cherry juice (unsweetened)</div>
+              <div class="item-meta">4oz max · occasional</div>
+            </div>
+          </div>
+          <div class="item" onclick="toggle(this)"><input type="checkbox" />
+            <div class="item-body">
+              <div class="item-name">Sparkling water (plain)</div>
+              <div class="item-meta">Weekend substitute</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:20px">Never Buy / Never Cook With</h3>
+      <div class="grocery-grid">
+        <div>
+          <div class="avoid-row"><span class="no">✕</span> &nbsp;Canola · vegetable · soybean · corn oil</div>
+          <div class="avoid-row"><span class="no">✕</span> &nbsp;White bread · white flour · white pasta</div>
+          <div class="avoid-row"><span class="no">✕</span> &nbsp;Brown rice</div>
+          <div class="avoid-row"><span class="no">✕</span> &nbsp;Refined sugar · candy</div>
+        </div>
+        <div>
+          <div class="avoid-row"><span class="no">✕</span> &nbsp;Deli meats · hot dogs · sausage</div>
+          <div class="avoid-row"><span class="no">✕</span> &nbsp;Soda · juice · energy drinks · alcohol</div>
+          <div class="avoid-row"><span class="no">✕</span> &nbsp;Farmed (Atlantic) salmon</div>
+          <div class="avoid-row"><span class="no">✕</span> &nbsp;Anything with seed oils in the ingredients</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card section" id="tab-recipes">
+      <h2>Cooking Instructions</h2>
+      <p class="note">Reference only. You run these on Sunday during prep — not during the week.</p>
+
+      <div class="recipe">
+        <h3>1 · Baked Salmon</h3>
+        <div class="timing">15 min · Sunday prep batch · Monday dinner + Saturday dinner</div>
+        <ol>
+          <li>Preheat oven to 400°F. Line baking sheet with parchment.</li>
+          <li>Rub salmon with 1 tbsp olive oil on both sides.</li>
+          <li>Press 1–2 minced garlic cloves onto the top.</li>
+          <li>Season with salt, pepper, red pepper flakes. Squeeze half a lemon over.</li>
+          <li>Bake 12–15 min until it flakes easily with a fork.</li>
+          <li>Drizzle more olive oil after it comes out.</li>
+        </ol>
+        <div class="tip"><strong>To reheat Monday:</strong> pan on medium-low, small amount of olive oil, 3–4 min per
+          side. Do not microwave — it dries out.</div>
+      </div>
+
+      <div class="recipe">
+        <h3>2 · Sheet Pan Vegetables</h3>
+        <div class="timing">25–30 min · Sunday prep · feeds Mon–Fri sides</div>
+        <ol>
+          <li>Preheat oven to 425°F.</li>
+          <li><strong>Start sweet potato first</strong> — cube it, toss in olive oil + salt + pepper, roast 30 min on its
+            own sheet.</li>
+          <li>Cut cauliflower into florets, asparagus into 2-inch pieces, bell peppers into strips.</li>
+          <li>Toss each in olive oil, salt, pepper, garlic powder, turmeric.</li>
+          <li>Spread in a <strong>single layer only</strong> — piling causes steaming, not roasting.</li>
+          <li>Roast 20–25 min, flip halfway through.</li>
+        </ol>
+        <div class="tip"><strong>Storage:</strong> separate containers per vegetable makes plating faster all week. Reheat
+          in a pan with olive oil — never microwave.</div>
+      </div>
+
+      <div class="recipe">
+        <h3>3 · Anti-Inflammatory Lentils</h3>
+        <div class="timing">30 min · Sunday prep · feeds Wed + Fri</div>
+        <ol>
+          <li>Rinse 1 cup dry lentils in cold water.</li>
+          <li>Heat 1 tbsp olive oil in medium pot over medium heat.</li>
+          <li>Add 3 minced garlic cloves — sauté 1 min until fragrant.</li>
+          <li>Add 1 tsp cumin + 1 tsp turmeric — stir 30 seconds.</li>
+          <li>Add lentils + 1 can diced tomatoes + 2.5 cups water.</li>
+          <li>Boil then reduce to simmer, cover, cook 25–30 min until soft.</li>
+          <li>Finish with salt + squeeze of lemon + drizzle of olive oil.</li>
+        </ol>
+        <div class="tip"><strong>Storage:</strong> 5 days in fridge. Freezes well. Reheat in a pan with a splash of water
+          to loosen.</div>
+      </div>
+
+      <div class="recipe">
+        <h3>4 · Salad Dressing Jar</h3>
+        <div class="timing">3 min · Sunday prep · lasts all week</div>
+        <ol>
+          <li>3 tbsp extra virgin olive oil</li>
+          <li>1 tbsp red wine vinegar</li>
+          <li>1 tsp Dijon mustard</li>
+          <li>1 minced garlic clove · salt + pepper</li>
+          <li>Seal jar and shake until emulsified. Done.</li>
+        </ol>
+      </div>
+
+      <div class="recipe">
+        <h3>5 · Hard Boiled Eggs</h3>
+        <div class="timing">15 min hands-off · Sunday prep · feeds Wed + Fri</div>
+        <ol>
+          <li>Place 6 eggs in a pot, cover with cold water.</li>
+          <li>Bring to a full boil over medium-high heat.</li>
+          <li>Turn off heat. Lid on. <strong>11 minutes exactly.</strong></li>
+          <li>Transfer immediately to ice water. Let sit 5 min.</li>
+          <li>Store in fridge up to 5 days. Peel as needed.</li>
+        </ol>
+      </div>
+
+      <div class="recipe">
+        <h3>6 · Anti-Inflammatory Smoothie</h3>
+        <div class="timing">5 min · Sunday breakfast only</div>
+        <ol>
+          <li>1 cup unsweetened almond milk</li>
+          <li>Large handful frozen spinach</li>
+          <li>½ cup frozen blueberries + ½ cup frozen tart cherries</li>
+          <li>1 tbsp extra virgin olive oil</li>
+          <li>½ tsp turmeric + pinch black pepper + pinch ground ginger</li>
+          <li>Optional: 1 tbsp ground flaxseed</li>
+          <li>Blend until smooth. Drink immediately.</li>
+        </ol>
+        <div class="tip"><strong>No banana. No sweetener. No protein powder with seed oils.</strong> If needed, add 2–3
+          frozen mango chunks only.</div>
+      </div>
+
+      <div class="recipe">
+        <h3>7 · Black Bean Bowl</h3>
+        <div class="timing">15 min · Sunday lunch</div>
+        <ol>
+          <li>Drain and rinse 1 can black beans.</li>
+          <li>Heat in pan with olive oil, cumin, smoked paprika, garlic, salt — 5 min.</li>
+          <li>Build bowl: roasted sweet potato base (from Sunday prep) + seasoned black beans + roasted bell peppers +
+            avocado.</li>
+          <li>Dress with dressing jar. Top with pomegranate seeds if available.</li>
+        </ol>
+      </div>
+
+      <div class="recipe">
+        <h3>8 · Scrambled Eggs (Weekend Breakfast)</h3>
+        <div class="timing">10 min · Saturday breakfast · cooked fresh</div>
+        <ol>
+          <li>Whisk 3 eggs with salt + pepper.</li>
+          <li>Heat pan over medium-low with 1 tsp olive oil.</li>
+          <li>Pour eggs in, add handful of spinach immediately.</li>
+          <li>Stir slowly and remove from heat while still slightly wet — they finish off the heat.</li>
+          <li>Add turmeric + red pepper flakes after plating.</li>
+        </ol>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>Anti-Inflammatory Meal System · Paired with MWF Upper Body + T/TH Swimming Program</footer>
+
+  <script>
+    const STORAGE_KEY = 'grocery_checks_v1';
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      event.currentTarget.classList.add('active');
     }
 
-    // INITIAL_SESSION fires on startup (existing session or none).
-    // SIGNED_IN fires after a magic link is consumed.
-    db.auth.onAuthStateChange((event, session) => {
-      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
-        session ? showApp(session) : showLogin();
-      } else if (event === 'SIGNED_OUT') {
-        showLogin();
-      }
-    });
-  }
-
-  function showApp(session) {
-    currentSession = session;
-    document.getElementById('loadingGate').style.display = 'none';
-    document.getElementById('authGate').style.display = 'none';
-    document.getElementById('appContent').style.display = 'block';
-    renderTracker();
-    renderWeightChart();
-    syncGroceryFromDb();
-  }
-
-  function showLogin() {
-    currentSession = null;
-    document.getElementById('loadingGate').style.display = 'none';
-    document.getElementById('authGate').style.display = 'block';
-    document.getElementById('appContent').style.display = 'none';
-  }
-
-  async function sendMagicLink() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const msg = document.getElementById('loginMsg');
-    const btn = document.getElementById('loginBtn');
-    if (!email) { msg.textContent = 'Enter your email first.'; return; }
-
-    btn.disabled = true;
-    msg.textContent = 'Sending…';
-
-    const { error } = await db.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin + window.location.pathname }
-    });
-
-    btn.disabled = false;
-    msg.textContent = error ? 'Error: ' + error.message : 'Link sent — open it in Safari or Chrome.';
-    if (!error) document.getElementById('loginEmail').value = '';
-  }
-
-  async function signOut() {
-    await db.auth.signOut();
-  }
-
-  /* ── GROCERY DB SYNC ── */
-  async function syncGroceryFromDb() {
-    if (!currentSession) return;
-    const { data, error } = await db
-      .from('grocery_checks')
-      .select('checks')
-      .eq('user_id', currentSession.user.id)
-      .maybeSingle();
-    if (error || !data) return;
-    const checks = data.checks || {};
-    saveState(checks);
-    applyGroceryState(checks);
-  }
-
-  async function saveGroceryToDb(state) {
-    if (!currentSession) return;
-    await db.from('grocery_checks').upsert({
-      user_id: currentSession.user.id,
-      checks: state,
-      updated_at: new Date().toISOString()
-    });
-  }
-
-  /* ── TRACKER ── */
-  let trackerCache = null;
-
-  function todayISO() {
-    const d = new Date();
-    return d.getFullYear() + '-' +
-      String(d.getMonth() + 1).padStart(2, '0') + '-' +
-      String(d.getDate()).padStart(2, '0');
-  }
-
-  async function loadTracker() {
-    const { data, error } = await db
-      .from('daily_logs')
-      .select('date, workout, meal, weight')
-      .order('date', { ascending: false })
-      .limit(90);
-    if (error) { console.error('Supabase fetch error:', error); return {}; }
-    return Object.fromEntries((data || []).map(r => [r.date, {
-      workout: r.workout,
-      meal: r.meal,
-      weight: r.weight
-    }]));
-  }
-
-  async function upsertDay(date, patch) {
-    if (!currentSession) return;
-    const { error } = await db
-      .from('daily_logs')
-      .upsert({ date, user_id: currentSession.user.id, ...patch }, { onConflict: 'date,user_id' });
-    if (error) console.error('Supabase upsert error:', error);
-  }
-
-  async function toggleCheckin(type) {
-    const data = trackerCache || {};
-    const key = todayISO();
-    const current = !!(data[key] && data[key][type]);
-    await upsertDay(key, { [type]: !current });
-    trackerCache = null;
-    await renderTracker();
-  }
-
-  function calcStreak(data, type) {
-    let streak = 0;
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    const todayKey = todayISO();
-    if (!data[todayKey] || !data[todayKey][type]) d.setDate(d.getDate() - 1);
-    for (let i = 0; i < 90; i++) {
-      const k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-      if (data[k] && data[k][type]) { streak++; d.setDate(d.getDate() - 1); } else break;
+    function getState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
     }
-    return streak;
-  }
 
-  async function renderTracker() {
-    if (!trackerCache) trackerCache = await loadTracker();
-    const data = trackerCache;
-    const today = todayISO();
-    const todayData = data[today] || {};
-
-    const now = new Date();
-    const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    document.getElementById('trackerDate').textContent =
-      'Today — ' + DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate();
-
-    document.getElementById('btnWorkout').classList.toggle('done', !!todayData.workout);
-    document.getElementById('btnMeal').classList.toggle('done', !!todayData.meal);
-    document.getElementById('statusWorkout').textContent = todayData.workout ? 'Done ✓' : 'Tap to log';
-    document.getElementById('statusMeal').textContent = todayData.meal ? 'Done ✓' : 'Tap to log';
-
-    document.getElementById('workoutStreak').textContent = calcStreak(data, 'workout');
-    document.getElementById('mealStreak').textContent = calcStreak(data, 'meal');
-
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-    start.setDate(start.getDate() - 27);
-    start.setDate(start.getDate() - start.getDay());
-
-    const end = new Date();
-    end.setHours(0, 0, 0, 0);
-
-    let html = '<div class="cal-grid">';
-    ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(l => { html += '<div class="cal-head">' + l + '</div>'; });
-    const cur = new Date(start);
-    while (cur <= end) {
-      const k = cur.getFullYear() + '-' + String(cur.getMonth() + 1).padStart(2, '0') + '-' + String(cur.getDate()).padStart(2, '0');
-      const entry = data[k] || {};
-      const cls = 'cal-day' + (k === today ? ' cal-today' : '');
-      let dots = '';
-      if (entry.workout) dots += '<span class="dot dot-w"></span>';
-      if (entry.meal) dots += '<span class="dot dot-m"></span>';
-      html += '<div class="' + cls + '"><div class="cal-date">' + cur.getDate() + '</div><div class="cal-dots">' + dots + '</div></div>';
-      cur.setDate(cur.getDate() + 1);
+    function saveState(s) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch { }
     }
-    html += '</div>';
-    document.getElementById('trackerCalendar').innerHTML = html;
-  }
 
-  /* ── WEIGHT TRACKER ── */
-  let weightChartInstance = null;
+    function allItems() {
+      return document.querySelectorAll('.item');
+    }
 
-  async function loadWeightLogs() {
-    const { data, error } = await db
-      .from('weight_logs')
-      .select('id, logged_at, weight')
-      .order('logged_at', { ascending: true })
-      .limit(100);
-    if (error) { console.error('Weight fetch error:', error); return []; }
-    return data || [];
-  }
+    function updateProgress() {
+      const items = allItems();
+      const checked = document.querySelectorAll('.item.checked').length;
+      const pct = items.length ? Math.round((checked / items.length) * 100) : 0;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent = checked + ' / ' + items.length + ' items';
+    }
 
-  async function logWeight() {
-    const input = document.getElementById('weightInput');
-    const w = parseFloat(input.value);
-    if (isNaN(w) || w < 50 || w > 500) return;
-    if (!currentSession) return;
+    function toggle(el) {
+      const cb = el.querySelector('input[type=checkbox]');
+      cb.checked = !cb.checked;
+      el.classList.toggle('checked', cb.checked);
+      const state = getState();
+      state[el.dataset.id] = cb.checked;
+      saveState(state);
+      updateProgress();
+    }
 
-    const { error } = await db.from('weight_logs').insert({
-      user_id: currentSession.user.id,
-      weight: w
-    });
-    if (error) { console.error('Weight insert error:', error); return; }
+    function resetAll() {
+      if (!confirm('Reset all checkboxes for a new week?')) return;
+      saveState({});
+      allItems().forEach(el => {
+        el.querySelector('input[type=checkbox]').checked = false;
+        el.classList.remove('checked');
+      });
+      updateProgress();
+    }
 
-    input.value = '';
-    await renderWeightChart();
-  }
+    function setPrepWeek(w) {
+      document.getElementById('prepA').style.display = w === 'A' ? 'block' : 'none';
+      document.getElementById('prepB').style.display = w === 'B' ? 'block' : 'none';
+      const accent = 'padding:7px 20px;border-radius:999px;border:1px solid rgba(110,168,255,.4);background:rgba(110,168,255,.15);color:#cfe0ff;font-size:13px;font-weight:700;cursor:pointer';
+      const muted = 'padding:7px 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer';
+      document.getElementById('btnPrepA').style.cssText = w === 'A' ? accent : muted;
+      document.getElementById('btnPrepB').style.cssText = w === 'B' ? accent : muted;
+    }
 
-  async function renderWeightChart() {
-    const logs = await loadWeightLogs();
-    renderWeightStats(logs);
+    function setWeek(w) {
+      localStorage.setItem('currentWeek', w);
+      document.getElementById('weekA').style.display = w === 'A' ? 'block' : 'none';
+      document.getElementById('weekB').style.display = w === 'B' ? 'block' : 'none';
+      const accent = 'padding:7px 20px;border-radius:999px;border:1px solid rgba(110,168,255,.4);background:rgba(110,168,255,.15);color:#cfe0ff;font-size:13px;font-weight:700;cursor:pointer';
+      const muted = 'padding:7px 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer';
+      document.getElementById('btnWeekA').style.cssText = w === 'A' ? accent : muted;
+      document.getElementById('btnWeekB').style.cssText = w === 'B' ? accent : muted;
+      document.getElementById('weekLabel').textContent = w === 'A' ? 'Switch to Week B next Sunday' : 'Switch to Week A next Sunday';
+    }
 
-    const labels = logs.map(l => {
-      const d = new Date(l.logged_at);
-      return (d.getMonth() + 1) + '/' + d.getDate();
-    });
-    const weights = logs.map(l => parseFloat(l.weight));
-    const pointColors = weights.map((w, i) => {
-      if (i === 0) return '#6ea8ff';
-      return w < weights[i - 1] ? '#4ade80' : w > weights[i - 1] ? '#f87171' : '#6ea8ff';
-    });
-
-    const ctx = document.getElementById('weightChart').getContext('2d');
-    if (weightChartInstance) weightChartInstance.destroy();
-
-    if (!weights.length) return;
-
-    const minW = Math.min(...weights);
-    const maxW = Math.max(...weights);
-
-    weightChartInstance = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [{
-          data: weights,
-          borderColor: '#6ea8ff',
-          backgroundColor: 'rgba(110,168,255,0.07)',
-          pointBackgroundColor: pointColors,
-          pointBorderColor: pointColors,
-          pointRadius: 6,
-          pointHoverRadius: 8,
-          tension: 0.35,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => ctx.parsed.y + ' lbs'
-            }
-          }
-        },
-        scales: {
-          x: {
-            grid: { color: 'rgba(255,255,255,0.05)' },
-            ticks: { color: '#9fb0d0', font: { size: 11 } }
-          },
-          y: {
-            grid: { color: 'rgba(255,255,255,0.05)' },
-            ticks: { color: '#9fb0d0', callback: v => v + ' lbs' },
-            min: Math.floor(minW - 3),
-            max: Math.ceil(maxW + 3)
-          }
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedWeek = localStorage.getItem('currentWeek') || 'A';
+      setWeek(savedWeek);
+      setPrepWeek(savedWeek);
+      const state = getState();
+      allItems().forEach((el, i) => {
+        el.dataset.id = 'item_' + i;
+        if (state['item_' + i]) {
+          el.querySelector('input[type=checkbox]').checked = true;
+          el.classList.add('checked');
         }
-      }
+      });
+      updateProgress();
     });
-  }
-
-  function renderWeightStats(logs) {
-    const el = document.getElementById('weightStats');
-    if (!logs.length) { el.innerHTML = ''; return; }
-
-    const first = parseFloat(logs[0].weight);
-    const current = parseFloat(logs[logs.length - 1].weight);
-    const diff = (current - first).toFixed(1);
-    const sign = diff > 0 ? '+' : '';
-    const color = diff < 0 ? '#4ade80' : diff > 0 ? '#f87171' : 'var(--muted)';
-
-    el.innerHTML =
-      '<div class="wstat"><div class="wstat-val">' + first + '</div><div class="wstat-label">Start (lbs)</div></div>' +
-      '<div class="wstat"><div class="wstat-val">' + current + '</div><div class="wstat-label">Current (lbs)</div></div>' +
-      '<div class="wstat"><div class="wstat-val" style="color:' + color + '">' + sign + diff + '</div><div class="wstat-label">Total Change</div></div>';
-  }
-</script>
+  </script>
 </body>
+
 </html>
