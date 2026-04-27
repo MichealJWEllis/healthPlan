@@ -637,6 +637,292 @@
       border-bottom: none
     }
 
+    .checkin-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      background: rgba(255, 255, 255, .02);
+      margin-bottom: 14px
+    }
+
+    .checkin-card h3 {
+      margin: 0 0 14px;
+      font-size: 15px;
+      color: var(--text)
+    }
+
+    .checkin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px
+    }
+
+    @media(max-width:400px) {
+      .checkin-grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .checkin-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .03);
+      color: var(--text);
+      cursor: pointer;
+      transition: all .2s;
+      width: 100%
+    }
+
+    .checkin-btn:hover {
+      background: rgba(255, 255, 255, .07)
+    }
+
+    .checkin-btn.done {
+      border-color: rgba(74, 222, 128, .4);
+      background: rgba(74, 222, 128, .07)
+    }
+
+    .checkin-icon {
+      font-size: 24px
+    }
+
+    .checkin-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted)
+    }
+
+    .checkin-status {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted)
+    }
+
+    .checkin-btn.done .checkin-status {
+      color: var(--green)
+    }
+
+    .streak-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px
+    }
+
+    .streak-block {
+      text-align: center;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .02)
+    }
+
+    .streak-num {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1
+    }
+
+    .streak-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px
+    }
+
+    .cal-head {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 4px 0;
+      letter-spacing: .05em
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .02);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 4px
+    }
+
+    .cal-today {
+      border-color: rgba(110, 168, 255, .4);
+      background: rgba(110, 168, 255, .07)
+    }
+
+    .cal-date {
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .cal-today .cal-date {
+      color: var(--accent);
+      font-weight: 700
+    }
+
+    .cal-dots {
+      display: flex;
+      gap: 3px;
+      min-height: 8px
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block
+    }
+
+    .dot-w {
+      background: var(--accent)
+    }
+
+    .dot-m {
+      background: var(--green)
+    }
+
+    .weight-section {
+      margin-top: 20px
+    }
+
+    .weight-entry-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px
+    }
+
+    .weight-entry-input {
+      flex: 1;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 16px;
+      padding: 10px 14px;
+      outline: none;
+      min-width: 0
+    }
+
+    .weight-entry-input:focus {
+      border-color: var(--accent)
+    }
+
+    .weight-log-btn {
+      padding: 10px 24px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #0b1220;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap
+    }
+
+    .wstat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px
+    }
+
+    .wstat {
+      text-align: center;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .02)
+    }
+
+    .wstat-val {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1
+    }
+
+    .wstat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    .tracker-auth-box {
+      max-width: 420px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .02)
+    }
+
+    .tracker-auth-box h3 {
+      margin: 0 0 8px;
+      color: var(--text)
+    }
+
+    .tracker-auth-box p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .tracker-auth-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .tracker-auth-input {
+      flex: 1;
+      min-width: 220px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      padding: 10px 14px;
+      outline: none
+    }
+
+    .tracker-auth-input:focus {
+      border-color: var(--accent)
+    }
+
+    .tracker-auth-msg {
+      min-height: 18px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .tracker-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px
+    }
+
     footer {
       max-width: 1100px;
       margin: 0 auto;
@@ -654,8 +940,8 @@
 
 <body>
 <nav class="site-nav">
-  <a href="./index.html">Meal Plan</a>
-  <a href="./workout.html" class="active">Workout</a>
+  <a href="./index.html" class="active">Meal Plan</a>
+  <a href="./workout.html">Workout</a>
 </nav>
   <header>
     <h1>Anti-Inflammatory Meal System</h1>
@@ -679,6 +965,7 @@
         <div class="tab" onclick="switchTab('prep')">🥘 Sunday Prep</div>
         <div class="tab" onclick="switchTab('grocery')">🛒 Grocery List</div>
         <div class="tab" onclick="switchTab('recipes')">👨‍🍳 Recipes</div>
+        <div class="tab" onclick="switchTab('tracker')">📊 Tracker</div>
       </div>
     </div>
 
@@ -1216,7 +1503,21 @@
 
     <section class="card section" id="tab-grocery">
       <h2>Weekly Grocery List</h2>
-      <p class="note">Check off items as you shop. Resets each week. Shop Saturday or Sunday morning before prep.</p>
+      <p class="note">Check off items as you shop. The list is now split into a base list for both weeks plus a week-specific add-on list. Shop Saturday or Sunday morning before prep.</p>
+
+      <div
+        style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02)">
+        <span style="font-size:13px;color:var(--muted);flex-shrink:0">Shopping for:</span>
+        <div style="display:flex;gap:8px">
+          <button id="btnGroceryA" onclick="setGroceryWeek('A')"
+            style="padding:7px 20px;border-radius:999px;border:1px solid rgba(110,168,255,.4);background:rgba(110,168,255,.15);color:#cfe0ff;font-size:13px;font-weight:700;cursor:pointer">Week
+            A</button>
+          <button id="btnGroceryB" onclick="setGroceryWeek('B')"
+            style="padding:7px 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer">Week
+            B</button>
+        </div>
+        <span id="groceryWeekLabel" style="font-size:12px;color:var(--muted)">Base groceries + Week A add-ons</span>
+      </div>
 
       <div class="reset-bar">
         <div class="progress-wrap">
@@ -1228,9 +1529,66 @@
         <button class="btn danger" onclick="resetAll()">↺ Reset for new week</button>
       </div>
 
+      <div id="groceryWeekA">
+        <h3 style="margin-top:0">Week A Add-Ons</h3>
+        <div class="grocery-grid">
+          <div>
+            <div class="cat-label">Week A Proteins &amp; Vegetables</div>
+            <div class="item" onclick="toggle(this)"><input type="checkbox" />
+              <div class="item-body">
+                <div class="item-name">Asparagus</div>
+                <div class="item-meta">1 bunch · Week A sheet pan Sunday</div>
+              </div>
+            </div>
+            <div class="item" onclick="toggle(this)"><input type="checkbox" />
+              <div class="item-body">
+                <div class="item-name">Bell peppers (red/yellow)</div>
+                <div class="item-meta">3–4 · Week A sheet pan Sunday</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="groceryWeekB" style="display:none">
+        <h3 style="margin-top:0">Week B Add-Ons</h3>
+        <div class="grocery-grid">
+          <div>
+            <div class="cat-label">Week B Proteins</div>
+            <div class="item" onclick="toggle(this)"><input type="checkbox" />
+              <div class="item-body">
+                <div class="item-name">Chicken thighs (boneless, skinless)</div>
+                <div class="item-meta">1.5 lbs · plain, no marinade</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="cat-label">Week B Vegetables</div>
+            <div class="item" onclick="toggle(this)"><input type="checkbox" />
+              <div class="item-body">
+                <div class="item-name">Kale</div>
+                <div class="item-meta">1 bunch · Week B greens base</div>
+              </div>
+            </div>
+            <div class="item" onclick="toggle(this)"><input type="checkbox" />
+              <div class="item-body">
+                <div class="item-name">Carrots</div>
+                <div class="item-meta">4–5 · Week B roasted side</div>
+              </div>
+            </div>
+            <div class="item" onclick="toggle(this)"><input type="checkbox" />
+              <div class="item-body">
+                <div class="item-name">Mushrooms (cremini or white)</div>
+                <div class="item-meta">8oz · Week B Tue + Thu</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="grocery-grid" id="groceryGrid">
         <div>
-          <div class="cat-label">Proteins</div>
+          <div class="cat-label">Base Groceries (Both Weeks) · Proteins</div>
           <div class="item" onclick="toggle(this)"><input type="checkbox" />
             <div class="item-body">
               <div class="item-name">Wild-caught salmon fillets</div>
@@ -1253,12 +1611,6 @@
             <div class="item-body">
               <div class="item-name">Pasture-raised eggs</div>
               <div class="item-meta">1 dozen · Vital Farms or similar</div>
-            </div>
-          </div>
-          <div class="item" onclick="toggle(this)"><input type="checkbox" />
-            <div class="item-body">
-              <div class="item-name">Chicken thighs (boneless, skinless)</div>
-              <div class="item-meta">1.5 lbs · plain, no marinade · Week B</div>
             </div>
           </div>
           <div class="item" onclick="toggle(this)"><input type="checkbox" />
@@ -1382,7 +1734,7 @@
         </div>
 
         <div>
-          <div class="cat-label">Vegetables</div>
+          <div class="cat-label">Base Groceries (Both Weeks) · Vegetables</div>
           <div class="item" onclick="toggle(this)"><input type="checkbox" />
             <div class="item-body">
               <div class="item-name">Baby spinach</div>
@@ -1397,18 +1749,6 @@
           </div>
           <div class="item" onclick="toggle(this)"><input type="checkbox" />
             <div class="item-body">
-              <div class="item-name">Kale</div>
-              <div class="item-meta">1 bunch · Thu base</div>
-            </div>
-          </div>
-          <div class="item" onclick="toggle(this)"><input type="checkbox" />
-            <div class="item-body">
-              <div class="item-name">Asparagus</div>
-              <div class="item-meta">1 bunch · sheet pan Sunday</div>
-            </div>
-          </div>
-          <div class="item" onclick="toggle(this)"><input type="checkbox" />
-            <div class="item-body">
               <div class="item-name">Cauliflower</div>
               <div class="item-meta">1 head · sheet pan Sunday</div>
             </div>
@@ -1417,24 +1757,6 @@
             <div class="item-body">
               <div class="item-name">Sweet potato</div>
               <div class="item-meta">4–5 medium · sheet pan Sunday · carb base</div>
-            </div>
-          </div>
-          <div class="item" onclick="toggle(this)"><input type="checkbox" />
-            <div class="item-body">
-              <div class="item-name">Bell peppers (red/yellow)</div>
-              <div class="item-meta">3–4 · sheet pan Sunday</div>
-            </div>
-          </div>
-          <div class="item" onclick="toggle(this)"><input type="checkbox" />
-            <div class="item-body">
-              <div class="item-name">Carrots</div>
-              <div class="item-meta">4–5 · Week B roasted side</div>
-            </div>
-          </div>
-          <div class="item" onclick="toggle(this)"><input type="checkbox" />
-            <div class="item-body">
-              <div class="item-name">Mushrooms (cremini or white)</div>
-              <div class="item-meta">8oz · Week B Tue + Thu</div>
             </div>
           </div>
           <div class="item" onclick="toggle(this)"><input type="checkbox" />
@@ -1567,10 +1889,24 @@
 
     <section class="card section" id="tab-recipes">
       <h2>Cooking Instructions</h2>
-      <p class="note">Reference only. You run these on Sunday during prep — not during the week.</p>
+      <p class="note">Reference only. Use these for Sunday prep items and daily staples you do not want to look up while cooking.</p>
 
       <div class="recipe">
-        <h3>1 · Baked Salmon</h3>
+        <h3>1 · Turmeric Drink</h3>
+        <div class="timing">25 min total · daily batch drink</div>
+        <ol>
+          <li>Bring <strong>8 cups filtered water</strong> to a full boil.</li>
+          <li>Add <strong>150g organic ginger</strong>, <strong>50g organic turmeric</strong>, <strong>2 tbsp organic black pepper</strong>, and <strong>2 tbsp organic cayenne pepper</strong>.</li>
+          <li>Reduce heat to a simmer.</li>
+          <li>Simmer for <strong>20 minutes</strong>.</li>
+          <li>Pour and serve hot.</li>
+          <li>When serving, add <strong>juice from 1/2 organic lemon</strong>, a <strong>splash of organic extra virgin olive oil</strong>, and <strong>organic honey</strong> to taste.</li>
+        </ol>
+        <div class="tip"><strong>Use daily:</strong> this is the morning drink referenced in the plan. Keep the lemon, olive oil, and honey as serving add-ins rather than simmering them in the pot.</div>
+      </div>
+
+      <div class="recipe">
+        <h3>2 · Baked Salmon</h3>
         <div class="timing">15 min · Sunday prep batch · Monday dinner + Saturday dinner</div>
         <ol>
           <li>Preheat oven to 400°F. Line baking sheet with parchment.</li>
@@ -1585,7 +1921,7 @@
       </div>
 
       <div class="recipe">
-        <h3>2 · Sheet Pan Vegetables</h3>
+        <h3>3 · Sheet Pan Vegetables</h3>
         <div class="timing">25–30 min · Sunday prep · feeds Mon–Fri sides</div>
         <ol>
           <li>Preheat oven to 425°F.</li>
@@ -1601,7 +1937,7 @@
       </div>
 
       <div class="recipe">
-        <h3>3 · Anti-Inflammatory Lentils</h3>
+        <h3>4 · Anti-Inflammatory Lentils</h3>
         <div class="timing">30 min · Sunday prep · feeds Wed + Fri</div>
         <ol>
           <li>Rinse 1 cup dry lentils in cold water.</li>
@@ -1617,7 +1953,7 @@
       </div>
 
       <div class="recipe">
-        <h3>4 · Salad Dressing Jar</h3>
+        <h3>5 · Salad Dressing Jar</h3>
         <div class="timing">3 min · Sunday prep · lasts all week</div>
         <ol>
           <li>3 tbsp extra virgin olive oil</li>
@@ -1629,7 +1965,7 @@
       </div>
 
       <div class="recipe">
-        <h3>5 · Hard Boiled Eggs</h3>
+        <h3>6 · Hard Boiled Eggs</h3>
         <div class="timing">15 min hands-off · Sunday prep · feeds Wed + Fri</div>
         <ol>
           <li>Place 6 eggs in a pot, cover with cold water.</li>
@@ -1641,7 +1977,7 @@
       </div>
 
       <div class="recipe">
-        <h3>6 · Anti-Inflammatory Smoothie</h3>
+        <h3>7 · Anti-Inflammatory Smoothie</h3>
         <div class="timing">5 min · Sunday breakfast only</div>
         <ol>
           <li>1 cup unsweetened almond milk</li>
@@ -1657,7 +1993,7 @@
       </div>
 
       <div class="recipe">
-        <h3>7 · Black Bean Bowl</h3>
+        <h3>8 · Black Bean Bowl</h3>
         <div class="timing">15 min · Sunday lunch</div>
         <ol>
           <li>Drain and rinse 1 can black beans.</li>
@@ -1669,7 +2005,7 @@
       </div>
 
       <div class="recipe">
-        <h3>8 · Scrambled Eggs (Weekend Breakfast)</h3>
+        <h3>9 · Scrambled Eggs (Weekend Breakfast)</h3>
         <div class="timing">10 min · Saturday breakfast · cooked fresh</div>
         <ol>
           <li>Whisk 3 eggs with salt + pepper.</li>
@@ -1681,12 +2017,86 @@
       </div>
     </section>
 
+    <section class="card section" id="tab-tracker">
+      <h2>Daily Tracker</h2>
+      <p class="note">Track meal-plan adherence, workouts, and weight with Supabase sync so it follows you across browsers.</p>
+
+      <div id="trackerAuth" class="tracker-auth-box">
+        <h3>Sign In To Sync</h3>
+        <p>Enter your email to receive a magic link. Your tracker data will sync through Supabase after sign-in.</p>
+        <div class="tracker-auth-row">
+          <input id="trackerEmail" class="tracker-auth-input" type="email" placeholder="your@email.com" />
+          <button class="weight-log-btn" onclick="sendMagicLink()">Send Link</button>
+        </div>
+        <div id="trackerAuthMsg" class="tracker-auth-msg"></div>
+      </div>
+
+      <div id="trackerApp" style="display:none">
+        <div class="tracker-toolbar">
+          <div class="note" id="trackerSignedInAs" style="margin:0"></div>
+          <button class="btn" onclick="signOut()">Sign out</button>
+        </div>
+
+        <div class="checkin-card">
+          <h3 id="trackerDate">Today</h3>
+          <div class="checkin-grid">
+            <button class="checkin-btn" id="btnWorkout" onclick="toggleCheckin('workout')">
+              <span class="checkin-icon">💪</span>
+              <span class="checkin-label">Workout Done</span>
+              <span class="checkin-status" id="statusWorkout">Tap to log</span>
+            </button>
+            <button class="checkin-btn" id="btnMeal" onclick="toggleCheckin('meal')">
+              <span class="checkin-icon">🥗</span>
+              <span class="checkin-label">Meal Plan</span>
+              <span class="checkin-status" id="statusMeal">Tap to log</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="streak-row">
+          <div class="streak-block">
+            <div class="streak-num" id="workoutStreak">0</div>
+            <div class="streak-label">Workout Streak</div>
+          </div>
+          <div class="streak-block">
+            <div class="streak-num" id="mealStreak">0</div>
+            <div class="streak-label">Meal Streak</div>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom:6px">Past 4 Weeks</h3>
+        <p class="note" style="margin-bottom:10px">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);vertical-align:middle;margin-right:4px"></span>Workout &nbsp;
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);vertical-align:middle;margin-right:4px"></span>Meal plan
+        </p>
+        <div id="trackerCalendar"></div>
+
+        <div class="weight-section">
+          <h3 style="margin:0 0 12px">Weight Tracker</h3>
+          <div class="weight-entry-row">
+            <input id="weightInput" class="weight-entry-input" type="number" step="0.1" min="50" max="500" placeholder="Enter weight (lbs)" />
+            <button class="weight-log-btn" onclick="logWeight()">Log</button>
+          </div>
+          <div class="wstat-row" id="weightStats"></div>
+          <canvas id="weightChart"></canvas>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <footer>Anti-Inflammatory Meal System · Paired with MWF Upper Body + T/TH Swimming Program</footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="./config.js"></script>
   <script>
     const STORAGE_KEY = 'grocery_checks_v1';
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentSession = null;
+    let trackerCache = null;
+    let weightChartInstance = null;
 
     function switchTab(name) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1704,12 +2114,16 @@
     }
 
     function allItems() {
-      return document.querySelectorAll('.item');
+      return document.querySelectorAll('#tab-grocery .item');
+    }
+
+    function visibleItems() {
+      return Array.from(allItems()).filter(el => el.offsetParent !== null);
     }
 
     function updateProgress() {
-      const items = allItems();
-      const checked = document.querySelectorAll('.item.checked').length;
+      const items = visibleItems();
+      const checked = items.filter(el => el.classList.contains('checked')).length;
       const pct = items.length ? Math.round((checked / items.length) * 100) : 0;
       document.getElementById('progressFill').style.width = pct + '%';
       document.getElementById('progressLabel').textContent = checked + ' / ' + items.length + ' items';
@@ -1744,6 +2158,18 @@
       document.getElementById('btnPrepB').style.cssText = w === 'B' ? accent : muted;
     }
 
+    function setGroceryWeek(w) {
+      localStorage.setItem('currentWeek', w);
+      document.getElementById('groceryWeekA').style.display = w === 'A' ? 'block' : 'none';
+      document.getElementById('groceryWeekB').style.display = w === 'B' ? 'block' : 'none';
+      const accent = 'padding:7px 20px;border-radius:999px;border:1px solid rgba(110,168,255,.4);background:rgba(110,168,255,.15);color:#cfe0ff;font-size:13px;font-weight:700;cursor:pointer';
+      const muted = 'padding:7px 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer';
+      document.getElementById('btnGroceryA').style.cssText = w === 'A' ? accent : muted;
+      document.getElementById('btnGroceryB').style.cssText = w === 'B' ? accent : muted;
+      document.getElementById('groceryWeekLabel').textContent = w === 'A' ? 'Base groceries + Week A add-ons' : 'Base groceries + Week B add-ons';
+      updateProgress();
+    }
+
     function setWeek(w) {
       localStorage.setItem('currentWeek', w);
       document.getElementById('weekA').style.display = w === 'A' ? 'block' : 'none';
@@ -1753,6 +2179,7 @@
       document.getElementById('btnWeekA').style.cssText = w === 'A' ? accent : muted;
       document.getElementById('btnWeekB').style.cssText = w === 'B' ? accent : muted;
       document.getElementById('weekLabel').textContent = w === 'A' ? 'Switch to Week B next Sunday' : 'Switch to Week A next Sunday';
+      setGroceryWeek(w);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -1768,7 +2195,280 @@
         }
       });
       updateProgress();
+      initAuth();
     });
+
+    function initAuth() {
+      db.auth.getSession().then(({ data: { session } }) => {
+        handleSession(session);
+      });
+
+      db.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) handleSession(session);
+        if (event === 'SIGNED_OUT') handleSession(null);
+      });
+    }
+
+    function handleSession(session) {
+      currentSession = session;
+      trackerCache = null;
+      if (session) {
+        document.getElementById('trackerAuth').style.display = 'none';
+        document.getElementById('trackerApp').style.display = 'block';
+        document.getElementById('trackerSignedInAs').textContent = 'Signed in as ' + session.user.email;
+        renderTracker();
+        renderWeightChart();
+      } else {
+        document.getElementById('trackerAuth').style.display = 'block';
+        document.getElementById('trackerApp').style.display = 'none';
+        document.getElementById('trackerAuthMsg').textContent = '';
+      }
+    }
+
+    async function sendMagicLink() {
+      const email = document.getElementById('trackerEmail').value.trim();
+      const msg = document.getElementById('trackerAuthMsg');
+      if (!email) {
+        msg.textContent = 'Enter your email first.';
+        return;
+      }
+
+      const { error } = await db.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.href }
+      });
+
+      msg.textContent = error ? 'Error: ' + error.message : 'Link sent. Check your email.';
+      if (!error) document.getElementById('trackerEmail').value = '';
+    }
+
+    async function signOut() {
+      await db.auth.signOut();
+    }
+
+    function todayISO() {
+      const d = new Date();
+      return d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0');
+    }
+
+    async function loadTracker() {
+      if (!currentSession) return {};
+      const { data, error } = await db
+        .from('daily_logs')
+        .select('date, workout, meal, weight')
+        .order('date', { ascending: false })
+        .limit(120);
+      if (error) {
+        console.error('Supabase fetch error:', error);
+        return {};
+      }
+      return Object.fromEntries((data || []).map(r => [r.date, {
+        workout: r.workout,
+        meal: r.meal,
+        weight: r.weight
+      }]));
+    }
+
+    async function upsertDay(date, patch) {
+      if (!currentSession) return;
+      const { error } = await db
+        .from('daily_logs')
+        .upsert({ date, user_id: currentSession.user.id, ...patch }, { onConflict: 'date,user_id' });
+      if (error) console.error('Supabase upsert error:', error);
+    }
+
+    async function toggleCheckin(type) {
+      const data = trackerCache || {};
+      const key = todayISO();
+      const current = !!(data[key] && data[key][type]);
+      await upsertDay(key, { [type]: !current });
+      trackerCache = null;
+      await renderTracker();
+    }
+
+    function calcStreak(data, type) {
+      let streak = 0;
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      const todayKey = todayISO();
+      if (!data[todayKey] || !data[todayKey][type]) d.setDate(d.getDate() - 1);
+      for (let i = 0; i < 90; i++) {
+        const k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        if (data[k] && data[k][type]) {
+          streak++;
+          d.setDate(d.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+      return streak;
+    }
+
+    async function renderTracker() {
+      if (!currentSession) return;
+      if (!trackerCache) trackerCache = await loadTracker();
+      const data = trackerCache;
+      const today = todayISO();
+      const todayData = data[today] || {};
+
+      const now = new Date();
+      const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      document.getElementById('trackerDate').textContent =
+        'Today — ' + DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate();
+
+      document.getElementById('btnWorkout').classList.toggle('done', !!todayData.workout);
+      document.getElementById('btnMeal').classList.toggle('done', !!todayData.meal);
+      document.getElementById('statusWorkout').textContent = todayData.workout ? 'Done ✓' : 'Tap to log';
+      document.getElementById('statusMeal').textContent = todayData.meal ? 'Done ✓' : 'Tap to log';
+
+      document.getElementById('workoutStreak').textContent = calcStreak(data, 'workout');
+      document.getElementById('mealStreak').textContent = calcStreak(data, 'meal');
+
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      start.setDate(start.getDate() - 27);
+      start.setDate(start.getDate() - start.getDay());
+
+      const end = new Date();
+      end.setHours(0, 0, 0, 0);
+
+      let html = '<div class="cal-grid">';
+      ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(l => { html += '<div class="cal-head">' + l + '</div>'; });
+      const cur = new Date(start);
+      while (cur <= end) {
+        const k = cur.getFullYear() + '-' + String(cur.getMonth() + 1).padStart(2, '0') + '-' + String(cur.getDate()).padStart(2, '0');
+        const entry = data[k] || {};
+        const cls = 'cal-day' + (k === today ? ' cal-today' : '');
+        let dots = '';
+        if (entry.workout) dots += '<span class="dot dot-w"></span>';
+        if (entry.meal) dots += '<span class="dot dot-m"></span>';
+        html += '<div class="' + cls + '"><div class="cal-date">' + cur.getDate() + '</div><div class="cal-dots">' + dots + '</div></div>';
+        cur.setDate(cur.getDate() + 1);
+      }
+      html += '</div>';
+      document.getElementById('trackerCalendar').innerHTML = html;
+    }
+
+    async function loadWeightLogs() {
+      if (!currentSession) return [];
+      const { data, error } = await db
+        .from('weight_logs')
+        .select('id, logged_at, weight')
+        .order('logged_at', { ascending: true })
+        .limit(200);
+      if (error) {
+        console.error('Weight fetch error:', error);
+        return [];
+      }
+      return data || [];
+    }
+
+    async function logWeight() {
+      const input = document.getElementById('weightInput');
+      const weight = parseFloat(input.value);
+      if (isNaN(weight) || weight < 50 || weight > 500 || !currentSession) return;
+
+      const { error } = await db.from('weight_logs').insert({
+        user_id: currentSession.user.id,
+        weight
+      });
+      if (error) {
+        console.error('Weight insert error:', error);
+        return;
+      }
+
+      input.value = '';
+      await renderWeightChart();
+    }
+
+    function renderWeightStats(logs) {
+      const el = document.getElementById('weightStats');
+      if (!logs.length) {
+        el.innerHTML = '';
+        return;
+      }
+
+      const first = parseFloat(logs[0].weight);
+      const current = parseFloat(logs[logs.length - 1].weight);
+      const diff = (current - first).toFixed(1);
+      const sign = diff > 0 ? '+' : '';
+      const color = diff < 0 ? '#4ade80' : diff > 0 ? '#f87171' : 'var(--muted)';
+
+      el.innerHTML =
+        '<div class="wstat"><div class="wstat-val">' + first + '</div><div class="wstat-label">Start (lbs)</div></div>' +
+        '<div class="wstat"><div class="wstat-val">' + current + '</div><div class="wstat-label">Current (lbs)</div></div>' +
+        '<div class="wstat"><div class="wstat-val" style="color:' + color + '">' + sign + diff + '</div><div class="wstat-label">Total Change</div></div>';
+    }
+
+    async function renderWeightChart() {
+      if (!currentSession) return;
+      const logs = await loadWeightLogs();
+      renderWeightStats(logs);
+
+      const canvas = document.getElementById('weightChart');
+      if (!canvas || typeof Chart === 'undefined') return;
+      const ctx = canvas.getContext('2d');
+
+      if (weightChartInstance) weightChartInstance.destroy();
+      if (!logs.length) return;
+
+      const labels = logs.map(l => {
+        const d = new Date(l.logged_at);
+        return (d.getMonth() + 1) + '/' + d.getDate();
+      });
+      const weights = logs.map(l => parseFloat(l.weight));
+      const pointColors = weights.map((w, i) => {
+        if (i === 0) return '#6ea8ff';
+        return w < weights[i - 1] ? '#4ade80' : w > weights[i - 1] ? '#f87171' : '#6ea8ff';
+      });
+
+      const minW = Math.min(...weights);
+      const maxW = Math.max(...weights);
+
+      weightChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            data: weights,
+            borderColor: '#6ea8ff',
+            backgroundColor: 'rgba(110,168,255,0.07)',
+            pointBackgroundColor: pointColors,
+            pointBorderColor: pointColors,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            tension: 0.35,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ctx.parsed.y + ' lbs'
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              ticks: { color: '#9fb0d0', font: { size: 11 } }
+            },
+            y: {
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              ticks: { color: '#9fb0d0', callback: v => v + ' lbs' },
+              min: Math.floor(minW - 3),
+              max: Math.ceil(maxW + 3)
+            }
+          }
+        }
+      });
+    }
   </script>
 </body>
 
