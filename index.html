@@ -2037,6 +2037,15 @@
           <button class="btn" onclick="signOut()">Sign out</button>
         </div>
 
+        <div class="tracker-toolbar">
+          <div class="tracker-auth-row">
+            <label for="trackerLogDate" class="note" style="margin:0;align-self:center">Log date:</label>
+            <input id="trackerLogDate" class="tracker-auth-input" type="date" style="min-width:180px" />
+            <button class="btn" onclick="jumpToToday()">Today</button>
+          </div>
+          <div class="note" style="margin:0">Meal/workout toggles and weight logging use the selected date.</div>
+        </div>
+
         <div class="checkin-card">
           <h3 id="trackerDate">Today</h3>
           <div class="checkin-grid">
@@ -2186,6 +2195,7 @@
       const savedWeek = localStorage.getItem('currentWeek') || 'A';
       setWeek(savedWeek);
       setPrepWeek(savedWeek);
+      document.getElementById('trackerLogDate').value = todayISO();
       const state = getState();
       allItems().forEach((el, i) => {
         el.dataset.id = 'item_' + i;
@@ -2195,6 +2205,9 @@
         }
       });
       updateProgress();
+      document.getElementById('trackerLogDate').addEventListener('change', () => {
+        renderTracker();
+      });
       initAuth();
     });
 
@@ -2253,6 +2266,16 @@
         String(d.getDate()).padStart(2, '0');
     }
 
+    function getSelectedTrackerDate() {
+      const input = document.getElementById('trackerLogDate');
+      return input && input.value ? input.value : todayISO();
+    }
+
+    function jumpToToday() {
+      document.getElementById('trackerLogDate').value = todayISO();
+      renderTracker();
+    }
+
     async function loadTracker() {
       if (!currentSession) return {};
       const { data, error } = await db
@@ -2281,7 +2304,7 @@
 
     async function toggleCheckin(type) {
       const data = trackerCache || {};
-      const key = todayISO();
+      const key = getSelectedTrackerDate();
       const current = !!(data[key] && data[key][type]);
       await upsertDay(key, { [type]: !current });
       trackerCache = null;
@@ -2311,18 +2334,19 @@
       if (!trackerCache) trackerCache = await loadTracker();
       const data = trackerCache;
       const today = todayISO();
-      const todayData = data[today] || {};
+      const selected = getSelectedTrackerDate();
+      const selectedData = data[selected] || {};
 
-      const now = new Date();
+      const shownDate = new Date(selected + 'T12:00:00');
       const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       document.getElementById('trackerDate').textContent =
-        'Today — ' + DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate();
+        (selected === today ? 'Today' : 'Selected Day') + ' — ' + DAYS[shownDate.getDay()] + ', ' + MONTHS[shownDate.getMonth()] + ' ' + shownDate.getDate();
 
-      document.getElementById('btnWorkout').classList.toggle('done', !!todayData.workout);
-      document.getElementById('btnMeal').classList.toggle('done', !!todayData.meal);
-      document.getElementById('statusWorkout').textContent = todayData.workout ? 'Done ✓' : 'Tap to log';
-      document.getElementById('statusMeal').textContent = todayData.meal ? 'Done ✓' : 'Tap to log';
+      document.getElementById('btnWorkout').classList.toggle('done', !!selectedData.workout);
+      document.getElementById('btnMeal').classList.toggle('done', !!selectedData.meal);
+      document.getElementById('statusWorkout').textContent = selectedData.workout ? 'Done ✓' : 'Tap to log';
+      document.getElementById('statusMeal').textContent = selectedData.meal ? 'Done ✓' : 'Tap to log';
 
       document.getElementById('workoutStreak').textContent = calcStreak(data, 'workout');
       document.getElementById('mealStreak').textContent = calcStreak(data, 'meal');
@@ -2341,7 +2365,7 @@
       while (cur <= end) {
         const k = cur.getFullYear() + '-' + String(cur.getMonth() + 1).padStart(2, '0') + '-' + String(cur.getDate()).padStart(2, '0');
         const entry = data[k] || {};
-        const cls = 'cal-day' + (k === today ? ' cal-today' : '');
+        const cls = 'cal-day' + (k === selected ? ' cal-today' : '');
         let dots = '';
         if (entry.workout) dots += '<span class="dot dot-w"></span>';
         if (entry.meal) dots += '<span class="dot dot-m"></span>';
@@ -2370,10 +2394,12 @@
       const input = document.getElementById('weightInput');
       const weight = parseFloat(input.value);
       if (isNaN(weight) || weight < 50 || weight > 500 || !currentSession) return;
+      const selected = getSelectedTrackerDate();
 
       const { error } = await db.from('weight_logs').insert({
         user_id: currentSession.user.id,
-        weight
+        weight,
+        logged_at: selected + 'T12:00:00'
       });
       if (error) {
         console.error('Weight insert error:', error);
