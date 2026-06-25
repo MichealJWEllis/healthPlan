@@ -6,21 +6,21 @@
 <title>Micheal — Health Goal Tracker</title>
 <style>
   :root {
-    --bg: #0d1117; --panel: #161b22; --panel2: #1c2330; --line: #2d3748;
-    --text: #e6edf3; --muted: #8b949e; --green: #3fb950; --amber: #d29922;
-    --blue: #58a6ff; --red: #f85149; --success-bg: #0d2d1a; --success-border: #2ea043;
-    --accent: #58a6ff; --yellow: #d29922;
+    --bg: #0b1220; --text: #e9eefc; --muted: #9fb0d0; --line: rgba(255,255,255,.10);
+    --accent: #6ea8ff; --blue: #6ea8ff; --green: #4ade80; --yellow: #fbbf24; --amber: #fbbf24; --red: #f87171;
+    --panel: rgba(255,255,255,.03); --panel2: rgba(255,255,255,.05);
+    --success-bg: rgba(74,222,128,.10); --success-border: rgba(74,222,128,.5);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, "Segoe UI", Roboto, sans-serif; padding: 0 0 40px; line-height: 1.5; }
-  .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
-  h1 { font-size: 1.3rem; font-weight: 500; }
+  body { background: linear-gradient(180deg, #070b14 0%, var(--bg) 100%); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; min-height: 100vh; padding-bottom: 40px; }
+  .container { max-width: none; margin: 0; padding: 0 clamp(16px, 2.5vw, 40px); }
+  h1 { font-size: clamp(20px, 2.4vw, 30px); font-weight: 500; }
   h2 { font-size: 1rem; font-weight: 500; margin-bottom: 12px; }
   h3 { font-size: 0.95rem; font-weight: 500; }
   .sub { color: var(--muted); font-size: 0.82rem; }
-  section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 14px; }
-  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px; }
-  .kpi { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .kpi { background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
   .kpi .label { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
   .kpi .value { font-size: 1.4rem; font-weight: 500; margin-top: 4px; }
   .kpi .sub2 { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
@@ -29,56 +29,60 @@
   .bar-head { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; }
   .track { background: var(--panel2); border-radius: 6px; height: 18px; overflow: hidden; position: relative; }
   .fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
+  .fill.green { background: var(--green); } .fill.amber { background: var(--amber); }
   .bar-sub { font-size: 0.72rem; color: var(--muted); margin-top: 3px; display: flex; justify-content: space-between; }
+  .top-grid { display: grid; grid-template-columns: 220px 1fr; gap: 14px; margin-bottom: 14px; align-items: start; }
+  @media (max-width: 640px) { .top-grid { grid-template-columns: 1fr; } }
   .donut-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto; }
   .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
   .donut-center .big { font-size: 1.6rem; font-weight: 500; }
   .donut-center .sm { font-size: 0.72rem; color: var(--muted); }
   .habits { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
-  .habit-btn { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 8px; cursor: pointer; color: var(--text); font-family: inherit; font-size: 0.82rem; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: background 0.2s, border-color 0.2s; }
-  .habit-btn:hover { border-color: var(--blue); }
+  .habit-btn { background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 8px; cursor: pointer; color: var(--text); font-family: inherit; font-size: 0.82rem; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: background 0.2s, border-color 0.2s; }
+  .habit-btn:hover { border-color: var(--accent); }
   .habit-btn.done { background: var(--success-bg); border-color: var(--success-border); color: var(--green); }
   .habit-icon { font-size: 1.4rem; }
   .habit-status { font-size: 0.72rem; color: var(--muted); }
   .habit-btn.done .habit-status { color: var(--green); }
-  input[type=number], input[type=date], input[type=email] { background: var(--panel2); border: 1px solid var(--line); color: var(--text); border-radius: 6px; padding: 7px 10px; font-size: 0.9rem; font-family: inherit; }
-  input:focus { outline: none; border-color: var(--blue); }
-  button.primary { background: var(--blue); color: #06223f; border: none; border-radius: 6px; padding: 8px 16px; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  input[type=number], input[type=date], input[type=email] { background: var(--panel2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; font-family: inherit; }
+  input:focus { outline: none; border-color: var(--accent); }
+  button.primary { background: var(--accent); color: #0b1220; border: none; border-radius: 8px; padding: 9px 18px; font-size: 0.85rem; font-weight: 700; cursor: pointer; font-family: inherit; }
   button.primary:hover { opacity: 0.9; }
-  .btn { background: var(--panel2); border: 1px solid var(--line); color: var(--text); border-radius: 6px; padding: 7px 14px; font-size: 0.82rem; cursor: pointer; font-family: inherit; }
-  .btn:hover { border-color: var(--blue); }
+  .btn { background: rgba(255,255,255,.03); border: 1px solid var(--line); color: var(--text); border-radius: 999px; padding: 7px 16px; font-size: 0.82rem; cursor: pointer; font-family: inherit; }
+  .btn:hover { background: rgba(255,255,255,.07); }
   .radio-group { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
   .radio-group label { display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer; }
+  .table-scroll { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
-  th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); }
+  th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
   th { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
   td:last-child { text-align: right; }
-  .streak-badge { background: var(--amber); color: #1a0d00; border-radius: 20px; padding: 3px 10px; font-size: 0.78rem; font-weight: 600; }
+  .streak-badge { background: var(--yellow); color: #1a0d00; border-radius: 20px; padding: 3px 10px; font-size: 0.78rem; font-weight: 600; }
   .milestone-row.hit { color: var(--green); }
-  .milestone-row.next { font-weight: 500; color: var(--blue); }
+  .milestone-row.next { font-weight: 500; color: var(--accent); }
   .flex-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
-  /* Site nav (shared across pages) */
-  .site-nav { max-width: 900px; margin: 0 auto; padding: 16px 20px 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+  /* Site nav (shared look with index.html / workout.html) */
+  .site-nav { max-width: none; margin: 0; padding: 16px clamp(16px, 2.5vw, 40px) 4px; display: flex; gap: 8px; flex-wrap: wrap; }
   .site-nav a { padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--muted); text-decoration: none; transition: all .2s; }
   .site-nav a:hover { background: rgba(255,255,255,.07); }
   .site-nav a.active { background: var(--accent); color: #0b1220; border-color: var(--accent); }
 
-  /* Auth + toolbar (ported) */
-  .tracker-auth-box { max-width: 420px; margin: 24px auto; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
+  /* Auth + toolbar */
+  .tracker-auth-box { max-width: 440px; margin: 24px auto; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
   .tracker-auth-box h3 { margin: 0 0 8px; }
   .tracker-auth-box p { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
   .tracker-auth-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .tracker-auth-input { flex: 1; min-width: 200px; }
   .tracker-auth-msg { min-height: 18px; margin-top: 10px; font-size: 12px; color: var(--muted); }
   .tracker-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-  .tracker-error { display: none; margin-bottom: 14px; padding: 10px 14px; border-radius: 8px; background: rgba(248,81,73,.12); border: 1px solid rgba(248,81,73,.4); color: #ffb4ae; font-size: 0.85rem; }
+  .tracker-error { display: none; margin-bottom: 14px; padding: 10px 14px; border-radius: 10px; background: rgba(248,113,113,.12); border: 1px solid rgba(248,113,113,.4); color: #ffd0cc; font-size: 0.85rem; }
 
-  /* 4-week calendar (ported) */
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  /* 4-week calendar */
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
   .cal-head { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); padding: 4px 0; letter-spacing: .05em; }
   .cal-day { aspect-ratio: 1; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.02); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 4px; }
-  .cal-today { border-color: rgba(88,166,255,.5); background: rgba(88,166,255,.08); }
+  .cal-today { border-color: rgba(110,168,255,.5); background: rgba(110,168,255,.08); }
   .cal-date { font-size: 11px; color: var(--muted); }
   .cal-today .cal-date { color: var(--accent); font-weight: 700; }
   .cal-dots { display: flex; gap: 3px; min-height: 8px; }
@@ -87,23 +91,22 @@
   .dot-m { background: var(--green); }
   .dot-wt { background: var(--yellow); }
 
-  /* Weight chart (ported) */
+  /* Weight chart */
   .wstat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 14px 0 16px; }
   .wstat { text-align: center; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel2); }
   .wstat-val { font-size: 26px; font-weight: 700; color: var(--accent); line-height: 1; }
   .wstat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
-  /* 6-month countdown grid (new) */
-  .cd-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  /* 6-month countdown grid — fills its container width */
+  .cd-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
   .cd-stat { font-size: 0.8rem; color: var(--muted); }
-  .cd-scroll { overflow-x: auto; padding-bottom: 6px; }
-  .cd-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 14px); grid-auto-columns: 14px; gap: 3px; min-width: max-content; }
-  .cd-cell { width: 14px; height: 14px; border-radius: 3px; background: rgba(255,255,255,.04); border: 1px solid var(--line); }
+  .cd-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 1fr); grid-auto-columns: 1fr; gap: 4px; width: 100%; aspect-ratio: calc(var(--cols, 27) / 7); }
+  .cd-cell { border-radius: 3px; background: rgba(255,255,255,.04); border: 1px solid var(--line); }
   .cd-pad { background: transparent; border-color: transparent; }
   .cd-done { background: var(--green); border-color: var(--green); }
   .cd-missed { background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.13); }
   .cd-future { background: rgba(255,255,255,.03); border-color: var(--line); }
-  .cd-today { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+  .cd-today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
   .cd-legend { display: flex; gap: 14px; margin-top: 12px; font-size: 0.72rem; color: var(--muted); flex-wrap: wrap; }
   .cd-legend span { display: flex; align-items: center; gap: 5px; }
   .cd-key { width: 11px; height: 11px; border-radius: 3px; display: inline-block; border: 1px solid var(--line); }
@@ -157,7 +160,7 @@
     </div>
   </section>
 
-  <div style="display:grid; grid-template-columns:220px 1fr; gap:14px; margin-bottom:14px; align-items:start;">
+  <div class="top-grid">
     <section style="padding:14px;">
       <div class="donut-wrap">
         <canvas id="donut" width="200" height="200" role="img" aria-label="Body composition donut: fat vs lean mass"></canvas>
@@ -169,7 +172,7 @@
       </div>
       <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:0.78rem;">
         <span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px;"></span>Fat</span>
-        <span><span style="display:inline-block;width:10px;height:10px;background:var(--blue);border-radius:2px;margin-right:4px;"></span>Lean</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px;"></span>Lean</span>
       </div>
     </section>
 
@@ -212,10 +215,12 @@
       <button class="primary" onclick="logWeight()">Log weight</button>
       <span class="sub" id="weightMsg"></span>
     </div>
-    <table>
-      <thead><tr><th>Date</th><th>Weight (lb)</th><th>Change</th><th>BF %</th></tr></thead>
-      <tbody id="logBody"><tr><td colspan="4" style="color:var(--muted); text-align:center; padding:16px;">No entries yet — log your first weight above.</td></tr></tbody>
-    </table>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Date</th><th>Weight (lb)</th><th>Change</th><th>BF %</th></tr></thead>
+        <tbody id="logBody"><tr><td colspan="4" style="color:var(--muted); text-align:center; padding:16px;">No entries yet — log your first weight above.</td></tr></tbody>
+      </table>
+    </div>
   </section>
 
   <section>
@@ -237,7 +242,7 @@
       <h2 style="margin:0;">🔥 6-month commitment</h2>
       <span class="cd-stat" id="cdStat">Day 1 of 184</span>
     </div>
-    <div class="cd-scroll"><div class="cd-grid" id="cdGrid"></div></div>
+    <div class="cd-grid" id="cdGrid"></div>
     <div class="cd-legend">
       <span><span class="cd-key cd-done"></span>Day completed</span>
       <span><span class="cd-key cd-missed"></span>Missed</span>
@@ -264,10 +269,12 @@
 
   <section>
     <h2>Milestones</h2>
-    <table>
-      <thead><tr><th>Milestone</th><th>Target weight</th><th>Est. date (1.5 lb/wk)</th><th>Status</th></tr></thead>
-      <tbody id="milestonesBody"></tbody>
-    </table>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Milestone</th><th>Target weight</th><th>Est. date (1.5 lb/wk)</th><th>Status</th></tr></thead>
+        <tbody id="milestonesBody"></tbody>
+      </table>
+    </div>
   </section>
 </div>
 
@@ -411,7 +418,7 @@
     if (!donutChart && typeof Chart !== 'undefined') {
       donutChart = new Chart($('donut').getContext('2d'), {
         type: 'doughnut',
-        data: { labels: ['Fat mass', 'Lean mass'], datasets: [{ data: [fat, LEAN_MASS], backgroundColor: ['#d29922', '#58a6ff'], borderWidth: 0, hoverOffset: 4 }] },
+        data: { labels: ['Fat mass', 'Lean mass'], datasets: [{ data: [fat, LEAN_MASS], backgroundColor: ['#fbbf24', '#6ea8ff'], borderWidth: 0, hoverOffset: 4 }] },
         options: { responsive: false, cutout: '72%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + c.label + ': ' + Number(c.raw).toFixed(1) + ' lb' } } } }
       });
     } else if (donutChart) {
@@ -457,7 +464,10 @@
     let html = '';
     for (let i = 0; i < cells[0].weekday; i++) html += '<div class="cd-cell cd-pad"></div>';
     cells.forEach(c => { html += '<div class="cd-cell cd-' + c.status + '" title="' + c.key + '"></div>'; });
-    $('cdGrid').innerHTML = html;
+    const cols = Math.ceil((cells[0].weekday + cells.length) / 7);
+    const grid = $('cdGrid');
+    grid.style.setProperty('--cols', cols);
+    grid.innerHTML = html;
     $('cdStat').textContent = 'Day ' + summary.dayNumber + ' of ' + summary.total + ' · ' + summary.done + ' completed · ends Dec 25, 2026';
   }
 
@@ -505,17 +515,17 @@
 
     const labels = weights.map(l => { const d = new Date(l.logged_at); return (d.getMonth() + 1) + '/' + d.getDate(); });
     const vals = weights.map(l => parseFloat(l.weight));
-    const colors = vals.map((w, i) => i === 0 ? '#58a6ff' : w < vals[i - 1] ? '#3fb950' : w > vals[i - 1] ? '#f85149' : '#58a6ff');
+    const colors = vals.map((w, i) => i === 0 ? '#6ea8ff' : w < vals[i - 1] ? '#4ade80' : w > vals[i - 1] ? '#f87171' : '#6ea8ff');
 
     weightChartInstance = new Chart(canvas.getContext('2d'), {
       type: 'line',
-      data: { labels, datasets: [{ data: vals, borderColor: '#58a6ff', backgroundColor: 'rgba(88,166,255,0.07)', pointBackgroundColor: colors, pointBorderColor: colors, pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: true }] },
+      data: { labels, datasets: [{ data: vals, borderColor: '#6ea8ff', backgroundColor: 'rgba(110,168,255,0.07)', pointBackgroundColor: colors, pointBorderColor: colors, pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: true }] },
       options: {
         responsive: true,
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.parsed.y + ' lb' } } },
         scales: {
-          x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 11 } } },
-          y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', callback: v => v + ' lb' }, min: Math.floor(Math.min(...vals) - 3), max: Math.ceil(Math.max(...vals) + 3) }
+          x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9fb0d0', font: { size: 11 } } },
+          y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9fb0d0', callback: v => v + ' lb' }, min: Math.floor(Math.min(...vals) - 3), max: Math.ceil(Math.max(...vals) + 3) }
         }
       }
     });
