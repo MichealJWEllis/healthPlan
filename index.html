@@ -946,6 +946,7 @@
 
 <body>
 <nav class="site-nav">
+  <a href="./tracker.html">Tracker</a>
   <a href="./index.html" class="active">Meal Plan</a>
   <a href="./workout.html">Workout</a>
 </nav>
@@ -971,7 +972,6 @@
         <div class="tab" onclick="switchTab('prep')">🥘 Sunday Prep</div>
         <div class="tab" onclick="switchTab('grocery')">🛒 Grocery List</div>
         <div class="tab" onclick="switchTab('recipes')">👨‍🍳 Recipes</div>
-        <div class="tab" onclick="switchTab('tracker')">📊 Tracker</div>
       </div>
     </div>
 
@@ -2061,95 +2061,14 @@
       </div>
     </section>
 
-    <section class="card section" id="tab-tracker">
-      <h2>Daily Tracker</h2>
-      <p class="note">Track meal-plan adherence, workouts, and weight with Supabase sync so it follows you across browsers.</p>
 
-      <div id="trackerAuth" class="tracker-auth-box">
-        <h3>Sign In To Sync</h3>
-        <p>Enter your email to receive a magic link. Your tracker data will sync through Supabase after sign-in.</p>
-        <div class="tracker-auth-row">
-          <input id="trackerEmail" class="tracker-auth-input" type="email" placeholder="your@email.com" />
-          <button class="weight-log-btn" onclick="sendMagicLink()">Send Link</button>
-        </div>
-        <div id="trackerAuthMsg" class="tracker-auth-msg"></div>
-      </div>
-
-      <div id="trackerApp" style="display:none">
-        <div class="tracker-toolbar">
-          <div class="note" id="trackerSignedInAs" style="margin:0"></div>
-          <button class="btn" onclick="signOut()">Sign out</button>
-        </div>
-
-        <div class="tracker-toolbar">
-          <div class="tracker-auth-row">
-            <label for="trackerLogDate" class="note" style="margin:0;align-self:center">Log date:</label>
-            <input id="trackerLogDate" class="tracker-auth-input" type="date" style="min-width:180px" />
-            <button class="btn" onclick="jumpToToday()">Today</button>
-          </div>
-          <div class="note" style="margin:0">Meal/workout toggles and weight logging use the selected date.</div>
-        </div>
-
-        <div class="checkin-card">
-          <h3 id="trackerDate">Today</h3>
-          <div class="checkin-grid">
-            <button class="checkin-btn" id="btnWorkout" onclick="toggleCheckin('workout')">
-              <span class="checkin-icon">💪</span>
-              <span class="checkin-label">Workout Done</span>
-              <span class="checkin-status" id="statusWorkout">Tap to log</span>
-            </button>
-            <button class="checkin-btn" id="btnMeal" onclick="toggleCheckin('meal')">
-              <span class="checkin-icon">🥗</span>
-              <span class="checkin-label">Meal Plan</span>
-              <span class="checkin-status" id="statusMeal">Tap to log</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="streak-row">
-          <div class="streak-block">
-            <div class="streak-num" id="workoutStreak">0</div>
-            <div class="streak-label">Workout Streak</div>
-          </div>
-          <div class="streak-block">
-            <div class="streak-num" id="mealStreak">0</div>
-            <div class="streak-label">Meal Streak</div>
-          </div>
-        </div>
-
-        <h3 style="margin-bottom:6px">Past 4 Weeks</h3>
-        <p class="note" style="margin-bottom:10px">
-          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);vertical-align:middle;margin-right:4px"></span>Workout &nbsp;
-          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);vertical-align:middle;margin-right:4px"></span>Meal plan
-        </p>
-        <div id="trackerCalendar"></div>
-
-        <div class="weight-section">
-          <h3 style="margin:0 0 12px">Weight Tracker</h3>
-          <div class="weight-entry-row">
-            <input id="weightInput" class="weight-entry-input" type="number" step="0.1" min="50" max="500" placeholder="Enter weight (lbs)" />
-            <button class="weight-log-btn" onclick="logWeight()">Log</button>
-          </div>
-          <div class="wstat-row" id="weightStats"></div>
-          <canvas id="weightChart"></canvas>
-        </div>
-      </div>
-    </section>
 
   </div>
 
   <footer>Anti-Inflammatory Meal System · Paired with MWF Upper Body + T/TH Swimming Program</footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-  <script src="./config.js"></script>
   <script>
     const STORAGE_KEY = 'grocery_checks_v1';
-    const { createClient } = supabase;
-    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let currentSession = null;
-    let trackerCache = null;
-    let weightChartInstance = null;
 
     function switchTab(name) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -2239,7 +2158,6 @@
       const savedWeek = localStorage.getItem('currentWeek') || 'A';
       setWeek(savedWeek);
       setPrepWeek(savedWeek);
-      document.getElementById('trackerLogDate').value = todayISO();
       const state = getState();
       allItems().forEach((el, i) => {
         el.dataset.id = 'item_' + i;
@@ -2249,296 +2167,7 @@
         }
       });
       updateProgress();
-      document.getElementById('trackerLogDate').addEventListener('change', () => {
-        renderTracker();
-      });
-      initAuth();
     });
-
-    function initAuth() {
-      db.auth.getSession().then(({ data: { session } }) => {
-        handleSession(session);
-      });
-
-      db.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN' && session) handleSession(session);
-        if (event === 'SIGNED_OUT') handleSession(null);
-      });
-    }
-
-    function handleSession(session) {
-      currentSession = session;
-      trackerCache = null;
-      if (session) {
-        document.getElementById('trackerAuth').style.display = 'none';
-        document.getElementById('trackerApp').style.display = 'block';
-        document.getElementById('trackerSignedInAs').textContent = 'Signed in as ' + session.user.email;
-        renderTracker();
-        renderWeightChart();
-      } else {
-        document.getElementById('trackerAuth').style.display = 'block';
-        document.getElementById('trackerApp').style.display = 'none';
-        document.getElementById('trackerAuthMsg').textContent = '';
-      }
-    }
-
-    async function sendMagicLink() {
-      const email = document.getElementById('trackerEmail').value.trim();
-      const msg = document.getElementById('trackerAuthMsg');
-      if (!email) {
-        msg.textContent = 'Enter your email first.';
-        return;
-      }
-
-      const { error } = await db.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: window.location.href }
-      });
-
-      msg.textContent = error ? 'Error: ' + error.message : 'Link sent. Check your email.';
-      if (!error) document.getElementById('trackerEmail').value = '';
-    }
-
-    async function signOut() {
-      await db.auth.signOut();
-    }
-
-    function todayISO() {
-      const d = new Date();
-      return d.getFullYear() + '-' +
-        String(d.getMonth() + 1).padStart(2, '0') + '-' +
-        String(d.getDate()).padStart(2, '0');
-    }
-
-    function getSelectedTrackerDate() {
-      const input = document.getElementById('trackerLogDate');
-      return input && input.value ? input.value : todayISO();
-    }
-
-    function jumpToToday() {
-      document.getElementById('trackerLogDate').value = todayISO();
-      renderTracker();
-    }
-
-    async function loadTracker() {
-      if (!currentSession) return {};
-      const { data, error } = await db
-        .from('daily_logs')
-        .select('date, workout, meal, weight')
-        .order('date', { ascending: false })
-        .limit(120);
-      if (error) {
-        console.error('Supabase fetch error:', error);
-        return {};
-      }
-      return Object.fromEntries((data || []).map(r => [r.date, {
-        workout: r.workout,
-        meal: r.meal,
-        weight: r.weight
-      }]));
-    }
-
-    async function upsertDay(date, patch) {
-      if (!currentSession) return;
-      const { error } = await db
-        .from('daily_logs')
-        .upsert({ date, user_id: currentSession.user.id, ...patch }, { onConflict: 'date,user_id' });
-      if (error) console.error('Supabase upsert error:', error);
-    }
-
-    async function toggleCheckin(type) {
-      const data = trackerCache || {};
-      const key = getSelectedTrackerDate();
-      const current = !!(data[key] && data[key][type]);
-      await upsertDay(key, { [type]: !current });
-      trackerCache = null;
-      await renderTracker();
-    }
-
-    function calcStreak(data, type) {
-      let streak = 0;
-      const d = new Date();
-      d.setHours(0, 0, 0, 0);
-      const todayKey = todayISO();
-      if (!data[todayKey] || !data[todayKey][type]) d.setDate(d.getDate() - 1);
-      for (let i = 0; i < 90; i++) {
-        const k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-        if (data[k] && data[k][type]) {
-          streak++;
-          d.setDate(d.getDate() - 1);
-        } else {
-          break;
-        }
-      }
-      return streak;
-    }
-
-    async function renderTracker() {
-      if (!currentSession) return;
-      if (!trackerCache) trackerCache = await loadTracker();
-      const data = trackerCache;
-      const today = todayISO();
-      const selected = getSelectedTrackerDate();
-      const selectedData = data[selected] || {};
-
-      const shownDate = new Date(selected + 'T12:00:00');
-      const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-      document.getElementById('trackerDate').textContent =
-        (selected === today ? 'Today' : 'Selected Day') + ' — ' + DAYS[shownDate.getDay()] + ', ' + MONTHS[shownDate.getMonth()] + ' ' + shownDate.getDate();
-
-      document.getElementById('btnWorkout').classList.toggle('done', !!selectedData.workout);
-      document.getElementById('btnMeal').classList.toggle('done', !!selectedData.meal);
-      document.getElementById('statusWorkout').textContent = selectedData.workout ? 'Done ✓' : 'Tap to log';
-      document.getElementById('statusMeal').textContent = selectedData.meal ? 'Done ✓' : 'Tap to log';
-
-      document.getElementById('workoutStreak').textContent = calcStreak(data, 'workout');
-      document.getElementById('mealStreak').textContent = calcStreak(data, 'meal');
-
-      const start = new Date();
-      start.setHours(0, 0, 0, 0);
-      start.setDate(start.getDate() - 27);
-      start.setDate(start.getDate() - start.getDay());
-
-      const end = new Date();
-      end.setHours(0, 0, 0, 0);
-
-      let html = '<div class="cal-grid">';
-      ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(l => { html += '<div class="cal-head">' + l + '</div>'; });
-      const cur = new Date(start);
-      while (cur <= end) {
-        const k = cur.getFullYear() + '-' + String(cur.getMonth() + 1).padStart(2, '0') + '-' + String(cur.getDate()).padStart(2, '0');
-        const entry = data[k] || {};
-        const cls = 'cal-day' + (k === selected ? ' cal-today' : '');
-        let dots = '';
-        if (entry.workout) dots += '<span class="dot dot-w"></span>';
-        if (entry.meal) dots += '<span class="dot dot-m"></span>';
-        html += '<div class="' + cls + '"><div class="cal-date">' + cur.getDate() + '</div><div class="cal-dots">' + dots + '</div></div>';
-        cur.setDate(cur.getDate() + 1);
-      }
-      html += '</div>';
-      document.getElementById('trackerCalendar').innerHTML = html;
-    }
-
-    async function loadWeightLogs() {
-      if (!currentSession) return [];
-      const { data, error } = await db
-        .from('weight_logs')
-        .select('id, logged_at, weight')
-        .order('logged_at', { ascending: true })
-        .limit(200);
-      if (error) {
-        console.error('Weight fetch error:', error);
-        return [];
-      }
-      return data || [];
-    }
-
-    async function logWeight() {
-      const input = document.getElementById('weightInput');
-      const weight = parseFloat(input.value);
-      if (isNaN(weight) || weight < 50 || weight > 500 || !currentSession) return;
-      const selected = getSelectedTrackerDate();
-
-      const { error } = await db.from('weight_logs').insert({
-        user_id: currentSession.user.id,
-        weight,
-        logged_at: selected + 'T12:00:00'
-      });
-      if (error) {
-        console.error('Weight insert error:', error);
-        return;
-      }
-
-      input.value = '';
-      await renderWeightChart();
-    }
-
-    function renderWeightStats(logs) {
-      const el = document.getElementById('weightStats');
-      if (!logs.length) {
-        el.innerHTML = '';
-        return;
-      }
-
-      const first = parseFloat(logs[0].weight);
-      const current = parseFloat(logs[logs.length - 1].weight);
-      const diff = (current - first).toFixed(1);
-      const sign = diff > 0 ? '+' : '';
-      const color = diff < 0 ? '#4ade80' : diff > 0 ? '#f87171' : 'var(--muted)';
-
-      el.innerHTML =
-        '<div class="wstat"><div class="wstat-val">' + first + '</div><div class="wstat-label">Start (lbs)</div></div>' +
-        '<div class="wstat"><div class="wstat-val">' + current + '</div><div class="wstat-label">Current (lbs)</div></div>' +
-        '<div class="wstat"><div class="wstat-val" style="color:' + color + '">' + sign + diff + '</div><div class="wstat-label">Total Change</div></div>';
-    }
-
-    async function renderWeightChart() {
-      if (!currentSession) return;
-      const logs = await loadWeightLogs();
-      renderWeightStats(logs);
-
-      const canvas = document.getElementById('weightChart');
-      if (!canvas || typeof Chart === 'undefined') return;
-      const ctx = canvas.getContext('2d');
-
-      if (weightChartInstance) weightChartInstance.destroy();
-      if (!logs.length) return;
-
-      const labels = logs.map(l => {
-        const d = new Date(l.logged_at);
-        return (d.getMonth() + 1) + '/' + d.getDate();
-      });
-      const weights = logs.map(l => parseFloat(l.weight));
-      const pointColors = weights.map((w, i) => {
-        if (i === 0) return '#6ea8ff';
-        return w < weights[i - 1] ? '#4ade80' : w > weights[i - 1] ? '#f87171' : '#6ea8ff';
-      });
-
-      const minW = Math.min(...weights);
-      const maxW = Math.max(...weights);
-
-      weightChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            data: weights,
-            borderColor: '#6ea8ff',
-            backgroundColor: 'rgba(110,168,255,0.07)',
-            pointBackgroundColor: pointColors,
-            pointBorderColor: pointColors,
-            pointRadius: 6,
-            pointHoverRadius: 8,
-            tension: 0.35,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: ctx => ctx.parsed.y + ' lbs'
-              }
-            }
-          },
-          scales: {
-            x: {
-              grid: { color: 'rgba(255,255,255,0.05)' },
-              ticks: { color: '#9fb0d0', font: { size: 11 } }
-            },
-            y: {
-              grid: { color: 'rgba(255,255,255,0.05)' },
-              ticks: { color: '#9fb0d0', callback: v => v + ' lbs' },
-              min: Math.floor(minW - 3),
-              max: Math.ceil(maxW + 3)
-            }
-          }
-        }
-      });
-    }
   </script>
 </body>
 

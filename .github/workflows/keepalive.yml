@@ -1,0 +1,19 @@
+name: Supabase keep-alive
+
+# Supabase free-tier projects pause after 7 days of no activity.
+# This pings the REST API every 3 days so the tracker's database stays awake.
+on:
+  schedule:
+    - cron: "0 9 */3 * *" # 09:00 UTC, every 3rd day
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST
+        run: |
+          curl -sS -o /dev/null -w "Supabase responded: HTTP %{http_code}\n" \
+            "https://zqirmvwhfanhnngchewn.supabase.co/rest/v1/daily_logs?select=date&limit=1" \
+            -H "apikey: sb_publishable_SvSLn43ue85UmyPseM1IUA_jCyUq8B4" \
+            -H "Authorization: Bearer sb_publishable_SvSLn43ue85UmyPseM1IUA_jCyUq8B4"
