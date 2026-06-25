@@ -14,8 +14,7 @@
   const TOTAL_LOSS = START_WEIGHT - GOAL_WEIGHT;
 
   // 6-month commitment window.
-  const GRID_START = "2026-06-25";
-  const GRID_END = "2026-12-25";
+  const GRID_START = "2026-06-25"; // default plan start; overridable per user
 
   const MILESTONES = [
     { label: "First 10 lb", weight: 248.4 },
@@ -99,11 +98,28 @@
     return cells;
   }
 
-  function gridSummary(cells, todayKey) {
+  function addMonths(key, n) {
+    const d = fromKey(key);
+    d.setMonth(d.getMonth() + n);
+    return ymd(d);
+  }
+
+  function sixMonthEnd(startKey) {
+    return addMonths(startKey, 6);
+  }
+
+  function gridSummary(cells, startKey, todayKey) {
     const total = cells.length;
     const done = cells.filter(c => c.status === "done").length;
-    const dayNumber = Math.min(total, Math.max(1, daysBetween(GRID_START, todayKey) + 1));
-    return { total, done, dayNumber };
+    const offset = daysBetween(startKey, todayKey); // today - start
+    const started = offset >= 0;
+    return {
+      total,
+      done,
+      started,
+      dayNumber: started ? Math.min(total, offset + 1) : 0,
+      daysUntilStart: started ? 0 : -offset,
+    };
   }
 
   function estDateLabel(startKey, weeks) {
@@ -117,12 +133,12 @@
   }
 
   const api = {
-    ymd, fromKey, addDays, daysBetween,
+    ymd, fromKey, addDays, addMonths, daysBetween,
     calcBF, fatMass, weeksToGoal,
-    isPlanDay, planStreak, gridCells, gridSummary,
+    isPlanDay, planStreak, gridCells, gridSummary, sixMonthEnd,
     estDateLabel, milestoneDate,
     MILESTONES,
-    consts: { START_WEIGHT, GOAL_WEIGHT, LEAN_MASS, START_BF, GOAL_BF, TOTAL_LOSS, GRID_START, GRID_END },
+    consts: { START_WEIGHT, GOAL_WEIGHT, LEAN_MASS, START_BF, GOAL_BF, TOTAL_LOSS, GRID_START },
   };
 
   if (typeof module !== "undefined" && module.exports) module.exports = api;

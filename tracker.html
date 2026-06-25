@@ -137,7 +137,7 @@
   <div style="display:flex; justify-content:space-between; align-items:flex-start; margin:18px 0; flex-wrap:wrap; gap:12px;">
     <div>
       <h1>Health Goal Tracker</h1>
-      <p class="sub">258.4 lb → 202.5 lb &nbsp;·&nbsp; 33.4% → 15% body fat &nbsp;·&nbsp; started June 25, 2026</p>
+      <p class="sub">258.4 lb → 202.5 lb &nbsp;·&nbsp; 33.4% → 15% body fat &nbsp;·&nbsp; <span id="startedLabel">started June 25, 2026</span></p>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
       <span class="sub">Streak:</span>
@@ -157,6 +157,11 @@
       <input type="date" id="trackerLogDate" />
       <button class="btn" onclick="jumpToToday()">Today</button>
       <span class="sub" style="margin-left:auto;">Check-ins &amp; weight use this date</span>
+    </div>
+    <div class="flex-row" style="margin-top:12px;">
+      <span class="sub">Plan start:</span>
+      <input type="date" id="planStartInput" onchange="savePlanStart()" />
+      <span class="sub" id="planStartMsg" style="margin-left:auto;"></span>
     </div>
   </section>
 
@@ -285,8 +290,11 @@
 <script>
   "use strict";
   const T = window.TrackerCalc;
-  const { START_WEIGHT, GOAL_WEIGHT, LEAN_MASS, START_BF, GOAL_BF, TOTAL_LOSS, GRID_START, GRID_END } = T.consts;
+  const { START_WEIGHT, GOAL_WEIGHT, LEAN_MASS, START_BF, GOAL_BF, TOTAL_LOSS, GRID_START } = T.consts;
   const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let startKey = GRID_START;            // plan start date (overridable per user)
+  let endKey = T.sixMonthEnd(startKey); // 6 months after start
 
   let session = null;
   let daily = {};      // { 'YYYY-MM-DD': { workout, meal } }
@@ -298,6 +306,8 @@
   const todayKey = () => T.ymd(new Date());
   const selectedDate = () => { const i = $('trackerLogDate'); return i && i.value ? i.value : todayKey(); };
   const currentWeight = () => weights.length ? parseFloat(weights[weights.length - 1].weight) : START_WEIGHT;
+  const fmtShort = key => T.fromKey(key).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const fmtLong = key => T.fromKey(key).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
   function showError(ctx) { const e = $('trackerError'); e.textContent = '⚠️ Couldn’t ' + ctx + '. Check your connection and try again.'; e.style.display = 'block'; }
   function clearError() { $('trackerError').style.display = 'none'; }
@@ -317,6 +327,10 @@
       $('trackerAuth').style.display = 'none';
       $('trackerApp').style.display = 'block';
       $('trackerSignedInAs').textContent = 'Signed in as ' + s.user.email;
+      const saved = s.user.user_metadata && s.user.user_metadata.plan_start;
+      startKey = saved || GRID_START;
+      endKey = T.sixMonthEnd(startKey);
+      $('planStartInput').value = startKey;
       loadAndRender();
     } else {
       $('trackerAuth').style.display = 'block';
@@ -336,6 +350,17 @@
   async function signOut() { await db.auth.signOut(); }
 
   function jumpToToday() { $('trackerLogDate').value = todayKey(); renderCheckin(); renderCalendar(); }
+
+  async function savePlanStart() {
+    const val = $('planStartInput').value;
+    if (!val) return;
+    startKey = val;
+    endKey = T.sixMonthEnd(startKey);
+    renderAll();
+    if (!session) return;
+    const { error } = await db.auth.updateUser({ data: { plan_start: val } });
+    $('planStartMsg').textContent = error ? 'Could not save start date' : 'Start date saved ✓';
+  }
 
   // ---- Data ----
   async function loadAndRender() {
@@ -413,7 +438,8 @@
     $('bfBar').style.width = bfPct.toFixed(1) + '%';
     $('pctLabel').textContent = Math.round(pct) + '%';
     $('bfBarLabel').textContent = Math.round(bfPct) + '%';
-    $('estDate').textContent = 'Est. goal: ' + T.estDateLabel(GRID_START, wks);
+    $('estDate').textContent = 'Est. goal: ' + T.estDateLabel(startKey, wks);
+    $('startedLabel').textContent = (startKey <= todayKey() ? 'started ' : 'starts ') + fmtShort(startKey);
 
     if (!donutChart && typeof Chart !== 'undefined') {
       donutChart = new Chart($('donut').getContext('2d'), {
@@ -459,8 +485,8 @@
   }
 
   function renderCountdown() {
-    const cells = T.gridCells(GRID_START, GRID_END, daily, todayKey());
-    const summary = T.gridSummary(cells, todayKey());
+    const cells = T.gridCells(startKey, endKey, daily, todayKey());
+    const summary = T.gridSummary(cells, startKey, todayKey());
     let html = '';
     for (let i = 0; i < cells[0].weekday; i++) html += '<div class="cd-cell cd-pad"></div>';
     cells.forEach(c => { html += '<div class="cd-cell cd-' + c.status + '" title="' + c.key + '"></div>'; });
@@ -468,7 +494,12 @@
     const grid = $('cdGrid');
     grid.style.setProperty('--cols', cols);
     grid.innerHTML = html;
-    $('cdStat').textContent = 'Day ' + summary.dayNumber + ' of ' + summary.total + ' · ' + summary.done + ' completed · ends Dec 25, 2026';
+    if (!summary.started) {
+      const d = summary.daysUntilStart;
+      $('cdStat').textContent = 'Starts ' + fmtLong(startKey) + ' · in ' + d + ' day' + (d !== 1 ? 's' : '');
+    } else {
+      $('cdStat').textContent = 'Day ' + summary.dayNumber + ' of ' + summary.total + ' · ' + summary.done + ' completed · ends ' + fmtShort(endKey);
+    }
   }
 
   function renderCalendar() {
@@ -538,7 +569,7 @@
       const next = !hit && weights.length > 0 && (w - m.weight) < 10;
       const cls = hit ? 'milestone-row hit' : next ? 'milestone-row next' : 'milestone-row';
       const status = hit ? '✓ Done' : next ? '← Next' : '—';
-      return '<tr class="' + cls + '"><td>' + m.label + '</td><td>' + m.weight.toFixed(1) + ' lb</td><td>' + T.milestoneDate(m.weight, GRID_START, 1.5) + '</td><td>' + status + '</td></tr>';
+      return '<tr class="' + cls + '"><td>' + m.label + '</td><td>' + m.weight.toFixed(1) + ' lb</td><td>' + T.milestoneDate(m.weight, startKey, 1.5) + '</td><td>' + status + '</td></tr>';
     }).join('');
   }
 
