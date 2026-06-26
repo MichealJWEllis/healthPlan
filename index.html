@@ -105,7 +105,7 @@
       margin-bottom: 0
     }
 
-    .tab {
+    .tab, .ktab {
       padding: 9px 18px;
       border-radius: 999px;
       font-size: 13px;
@@ -117,21 +117,21 @@
       transition: all .2s;
     }
 
-    .tab:hover {
+    .tab:hover, .ktab:hover {
       background: rgba(255, 255, 255, .07)
     }
 
-    .tab.active {
+    .tab.active, .ktab.active {
       background: var(--accent);
       color: #0b1220;
       border-color: var(--accent)
     }
 
-    .section {
+    .section, .ksection {
       display: none
     }
 
-    .section.active {
+    .section.active, .ksection.active {
       display: block
     }
 
@@ -977,7 +977,16 @@
 
     <div id="plan-keto">
 
-      <div class="card">
+      <div class="card" style="padding:14px">
+        <div class="tabs">
+          <div class="ktab active" onclick="switchKetoTab('rotation')">📅 7-Day Rotation</div>
+          <div class="ktab" onclick="switchKetoTab('prep')">🥘 Sunday Prep</div>
+          <div class="ktab" onclick="switchKetoTab('grocery')">🛒 Grocery List</div>
+          <div class="ktab" onclick="switchKetoTab('recipes')">👨‍🍳 Recipes</div>
+        </div>
+      </div>
+
+      <section class="card ksection active" id="ktab-rotation">
         <h2>Keto OMAD · One Meal a Day</h2>
         <p class="note">One large meal daily. Protein first to preserve lean mass, then fat to fill calories. Keep net carbs very low.</p>
 
@@ -1135,9 +1144,43 @@
             <p class="macro-row">Estimated macros: about <strong>2,050 cal</strong> · <strong>10g carbs</strong> · <strong>170g protein</strong> · <strong>150g fat</strong></p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="card">
+      <section class="card ksection" id="ktab-prep">
+        <h2>Sunday Prep — Keto OMAD</h2>
+        <p class="note">OMAD keeps prep light — one meal a day, simple proteins. A little Sunday batch-cooking makes most days a 2-minute reheat-and-plate.</p>
+
+        <h3>Batch-cook + portion into containers</h3>
+        <div class="meal-items">
+          <span class="meal-tag protein">Hard-boil 8–12 eggs (covers several days)</span>
+          <span class="meal-tag protein">Bake chicken thighs — Day 1</span>
+          <span class="meal-tag protein">Brown the ground beef — Day 3</span>
+          <span class="meal-tag protein">Cook turkey patties — Day 4</span>
+          <span class="meal-tag protein">Cook beef burger patties — Day 7</span>
+        </div>
+
+        <h3>Buy ready — zero cooking</h3>
+        <div class="meal-items">
+          <span class="meal-tag protein">Rotisserie chicken — Day 5</span>
+          <span class="meal-tag protein">Canned tuna — Day 6</span>
+          <span class="meal-tag protein">Pre-cooked shrimp — Day 2</span>
+        </div>
+
+        <h3>Cook fresh, day-of</h3>
+        <div class="meal-items">
+          <span class="meal-tag protein">Salmon — Day 2 (best fresh)</span>
+          <span class="meal-tag fat">Slice avocados day-of so they don't brown</span>
+        </div>
+
+        <h3>Veg prep</h3>
+        <div class="meal-items">
+          <span class="meal-tag veg">Wash + portion broccoli, asparagus, zucchini, salad greens</span>
+        </div>
+
+        <div class="reheat-note">⚡ Daily: pull a protein container, reheat in a pan with butter, add eggs + avocado + greens. Two minutes.</div>
+      </section>
+
+      <section class="card ksection" id="ktab-grocery">
         <h2>Keto Grocery List</h2>
         <p class="note">Buy across the week — the daily template repeats, so most items carry several days.</p>
         <div style="font-size:13px;color:var(--muted);line-height:1.9">
@@ -1150,7 +1193,36 @@
           style="margin-top:14px;padding:12px 16px;border:1px solid rgba(255,170,90,.3);border-radius:14px;background:rgba(255,170,90,.06);font-size:13px;color:var(--muted)">
           ⚠️ <strong style="color:#ffb86b">No pork:</strong> check labels on turkey bacon/sausage, deli meats, and pre-made burger patties — some contain pork or pork-derived ingredients.
         </div>
-      </div>
+      </section>
+
+      <section class="card ksection" id="ktab-recipes">
+        <h2>Keto Cooking Methods</h2>
+        <p class="note">Keep it simple — cook in butter or olive oil (never seed oils), salt well, don't fear the fat. Each method below is one pan or one tray.</p>
+
+        <h3>1 · Chicken thighs — Day 1</h3>
+        <p class="note">Season with salt, pepper, garlic. Bake at 400°F for 25–30 min, or pan-sear skin-side down ~7 min, flip, finish 5 min. Skin crisp, juices clear.</p>
+
+        <h3>2 · Salmon + shrimp — Day 2</h3>
+        <p class="note">Salmon: bake at 400°F for 12–15 min with butter, salt, lemon. Shrimp: sauté in butter 3–4 min until pink. Don't overcook either.</p>
+
+        <h3>3 · Ground beef bowl — Day 3</h3>
+        <p class="note">Brown the beef, season (salt, pepper, cumin/chili if you like). Plate over greens; top with cheddar, avocado, sour cream. Fry the eggs in the beef fat.</p>
+
+        <h3>4 · Turkey patties — Day 4</h3>
+        <p class="note">Form patties, season well (turkey needs it). Pan-cook in butter ~5–6 min per side to 165°F internal. Melt cheese on top at the end.</p>
+
+        <h3>5 · Rotisserie chicken — Day 5</h3>
+        <p class="note">No cooking — buy it hot, pull the meat, plate with avocado, eggs, and greens. The easiest day.</p>
+
+        <h3>6 · Tuna or chicken salad bowl — Day 6</h3>
+        <p class="note">Mix tuna (or shredded chicken) with mayo, salt, pepper. Pile over greens; add cheese and chopped hard-boiled eggs. No heat needed.</p>
+
+        <h3>7 · Beef burger patties — Day 7</h3>
+        <p class="note">Pan or grill 4–5 min per side; melt cheese in the last minute. Serve over zucchini or greens with avocado, pickles, mustard — no bun.</p>
+
+        <h3>Eggs — every day</h3>
+        <p class="note">Fried in butter, or hard-boiled from Sunday prep. 3–4 per meal.</p>
+      </section>
 
     </div>
 
@@ -2266,6 +2338,16 @@
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.getElementById('tab-' + name).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    // Keto's own tab switcher — scoped to #plan-keto so it never collides with the
+    // anti-inflammatory switchTab (separate .ktab / .ksection classes).
+    function switchKetoTab(name) {
+      const root = document.getElementById('plan-keto');
+      root.querySelectorAll('.ktab').forEach(t => t.classList.remove('active'));
+      root.querySelectorAll('.ksection').forEach(s => s.classList.remove('active'));
+      document.getElementById('ktab-' + name).classList.add('active');
       event.currentTarget.classList.add('active');
     }
 
