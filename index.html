@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Anti-Inflammatory Meal System</title>
+  <title>Meal System · Keto OMAD + Anti-Inflammatory</title>
   <style>
     :root {
       --bg: #0b1220;
@@ -951,20 +951,210 @@
   <a href="./workout.html">Workout</a>
 </nav>
   <header>
-    <h1>Anti-Inflammatory Meal System</h1>
-    <p class="sub">Mediterranean framework · Structred Week & Structured weekends · Joint inflammation &amp; weight loss
-    </p>
-    <div class="pill-row">
+    <h1 id="planTitle">Keto OMAD Meal System</h1>
+    <p class="sub" id="planSub">One meal a day · Ketogenic · ~2,000 cal · 160–200g protein · lean-mass-preserving cut</p>
+    <div class="pill-row" id="planPills">
+      <span class="pill">OMAD</span>
+      <span class="pill">Keto · 5–20g net carbs</span>
+      <span class="pill">160–200g protein</span>
+      <span class="pill">No pork</span>
       <span class="pill">No seed oils</span>
       <span class="pill">No refined sugar</span>
-      <span class="pill">No processed meats</span>
-      <span class="pill">No brown rice or grains</span>
-      <span class="pill">Olive oil only</span>
-      <span class="pill">Omega-3 priority</span>
     </div>
   </header>
 
   <div class="wrap">
+
+    <div
+      style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02);flex-wrap:wrap">
+      <span style="font-size:13px;color:var(--muted);flex-shrink:0">Plan:</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="btnPlanKeto" onclick="setPlan('keto')">🥩 Keto OMAD</button>
+        <button id="btnPlanAnti" onclick="setPlan('antiinflam')">🫒 Anti-Inflammatory</button>
+      </div>
+      <span style="font-size:12px;color:var(--muted);margin-left:4px">Your two systems — switch anytime</span>
+    </div>
+
+    <div id="plan-keto">
+
+      <div class="card">
+        <h2>Keto OMAD · One Meal a Day</h2>
+        <p class="note">One large meal daily. Protein first to preserve lean mass, then fat to fill calories. Keep net carbs very low.</p>
+
+        <div class="rule-banner">
+          <div class="rule-block highlight">
+            <div class="day-label">Daily Targets</div>
+            <div class="rule-text">~2,000 cal · 160–200g protein</div>
+            <div class="rule-sub">Net carbs 5–20g · fat fills the rest. Eat in one window; water, black coffee, or the morning tonic outside it.</div>
+          </div>
+          <div class="rule-block highlight">
+            <div class="day-label">Daily Template</div>
+            <div class="rule-text">18–24oz meat/fish + 4 eggs</div>
+            <div class="rule-sub">+ 1 avocado + 2 cups low-carb veg + 1–3 tbsp butter / olive oil / mayo + optional 1–2oz cheese.</div>
+          </div>
+        </div>
+
+        <h3>Every Morning (before the meal)</h3>
+        <div
+          style="padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02);font-size:13px;color:var(--muted);margin-bottom:18px">
+          <strong style="color:var(--text);display:block;margin-bottom:4px">🌅 Turmeric Drink — kept from your anti-inflammatory base</strong>
+          Turmeric · ginger · cayenne · black pepper · lemon juice · olive oil · small amount of honey. Near-zero calories — keeps the anti-inflammatory habit even on keto.
+        </div>
+
+        <h3>The 7-Day Rotation</h3>
+        <p class="note">Repeats weekly. Same template every day — just swap the main protein. Macros are estimates.</p>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">DAY 1</div>
+            <div class="day-sub">OMAD</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Chicken Thighs + Eggs + Avocado</div>
+            <div class="meal-items">
+              <span class="meal-tag protein">20oz cooked chicken thighs</span>
+              <span class="meal-tag protein">4 large eggs</span>
+              <span class="meal-tag fat">1 whole avocado</span>
+              <span class="meal-tag fat">2 tbsp butter or olive oil</span>
+              <span class="meal-tag veg">2 cups broccoli or spinach</span>
+            </div>
+            <p class="macro-row">Estimated macros: about <strong>2,000 cal</strong> · <strong>10g carbs</strong> · <strong>185g protein</strong> · <strong>140g fat</strong></p>
+          </div>
+        </div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">DAY 2</div>
+            <div class="day-sub">OMAD</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Salmon + Shrimp + Eggs</div>
+            <div class="meal-items">
+              <span class="meal-tag protein">12oz salmon</span>
+              <span class="meal-tag protein">12oz shrimp</span>
+              <span class="meal-tag protein">4 large eggs</span>
+              <span class="meal-tag fat">2–3 tbsp butter</span>
+              <span class="meal-tag veg">2 cups asparagus or zucchini</span>
+            </div>
+            <p class="macro-row">Estimated macros: about <strong>2,000 cal</strong> · <strong>10g carbs</strong> · <strong>190g protein</strong> · <strong>125g fat</strong></p>
+          </div>
+        </div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">DAY 3</div>
+            <div class="day-sub">OMAD</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Ground Beef Bowl</div>
+            <div class="meal-items">
+              <span class="meal-tag protein">20oz cooked 80/20 ground beef</span>
+              <span class="meal-tag protein">3 large eggs</span>
+              <span class="meal-tag fat">2oz cheddar</span>
+              <span class="meal-tag fat">1 whole avocado</span>
+              <span class="meal-tag fat">2 tbsp sour cream</span>
+              <span class="meal-tag veg">2 cups lettuce or spinach</span>
+            </div>
+            <div class="reheat-note">💡 Use 90/10 beef + 2 extra eggs (or a scoop of whey isolate) to push protein higher.</div>
+            <p class="macro-row">Estimated macros: about <strong>2,100 cal</strong> · <strong>12g carbs</strong> · <strong>160g protein</strong> · <strong>160g fat</strong></p>
+          </div>
+        </div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">DAY 4</div>
+            <div class="day-sub">OMAD</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Turkey Burger Patties + Eggs</div>
+            <div class="meal-items">
+              <span class="meal-tag protein">20oz cooked turkey patties / ground turkey</span>
+              <span class="meal-tag protein">4 large eggs</span>
+              <span class="meal-tag fat">1 whole avocado</span>
+              <span class="meal-tag fat">2 tbsp olive oil</span>
+              <span class="meal-tag fat">1–2oz cheese</span>
+              <span class="meal-tag veg">3 cups salad greens</span>
+            </div>
+            <p class="macro-row">Estimated macros: about <strong>2,000 cal</strong> · <strong>12g carbs</strong> · <strong>185g protein</strong> · <strong>135g fat</strong></p>
+          </div>
+        </div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">DAY 5</div>
+            <div class="day-sub">OMAD</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Rotisserie Chicken Plate</div>
+            <div class="meal-items">
+              <span class="meal-tag protein">20–24oz rotisserie chicken meat</span>
+              <span class="meal-tag protein">3 large eggs</span>
+              <span class="meal-tag fat">2 tbsp mayo or olive oil</span>
+              <span class="meal-tag fat">1 whole avocado</span>
+              <span class="meal-tag fat">1oz cheese</span>
+              <span class="meal-tag veg">2 cups broccoli or spinach</span>
+            </div>
+            <div class="reheat-note">💡 Easiest non-cook day — buy the chicken pre-cooked.</div>
+            <p class="macro-row">Estimated macros: about <strong>2,000 cal</strong> · <strong>12g carbs</strong> · <strong>195g protein</strong> · <strong>130g fat</strong></p>
+          </div>
+        </div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">DAY 6</div>
+            <div class="day-sub">OMAD</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Tuna or Chicken Salad Bowl</div>
+            <div class="meal-items">
+              <span class="meal-tag protein">2 cans tuna OR 12oz chicken</span>
+              <span class="meal-tag protein">3 large eggs</span>
+              <span class="meal-tag fat">1–2oz cheese</span>
+              <span class="meal-tag fat">2 tbsp mayo</span>
+              <span class="meal-tag veg">2 cups greens</span>
+            </div>
+            <p class="macro-row">Estimated macros: about <strong>1,900 cal</strong> · <strong>10g carbs</strong> · <strong>175g protein</strong> · <strong>120g fat</strong></p>
+          </div>
+        </div>
+
+        <div class="day-row">
+          <div class="day-label-col">
+            <div class="day-name">DAY 7</div>
+            <div class="day-sub">OMAD</div>
+          </div>
+          <div class="day-meal">
+            <div class="meal-title">Beef Burger Patties + Eggs</div>
+            <div class="meal-items">
+              <span class="meal-tag protein">20oz cooked beef patties (no bun)</span>
+              <span class="meal-tag protein">4 large eggs</span>
+              <span class="meal-tag fat">2oz cheese</span>
+              <span class="meal-tag fat">1 whole avocado</span>
+              <span class="meal-tag veg">2 cups zucchini</span>
+              <span class="meal-tag base">pickles · lettuce · mustard</span>
+            </div>
+            <p class="macro-row">Estimated macros: about <strong>2,050 cal</strong> · <strong>10g carbs</strong> · <strong>170g protein</strong> · <strong>150g fat</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Keto Grocery List</h2>
+        <p class="note">Buy across the week — the daily template repeats, so most items carry several days.</p>
+        <div style="font-size:13px;color:var(--muted);line-height:1.9">
+          <div><strong style="color:var(--text)">Proteins:</strong> chicken thighs · rotisserie chicken · ground beef · beef burger patties · ground turkey / turkey patties · salmon · shrimp · canned tuna · eggs</div>
+          <div><strong style="color:var(--text)">Fats:</strong> butter · olive oil · mayo · avocados · cheddar · sour cream</div>
+          <div><strong style="color:var(--text)">Low-carb veg:</strong> broccoli · spinach · asparagus · zucchini · salad greens · lettuce · pickles</div>
+          <div><strong style="color:var(--text)">Extras:</strong> mustard · salt · pepper</div>
+        </div>
+        <div
+          style="margin-top:14px;padding:12px 16px;border:1px solid rgba(255,170,90,.3);border-radius:14px;background:rgba(255,170,90,.06);font-size:13px;color:var(--muted)">
+          ⚠️ <strong style="color:#ffb86b">No pork:</strong> check labels on turkey bacon/sausage, deli meats, and pre-made burger patties — some contain pork or pork-derived ingredients.
+        </div>
+      </div>
+
+    </div>
+
+    <div id="plan-antiinflam" style="display:none">
 
     <div class="card" style="padding:14px">
       <div class="tabs">
@@ -2063,9 +2253,11 @@
 
 
 
+    </div><!-- /plan-antiinflam -->
+
   </div>
 
-  <footer>Anti-Inflammatory Meal System · Paired with MWF Upper Body + T/TH Swimming Program</footer>
+  <footer>Meal System · Keto OMAD + Anti-Inflammatory · Paired with MWF Upper Body + T/TH Swimming Program</footer>
 
   <script>
     const STORAGE_KEY = 'grocery_checks_v1';
@@ -2154,7 +2346,33 @@
       setGroceryWeek(w);
     }
 
+    function setPlan(p) {
+      localStorage.setItem('currentPlan', p);
+      document.getElementById('plan-keto').style.display = p === 'keto' ? 'block' : 'none';
+      document.getElementById('plan-antiinflam').style.display = p === 'antiinflam' ? 'block' : 'none';
+      const accent = 'padding:9px 22px;border-radius:999px;border:1px solid rgba(110,168,255,.5);background:rgba(110,168,255,.18);color:#cfe0ff;font-size:14px;font-weight:700;cursor:pointer';
+      const muted = 'padding:9px 22px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font-size:14px;font-weight:700;cursor:pointer';
+      document.getElementById('btnPlanKeto').style.cssText = p === 'keto' ? accent : muted;
+      document.getElementById('btnPlanAnti').style.cssText = p === 'antiinflam' ? accent : muted;
+      const meta = {
+        keto: {
+          t: 'Keto OMAD Meal System',
+          s: 'One meal a day · Ketogenic · ~2,000 cal · 160–200g protein · lean-mass-preserving cut',
+          pills: ['OMAD', 'Keto · 5–20g net carbs', '160–200g protein', 'No pork', 'No seed oils', 'No refined sugar']
+        },
+        antiinflam: {
+          t: 'Anti-Inflammatory Meal System',
+          s: 'Mediterranean framework · Structured week & structured weekends · Joint inflammation & weight loss',
+          pills: ['No seed oils', 'No refined sugar', 'No processed meats', 'No brown rice or grains', 'Olive oil only', 'Omega-3 priority']
+        }
+      }[p];
+      document.getElementById('planTitle').textContent = meta.t;
+      document.getElementById('planSub').textContent = meta.s;
+      document.getElementById('planPills').innerHTML = meta.pills.map(x => '<span class="pill">' + x + '</span>').join('');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      setPlan(localStorage.getItem('currentPlan') || 'keto');
       const savedWeek = localStorage.getItem('currentWeek') || 'A';
       setWeek(savedWeek);
       setPrepWeek(savedWeek);
