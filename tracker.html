@@ -36,6 +36,12 @@
   @media (max-width: 640px) { .top-grid { grid-template-columns: 1fr; } }
   .actions-col { display: flex; flex-direction: column; gap: 14px; }
   .actions-col section { margin-bottom: 0; }
+  .stats-grid { display: grid; grid-template-columns: 220px 1fr; gap: 14px; margin-bottom: 14px; align-items: start; }
+  @media (max-width: 640px) { .stats-grid { grid-template-columns: 1fr; } .stats-grid .donut-panel { order: 2; } }
+  .donut-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto; }
+  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+  .donut-center .big { font-size: 1.6rem; font-weight: 500; }
+  .donut-center .sm { font-size: 0.72rem; color: var(--muted); }
   .fast-ring-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto; }
   .fast-ring-track { fill: none; stroke: rgba(255,255,255,.07); stroke-width: 12; }
   .fast-ring-fill { fill: none; stroke: var(--green); stroke-width: 12; stroke-linecap: round; transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 0.5s ease; }
@@ -247,15 +253,32 @@
     </div>
   </details>
 
-  <div class="kpis">
-    <div class="kpi"><div class="label">Current weight</div><div class="value" id="kpiWeight">—</div><div class="sub2">lb</div></div>
-    <div class="kpi"><div class="label">Lost so far</div><div class="value green" id="kpiLost">—</div><div class="sub2">lb</div></div>
-    <div class="kpi"><div class="label">To goal</div><div class="value" id="kpiToGo">—</div><div class="sub2">lb remaining</div></div>
-    <div class="kpi"><div class="label">Body fat</div><div class="value amber" id="kpiBF">—</div><div class="sub2" id="kpiFatSub">goal: 15%</div></div>
-  </div>
+  <div class="stats-grid">
+    <section class="donut-panel" style="padding:14px; margin-bottom:0;">
+      <div class="donut-wrap">
+        <canvas id="donut" width="200" height="200" role="img" aria-label="Body composition donut: fat vs lean mass"></canvas>
+        <div class="donut-center">
+          <div class="big amber" id="bfDisplay">—</div>
+          <div class="sm">body fat</div>
+          <div class="sm" style="margin-top:3px;">goal: 15%</div>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:0.78rem;">
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px;"></span>Fat</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px;"></span>Lean</span>
+      </div>
+    </section>
 
-  <section>
-    <div class="bar-wrap">
+    <div>
+      <div class="kpis">
+        <div class="kpi"><div class="label">Current weight</div><div class="value" id="kpiWeight">—</div><div class="sub2">lb</div></div>
+        <div class="kpi"><div class="label">Lost so far</div><div class="value green" id="kpiLost">—</div><div class="sub2">lb</div></div>
+        <div class="kpi"><div class="label">To goal</div><div class="value" id="kpiToGo">—</div><div class="sub2">lb remaining</div></div>
+        <div class="kpi"><div class="label">Fat mass</div><div class="value amber" id="kpiFat">—</div><div class="sub2">lb (goal: 30.4)</div></div>
+      </div>
+
+      <section style="margin-bottom:0;">
+        <div class="bar-wrap">
       <div class="bar-head"><span>Weight progress</span><span id="pctLabel">—</span></div>
       <div class="track"><div class="fill green" id="weightBar"></div></div>
       <div class="bar-sub"><span>258.4 lb</span><span>202.5 lb</span></div>
@@ -274,7 +297,9 @@
       </div>
       <span class="sub" id="estDate" style="margin-left:auto;"></span>
     </div>
-  </section>
+      </section>
+    </div>
+  </div>
 
   <section>
     <div class="cd-head">
@@ -341,6 +366,7 @@
   let daily = {};      // { 'YYYY-MM-DD': { workout, meal } }
   let weights = [];    // [{ id, logged_at, weight }] ascending
   let weightChartInstance = null;
+  let donutChart = null;
   let habitInFlight = { workout: false, meal: false };
   let armedDeleteId = null;
   let armedDeleteTimer = null;
@@ -755,14 +781,25 @@
     $('kpiWeight').textContent = w.toFixed(1);
     $('kpiLost').textContent = Math.max(0, lost).toFixed(1);
     $('kpiToGo').textContent = Math.max(0, toGo).toFixed(1);
-    $('kpiBF').textContent = bf.toFixed(1) + '%';
-    $('kpiFatSub').textContent = fat.toFixed(1) + ' lb fat mass · goal: 15%';
+    $('kpiFat').textContent = fat.toFixed(1);
+    $('bfDisplay').textContent = bf.toFixed(1) + '%';
     $('weightBar').style.transform = 'scaleX(' + (pct / 100).toFixed(3) + ')';
     $('bfBar').style.transform = 'scaleX(' + (bfPct / 100).toFixed(3) + ')';
     $('pctLabel').textContent = Math.round(pct) + '%';
     $('bfBarLabel').textContent = Math.round(bfPct) + '%';
     $('estDate').textContent = 'Est. goal: ' + T.estDateLabel(startKey, wks);
     $('startedLabel').textContent = (startKey <= todayKey() ? 'started ' : 'starts ') + fmtShort(startKey);
+
+    if (!donutChart && typeof Chart !== 'undefined') {
+      donutChart = new Chart($('donut').getContext('2d'), {
+        type: 'doughnut',
+        data: { labels: ['Fat mass', 'Lean mass'], datasets: [{ data: [fat, LEAN_MASS], backgroundColor: ['#fbbf24', '#6ea8ff'], borderWidth: 0 }] },
+        options: { responsive: false, cutout: '72%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + c.label + ': ' + Number(c.raw).toFixed(1) + ' lb' } } } }
+      });
+    } else if (donutChart) {
+      donutChart.data.datasets[0].data = [parseFloat(fat.toFixed(1)), parseFloat(LEAN_MASS.toFixed(1))];
+      donutChart.update();
+    }
   }
 
   function renderLogTable() {
