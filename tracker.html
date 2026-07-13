@@ -156,6 +156,10 @@
     <input id="trackerEmail" class="tracker-auth-input" type="email" placeholder="your@email.com" />
     <button class="primary" onclick="sendMagicLink()">Send link</button>
   </div>
+  <div class="tracker-auth-row" style="margin-top:8px;">
+    <input id="trackerOtp" class="tracker-auth-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code from the email" />
+    <button class="btn" onclick="signInWithCode()">Sign in with code</button>
+  </div>
   <div id="trackerAuthMsg" class="tracker-auth-msg"></div>
 </div>
 
@@ -464,8 +468,19 @@
     // Canonical URL (no query/hash) so it always matches the Supabase redirect allowlist
     const redirectUrl = window.location.origin + window.location.pathname;
     const { error } = await db.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectUrl } });
-    msg.textContent = error ? 'Error: ' + error.message : 'Link sent. Check your email. Tip: open the link in this same browser, not the mail app’s built-in one.';
-    if (!error) $('trackerEmail').value = '';
+    msg.textContent = error ? 'Error: ' + error.message : 'Sent. Tap the link on this device, or type the 6-digit code from the email below.';
+  }
+
+  // Code entry sidesteps every link failure mode: in-app browsers, link
+  // scanners, redirect allowlists. Needs {{ .Token }} in the magic-link email template.
+  async function signInWithCode() {
+    const email = $('trackerEmail').value.trim();
+    const code = $('trackerOtp').value.trim();
+    const msg = $('trackerAuthMsg');
+    if (!email || !code) { msg.textContent = 'Enter your email and the 6-digit code from the email.'; return; }
+    const { error } = await db.auth.verifyOtp({ email, token: code, type: 'email' });
+    if (error) { msg.textContent = 'Error: ' + error.message; return; }
+    $('trackerOtp').value = '';
   }
 
   // A failed/expired link comes back with the reason in the URL hash — show it
