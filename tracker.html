@@ -461,9 +461,19 @@
     const email = $('trackerEmail').value.trim();
     const msg = $('trackerAuthMsg');
     if (!email) { msg.textContent = 'Enter your email first.'; return; }
-    const { error } = await db.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
-    msg.textContent = error ? 'Error: ' + error.message : 'Link sent. Check your email.';
+    // Canonical URL (no query/hash) so it always matches the Supabase redirect allowlist
+    const redirectUrl = window.location.origin + window.location.pathname;
+    const { error } = await db.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectUrl } });
+    msg.textContent = error ? 'Error: ' + error.message : 'Link sent. Check your email. Tip: open the link in this same browser, not the mail app’s built-in one.';
     if (!error) $('trackerEmail').value = '';
+  }
+
+  // A failed/expired link comes back with the reason in the URL hash — show it
+  // instead of silently re-presenting the sign-in box.
+  function surfaceAuthRedirectError() {
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const reason = hashParams.get('error_description') || hashParams.get('error_code') || hashParams.get('error');
+    if (reason) $('trackerAuthMsg').textContent = 'Sign-in link problem: ' + reason + '. Send yourself a fresh link.';
   }
 
   async function signOut() { await db.auth.signOut(); }
@@ -940,6 +950,7 @@
     $('trackerLogDate').addEventListener('change', () => { renderCheckin(); renderCalendar(); });
     $('weighForm').addEventListener('submit', e => { e.preventDefault(); logWeight(); });
     document.querySelectorAll('input[name="pace"]').forEach(r => r.addEventListener('change', () => { renderHeaderAndBars(); renderMilestones(); }));
+    surfaceAuthRedirectError();
     initAuth();
   });
 </script>
