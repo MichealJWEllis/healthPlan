@@ -57,18 +57,32 @@
     return Math.max(0, Math.ceil((weight - GOAL_WEIGHT) / pace));
   }
 
-  // A day "counts" only when BOTH workout and meal are logged true.
-  function isPlanDay(dayEntry) {
-    return !!(dayEntry && dayEntry.workout && dayEntry.meal);
+  // Program schedule: lifting days are Mon/Wed/Fri (see workout.html).
+  const WORKOUT_WEEKDAYS = [1, 3, 5];
+
+  function isWorkoutWeekday(dayKey) {
+    return WORKOUT_WEEKDAYS.includes(fromKey(dayKey).getDay());
+  }
+
+  // A day counts toward the plan when it matches the program actually being run:
+  // - a fasted day (16h+ fasting that day, computed by the page) counts on its own;
+  //   demanding a workout mid water-fast would punish the most disciplined days
+  // - otherwise "ate clean" is always required, "worked out" only on Mon/Wed/Fri
+  function isPlanDay(dayEntry, dayKey, fastedDays) {
+    if (fastedDays && fastedDays.has(dayKey)) return true;
+    const meal = !!(dayEntry && dayEntry.meal);
+    const workout = !!(dayEntry && dayEntry.workout);
+    return meal && (workout || !isWorkoutWeekday(dayKey));
   }
 
   // Consecutive plan-days ending today (or yesterday if today isn't done yet).
-  function planStreak(daily, todayKey) {
+  function planStreak(daily, todayKey, fastedDays) {
     let streak = 0;
     let d = fromKey(todayKey);
-    if (!isPlanDay(daily[todayKey])) d = addDays(d, -1);
+    if (!isPlanDay(daily[todayKey], todayKey, fastedDays)) d = addDays(d, -1);
     for (let i = 0; i < 400; i++) {
-      if (isPlanDay(daily[ymd(d)])) {
+      const key = ymd(d);
+      if (isPlanDay(daily[key], key, fastedDays)) {
         streak++;
         d = addDays(d, -1);
       } else {
@@ -80,7 +94,7 @@
 
   // One cell per calendar day from start..end inclusive.
   // status: done | missed (past, not a plan day) | today | future
-  function gridCells(startKey, endKey, daily, todayKey) {
+  function gridCells(startKey, endKey, daily, todayKey, fastedDays) {
     const end = fromKey(endKey);
     const today = fromKey(todayKey);
     const cells = [];
@@ -88,7 +102,7 @@
     while (cur <= end) {
       const key = ymd(cur);
       let status;
-      if (isPlanDay(daily[key])) status = "done";
+      if (isPlanDay(daily[key], key, fastedDays)) status = "done";
       else if (+cur === +today) status = "today";
       else if (cur < today) status = "missed";
       else status = "future";
@@ -135,7 +149,7 @@
   const api = {
     ymd, fromKey, addDays, addMonths, daysBetween,
     calcBF, fatMass, weeksToGoal,
-    isPlanDay, planStreak, gridCells, gridSummary, sixMonthEnd,
+    isPlanDay, isWorkoutWeekday, planStreak, gridCells, gridSummary, sixMonthEnd,
     estDateLabel, milestoneDate,
     MILESTONES,
     consts: { START_WEIGHT, GOAL_WEIGHT, LEAN_MASS, START_BF, GOAL_BF, TOTAL_LOSS, GRID_START },

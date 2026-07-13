@@ -18,75 +18,82 @@
   h2 { font-size: 1rem; font-weight: 500; margin-bottom: 12px; }
   h3 { font-size: 0.95rem; font-weight: 500; }
   .sub { color: var(--muted); font-size: 0.82rem; }
+  .coach { font-size: 0.9rem; color: var(--text); opacity: 0.85; margin-top: 6px; max-width: 60ch; }
   section { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
   .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
   .kpi { background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-  .kpi .label { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .kpi .label { color: var(--muted); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; }
   .kpi .value { font-size: 1.4rem; font-weight: 500; margin-top: 4px; }
-  .kpi .sub2 { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+  .kpi .sub2 { font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
   .green { color: var(--green); } .amber { color: var(--amber); } .red { color: var(--red); } .blue { color: var(--blue); }
   .bar-wrap { margin-bottom: 14px; }
   .bar-head { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; }
   .track { background: var(--panel2); border-radius: 6px; height: 18px; overflow: hidden; position: relative; }
-  .fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
+  .fill { height: 100%; width: 100%; border-radius: 6px; transform: scaleX(0); transform-origin: left; transition: transform 0.5s ease; }
   .fill.green { background: var(--green); } .fill.amber { background: var(--amber); }
-  .bar-sub { font-size: 0.72rem; color: var(--muted); margin-top: 3px; display: flex; justify-content: space-between; }
-  .top-grid { display: grid; grid-template-columns: 220px 220px 1fr; gap: 14px; margin-bottom: 14px; align-items: start; }
-  @media (max-width: 980px) { .top-grid { grid-template-columns: 1fr 1fr; } .top-grid .top-main { grid-column: 1 / -1; } }
-  @media (max-width: 640px) { .top-grid { grid-template-columns: 1fr; } .top-grid .top-main { grid-column: auto; } }
-  .donut-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto; }
-  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
-  .donut-center .big { font-size: 1.6rem; font-weight: 500; }
-  .donut-center .sm { font-size: 0.72rem; color: var(--muted); }
+  .bar-sub { font-size: 0.78rem; color: var(--muted); margin-top: 3px; display: flex; justify-content: space-between; }
+  .top-grid { display: grid; grid-template-columns: 220px 1fr; gap: 14px; margin-bottom: 14px; align-items: start; }
+  @media (max-width: 640px) { .top-grid { grid-template-columns: 1fr; } }
+  .actions-col { display: flex; flex-direction: column; gap: 14px; }
+  .actions-col section { margin-bottom: 0; }
   .fast-ring-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto; }
   .fast-ring-track { fill: none; stroke: rgba(255,255,255,.07); stroke-width: 12; }
   .fast-ring-fill { fill: none; stroke: var(--green); stroke-width: 12; stroke-linecap: round; transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 0.5s ease; }
   .fast-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; width: 145px; }
   .fast-center .big { font-size: 1.45rem; font-weight: 500; font-variant-numeric: tabular-nums; }
   .fast-center .sm { font-size: 0.72rem; color: var(--muted); }
+  .fast-center .stage { font-size: 0.8rem; font-weight: 600; margin-top: 2px; }
   .fast-controls { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
   .fast-controls input[type=datetime-local] { width: 100%; }
-  .fast-sub { font-size: 0.72rem; color: var(--muted); }
+  .fast-sub { font-size: 0.78rem; color: var(--muted); }
   .fast-end-btn { border-color: rgba(248,113,113,.5); color: var(--red); }
   .habits { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
-  .habit-btn { background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 8px; cursor: pointer; color: var(--text); font-family: inherit; font-size: 0.82rem; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: background 0.2s, border-color 0.2s; }
+  .habit-btn { background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 8px; min-height: 44px; cursor: pointer; color: var(--text); font-family: inherit; font-size: 0.82rem; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: background 0.2s, border-color 0.2s; }
   .habit-btn:hover { border-color: var(--accent); }
   .habit-btn.done { background: var(--success-bg); border-color: var(--success-border); color: var(--green); }
   .habit-icon { font-size: 1.4rem; }
-  .habit-status { font-size: 0.72rem; color: var(--muted); }
+  .habit-status { font-size: 0.8rem; color: var(--muted); }
   .habit-btn.done .habit-status { color: var(--green); }
-  input[type=number], input[type=date], input[type=email], input[type=datetime-local] { background: var(--panel2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; font-family: inherit; color-scheme: dark; }
-  input:focus { outline: none; border-color: var(--accent); }
-  button.primary { background: var(--accent); color: #0b1220; border: none; border-radius: 8px; padding: 9px 18px; font-size: 0.85rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  input[type=number], input[type=date], input[type=email], input[type=datetime-local] { background: var(--panel2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 10px 12px; font-size: 1rem; min-height: 44px; font-family: inherit; color-scheme: dark; }
+  input:focus { border-color: var(--accent); }
+  input:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.primary { background: var(--accent); color: #0b1220; border: none; border-radius: 8px; padding: 10px 18px; min-height: 44px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit; }
   button.primary:hover { opacity: 0.9; }
-  .btn { background: rgba(255,255,255,.03); border: 1px solid var(--line); color: var(--text); border-radius: 999px; padding: 7px 16px; font-size: 0.82rem; cursor: pointer; font-family: inherit; }
+  .btn { background: rgba(255,255,255,.03); border: 1px solid var(--line); color: var(--text); border-radius: 999px; padding: 10px 18px; min-height: 44px; font-size: 0.85rem; cursor: pointer; font-family: inherit; }
   .btn:hover { background: rgba(255,255,255,.07); }
+  .row-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.9rem; padding: 4px 8px; font-family: inherit; }
+  .row-del:hover { color: var(--red); }
   .radio-group { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
   .radio-group label { display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer; }
   .table-scroll { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
   th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
-  th { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
-  td:last-child { text-align: right; }
+  th { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
   .streak-badge { background: var(--yellow); color: #1a0d00; border-radius: 20px; padding: 3px 10px; font-size: 0.78rem; font-weight: 600; }
   .milestone-row.hit { color: var(--green); }
   .milestone-row.next { font-weight: 500; color: var(--accent); }
   .flex-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
   /* Site nav (shared look with index.html / workout.html) */
-  .site-nav { max-width: none; margin: 0; padding: 16px clamp(16px, 2.5vw, 40px) 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .site-nav { max-width: none; margin: 0; padding: 16px 18px 4px; display: flex; gap: 8px; flex-wrap: wrap; }
   .site-nav a { padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--muted); text-decoration: none; transition: all .2s; }
   .site-nav a:hover { background: rgba(255,255,255,.07); }
   .site-nav a.active { background: var(--accent); color: #0b1220; border-color: var(--accent); }
 
-  /* Auth + toolbar */
+  /* Loading, auth, settings */
+  .tracker-loading { text-align: center; color: var(--muted); padding: 80px 20px; }
   .tracker-auth-box { max-width: 440px; margin: 24px auto; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
   .tracker-auth-box h3 { margin: 0 0 8px; }
   .tracker-auth-box p { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
   .tracker-auth-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .tracker-auth-input { flex: 1; min-width: 200px; }
   .tracker-auth-msg { min-height: 18px; margin-top: 10px; font-size: 12px; color: var(--muted); }
-  .tracker-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .settings { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; margin-bottom: 14px; }
+  .settings summary { cursor: pointer; padding: 14px 18px; font-size: 0.85rem; color: var(--muted); list-style: none; min-height: 44px; display: flex; align-items: center; gap: 8px; }
+  .settings summary::-webkit-details-marker { display: none; }
+  .settings summary::before { content: '▸'; transition: transform 0.15s; }
+  .settings[open] summary::before { transform: rotate(90deg); }
+  .settings-body { padding: 0 18px 16px; display: flex; flex-direction: column; gap: 12px; }
   .tracker-error { display: none; margin-bottom: 14px; padding: 10px 14px; border-radius: 10px; background: rgba(248,113,113,.12); border: 1px solid rgba(248,113,113,.4); color: #ffd0cc; font-size: 0.85rem; }
 
   /* 4-week calendar */
@@ -119,7 +126,7 @@
   .cd-missed { background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.13); }
   .cd-future { background: rgba(255,255,255,.03); border-color: var(--line); }
   .cd-today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-  .cd-legend { display: flex; gap: 14px; margin-top: 12px; font-size: 0.72rem; color: var(--muted); flex-wrap: wrap; }
+  .cd-legend { display: flex; gap: 14px; margin-top: 12px; font-size: 0.78rem; color: var(--muted); flex-wrap: wrap; }
   .cd-legend span { display: flex; align-items: center; gap: 5px; }
   .cd-key { width: 11px; height: 11px; border-radius: 3px; display: inline-block; border: 1px solid var(--line); }
 </style>
@@ -132,10 +139,13 @@
   <a href="./workout.html">Workout</a>
 </nav>
 
+<!-- Resolving session -->
+<div id="trackerLoading" class="tracker-loading">Loading your tracker…</div>
+
 <!-- Signed-out: auth gate -->
-<div id="trackerAuth" class="tracker-auth-box">
+<div id="trackerAuth" class="tracker-auth-box" style="display:none">
   <h3>Sign in to your tracker</h3>
-  <p>Enter your email for a magic link. Your weight and check-ins sync through Supabase, so they follow you across every device.</p>
+  <p>Enter your email for a magic link. Your weight, check-ins, and fasts sync to your account and follow you across every device.</p>
   <div class="tracker-auth-row">
     <input id="trackerEmail" class="tracker-auth-input" type="email" placeholder="your@email.com" />
     <button class="primary" onclick="sendMagicLink()">Send link</button>
@@ -149,50 +159,19 @@
   <div style="display:flex; justify-content:space-between; align-items:flex-start; margin:18px 0; flex-wrap:wrap; gap:12px;">
     <div>
       <h1>Health Goal Tracker</h1>
-      <p class="sub">258.4 lb → 202.5 lb &nbsp;·&nbsp; 33.4% → 15% body fat &nbsp;·&nbsp; <span id="startedLabel">started June 25, 2026</span></p>
+      <p class="sub">258.4 lb → 202.5 lb &nbsp;·&nbsp; 33.4% → 15% body fat &nbsp;·&nbsp; <span id="startedLabel"></span></p>
+      <p class="coach" id="coachLine"></p>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
-      <span class="sub">Streak:</span>
-      <span class="streak-badge" id="streakBadge">0 days</span>
+      <span class="sub">Day streak:</span>
+      <span class="streak-badge" id="streakBadge">—</span>
     </div>
   </div>
 
-  <div id="trackerError" class="tracker-error"></div>
+  <div id="trackerError" class="tracker-error" role="alert" aria-live="polite"></div>
 
-  <section>
-    <div class="tracker-toolbar" style="margin:0;">
-      <div class="sub" id="trackerSignedInAs"></div>
-      <button class="btn" onclick="signOut()">Sign out</button>
-    </div>
-    <div class="flex-row" style="margin-top:12px;">
-      <span class="sub">Logging for:</span>
-      <input type="date" id="trackerLogDate" />
-      <button class="btn" onclick="jumpToToday()">Today</button>
-      <span class="sub" style="margin-left:auto;">Check-ins &amp; weight use this date</span>
-    </div>
-    <div class="flex-row" style="margin-top:12px;">
-      <span class="sub">Plan start:</span>
-      <input type="date" id="planStartInput" onchange="savePlanStart()" />
-      <span class="sub" id="planStartMsg" style="margin-left:auto;"></span>
-    </div>
-  </section>
-
+  <!-- Daily cockpit: fast timer + the two logging actions -->
   <div class="top-grid">
-    <section style="padding:14px;">
-      <div class="donut-wrap">
-        <canvas id="donut" width="200" height="200" role="img" aria-label="Body composition donut: fat vs lean mass"></canvas>
-        <div class="donut-center">
-          <div class="big amber" id="bfDisplay">33.4%</div>
-          <div class="sm">body fat</div>
-          <div class="sm" style="margin-top:3px;">goal: 15%</div>
-        </div>
-      </div>
-      <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:0.78rem;">
-        <span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px;"></span>Fat</span>
-        <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px;"></span>Lean</span>
-      </div>
-    </section>
-
     <section style="padding:14px;">
       <div class="fast-ring-wrap">
         <svg width="200" height="200" viewBox="0 0 200 200" role="img" aria-label="Fasting timer progress ring">
@@ -201,7 +180,7 @@
         </svg>
         <div class="fast-center">
           <div class="big" id="fastElapsed">—</div>
-          <div class="sm" id="fastStage">not fasting</div>
+          <div class="stage" id="fastStage">not fasting</div>
           <div class="sm" id="fastSince" style="margin-top:3px;"></div>
         </div>
       </div>
@@ -214,82 +193,99 @@
       <div class="fast-controls" id="fastActive" style="display:none;">
         <span class="fast-sub">Started (adjust if needed):</span>
         <input type="datetime-local" id="fastEditStart" onchange="updateFastStart()" />
-        <button class="btn fast-end-btn" onclick="endFast()">End fast</button>
+        <button class="btn fast-end-btn" id="endFastBtn" onclick="endFast()">End fast</button>
       </div>
-      <div class="fast-sub" id="fastStreakLabel" style="text-align:center; margin-top:10px;"></div>
+      <div class="fast-sub" id="fastMsg" aria-live="polite" style="text-align:center; margin-top:8px;"></div>
+      <div class="fast-sub" id="fastStreakLabel" style="text-align:center; margin-top:4px;"></div>
     </section>
 
-    <div class="top-main">
-      <div class="kpis">
-        <div class="kpi"><div class="label">Current weight</div><div class="value" id="kpiWeight">258.4</div><div class="sub2">lb</div></div>
-        <div class="kpi"><div class="label">Lost so far</div><div class="value green" id="kpiLost">0.0</div><div class="sub2">lb</div></div>
-        <div class="kpi"><div class="label">To goal</div><div class="value" id="kpiToGo">55.9</div><div class="sub2">lb remaining</div></div>
-        <div class="kpi"><div class="label">Fat mass</div><div class="value amber" id="kpiFat">86.3</div><div class="sub2">lb (goal: 30.4)</div></div>
-      </div>
+    <div class="actions-col">
+      <section>
+        <h2 style="margin-bottom:10px;">Log weight <span class="sub" style="font-weight:400;" id="logDateChip"></span></h2>
+        <form id="weighForm" class="flex-row">
+          <input type="number" id="weightInput" step="0.1" min="50" max="500" placeholder="e.g. 257.2" style="width:140px;" />
+          <button class="primary" type="submit">Log weight</button>
+          <span class="sub" id="weightMsg" aria-live="polite"></span>
+        </form>
+      </section>
 
       <section>
-        <div class="bar-wrap">
-          <div class="bar-head"><span>Weight progress</span><span id="pctLabel">0%</span></div>
-          <div class="track"><div class="fill green" id="weightBar" style="width:0%;"></div></div>
-          <div class="bar-sub"><span>258.4 lb</span><span>202.5 lb</span></div>
+        <h2 style="margin-bottom:10px;">Check-in <span class="sub" style="font-weight:400;" id="checkinDate"></span></h2>
+        <div class="habits">
+          <button class="habit-btn" id="btnWorkout" aria-pressed="false" onclick="toggleHabit('workout')">
+            <span class="habit-icon">🏋️</span>Worked out
+            <span class="habit-status" id="statusWorkout">Tap to log</span>
+          </button>
+          <button class="habit-btn" id="btnMeal" aria-pressed="false" onclick="toggleHabit('meal')">
+            <span class="habit-icon">🥗</span>Ate clean
+            <span class="habit-status" id="statusMeal">Tap to log</span>
+          </button>
         </div>
-        <div class="bar-wrap">
-          <div class="bar-head"><span>Body fat reduction</span><span id="bfBarLabel">0%</span></div>
-          <div class="track"><div class="fill amber" id="bfBar" style="width:0%;"></div></div>
-          <div class="bar-sub"><span>33.4%</span><span>15%</span></div>
-        </div>
-        <div class="flex-row" style="margin-top:4px;">
-          <span class="sub">Pace:</span>
-          <div class="radio-group" id="paceGroup">
-            <label><input type="radio" name="pace" value="1" /> 1 lb/wk</label>
-            <label><input type="radio" name="pace" value="1.5" checked /> 1.5 lb/wk</label>
-            <label><input type="radio" name="pace" value="2" /> 2 lb/wk</label>
-          </div>
-          <span class="sub" id="estDate" style="margin-left:auto;">Est. goal: Mar 2027</span>
-        </div>
+        <p class="sub" style="margin-top:10px;">Mon / Wed / Fri need both taps. Rest days need Ate clean. A 16h+ fasting day counts on its own.</p>
       </section>
     </div>
   </div>
 
-  <section>
-    <h2>Log weight</h2>
-    <div class="flex-row" style="margin-bottom:16px;">
-      <input type="number" id="weightInput" step="0.1" min="50" max="500" placeholder="e.g. 257.2" style="width:140px;" />
-      <button class="primary" onclick="logWeight()">Log weight</button>
-      <span class="sub" id="weightMsg"></span>
+  <details class="settings">
+    <summary>Settings &amp; account</summary>
+    <div class="settings-body">
+      <div class="flex-row">
+        <span class="sub" id="trackerSignedInAs"></span>
+        <button class="btn" onclick="signOut()" style="margin-left:auto;">Sign out</button>
+      </div>
+      <div class="flex-row">
+        <span class="sub">Logging for:</span>
+        <input type="date" id="trackerLogDate" />
+        <button class="btn" type="button" onclick="jumpToToday()">Today</button>
+        <span class="sub">Check-ins &amp; weight use this date; fasts use their own clock</span>
+      </div>
+      <div class="flex-row">
+        <span class="sub">Plan start:</span>
+        <input type="date" id="planStartInput" onchange="savePlanStart()" />
+        <span class="sub" id="planStartMsg"></span>
+      </div>
     </div>
-    <div class="table-scroll">
-      <table>
-        <thead><tr><th>Date</th><th>Weight (lb)</th><th>Change</th><th>BF %</th></tr></thead>
-        <tbody id="logBody"><tr><td colspan="4" style="color:var(--muted); text-align:center; padding:16px;">No entries yet — log your first weight above.</td></tr></tbody>
-      </table>
-    </div>
-  </section>
+  </details>
+
+  <div class="kpis">
+    <div class="kpi"><div class="label">Current weight</div><div class="value" id="kpiWeight">—</div><div class="sub2">lb</div></div>
+    <div class="kpi"><div class="label">Lost so far</div><div class="value green" id="kpiLost">—</div><div class="sub2">lb</div></div>
+    <div class="kpi"><div class="label">To goal</div><div class="value" id="kpiToGo">—</div><div class="sub2">lb remaining</div></div>
+    <div class="kpi"><div class="label">Body fat</div><div class="value amber" id="kpiBF">—</div><div class="sub2" id="kpiFatSub">goal: 15%</div></div>
+  </div>
 
   <section>
-    <h2>Today's check-in &nbsp;<span class="sub" style="font-weight:400;">both done = the day counts</span></h2>
-    <div class="habits">
-      <button class="habit-btn" id="btnWorkout" onclick="toggleHabit('workout')">
-        <span class="habit-icon">🏋️</span>Worked out
-        <span class="habit-status" id="statusWorkout">Tap to log</span>
-      </button>
-      <button class="habit-btn" id="btnMeal" onclick="toggleHabit('meal')">
-        <span class="habit-icon">🥗</span>Ate clean
-        <span class="habit-status" id="statusMeal">Tap to log</span>
-      </button>
+    <div class="bar-wrap">
+      <div class="bar-head"><span>Weight progress</span><span id="pctLabel">—</span></div>
+      <div class="track"><div class="fill green" id="weightBar"></div></div>
+      <div class="bar-sub"><span>258.4 lb</span><span>202.5 lb</span></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-head"><span>Body fat reduction</span><span id="bfBarLabel">—</span></div>
+      <div class="track"><div class="fill amber" id="bfBar"></div></div>
+      <div class="bar-sub"><span>33.4%</span><span>15%</span></div>
+    </div>
+    <div class="flex-row" style="margin-top:4px;">
+      <span class="sub">Pace:</span>
+      <div class="radio-group" id="paceGroup">
+        <label><input type="radio" name="pace" value="1" /> 1 lb/wk</label>
+        <label><input type="radio" name="pace" value="1.5" checked /> 1.5 lb/wk</label>
+        <label><input type="radio" name="pace" value="2" /> 2 lb/wk</label>
+      </div>
+      <span class="sub" id="estDate" style="margin-left:auto;"></span>
     </div>
   </section>
 
   <section>
     <div class="cd-head">
-      <h2 style="margin:0;">🔥 6-month commitment</h2>
-      <span class="cd-stat" id="cdStat">Day 1 of 184</span>
+      <h2 style="margin:0;">6-month commitment</h2>
+      <span class="cd-stat" id="cdStat"></span>
     </div>
     <div class="cd-grid" id="cdGrid"></div>
     <div class="cd-legend">
       <span><span class="cd-key cd-done"></span>Day completed</span>
       <span><span class="cd-key cd-missed"></span>Missed</span>
-      <span><span class="cd-key cd-future"></span>Ahead</span>
+      <span><span class="cd-key cd-future"></span>Upcoming</span>
       <span><span class="cd-key cd-today"></span>Today</span>
     </div>
   </section>
@@ -308,14 +304,20 @@
   <section>
     <h2>Weight trend</h2>
     <div class="wstat-row" id="weightStats"></div>
-    <canvas id="weightChart"></canvas>
+    <canvas id="weightChart" role="img" aria-label="Weight trend line chart"></canvas>
+    <div class="table-scroll" style="margin-top:16px;">
+      <table>
+        <thead><tr><th>Date</th><th>Weight (lb)</th><th>Change</th><th>BF %</th><th></th></tr></thead>
+        <tbody id="logBody"><tr><td colspan="5" style="color:var(--muted); text-align:center; padding:16px;">No entries yet — log your first weight above.</td></tr></tbody>
+      </table>
+    </div>
   </section>
 
   <section>
     <h2>Milestones</h2>
     <div class="table-scroll">
       <table>
-        <thead><tr><th>Milestone</th><th>Target weight</th><th>Est. date (1.5 lb/wk)</th><th>Status</th></tr></thead>
+        <thead><tr><th>Milestone</th><th>Target weight</th><th id="msEstHead">Est. date</th><th style="text-align:right;">Status</th></tr></thead>
         <tbody id="milestonesBody"></tbody>
       </table>
     </div>
@@ -338,16 +340,19 @@
   let session = null;
   let daily = {};      // { 'YYYY-MM-DD': { workout, meal } }
   let weights = [];    // [{ id, logged_at, weight }] ascending
-  let donutChart = null;
   let weightChartInstance = null;
+  let habitInFlight = { workout: false, meal: false };
+  let armedDeleteId = null;
+  let armedDeleteTimer = null;
 
-  // Fasting timer (Zero-style). Stage boundaries in hours; ring fills toward the next stage.
+  // Fasting timer (Zero-style). Stage boundaries in hours; ring fills toward the
+  // next stage and takes that stage's color.
   const FAST_STAGES = [
-    { untilH: 4,        label: 'anabolic — digesting' },
-    { untilH: 16,       label: 'catabolic — burning glycogen' },
-    { untilH: 24,       label: 'fat burning' },
-    { untilH: 72,       label: 'ketosis + autophagy' },
-    { untilH: Infinity, label: 'deep ketosis' }
+    { untilH: 4,        label: 'anabolic: digesting',           color: '#9fb0d0' },
+    { untilH: 16,       label: 'catabolic: burning glycogen',   color: '#fbbf24' },
+    { untilH: 24,       label: 'fat burning',                   color: '#4ade80' },
+    { untilH: 72,       label: 'ketosis + autophagy',           color: '#c084fc' },
+    { untilH: Infinity, label: 'deep ketosis',                  color: '#e9eefc' }
   ];
   const RING_RADIUS = 88; // must match the r= on #fastRingFill
   const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
@@ -356,10 +361,37 @@
   // covers the partial last day of a long fast and still marks OMAD-pattern days.
   const FASTED_DAY_MIN_HOURS = 16;
   const MS_PER_HOUR = 3600000;
+  const UNDO_WINDOW_MS = 60000;
+  const CONFIRM_WINDOW_MS = 5000;
   let fasts = [];        // all rows, newest first
   let activeFast = null; // row with ended_at null
   let lastFast = null;   // most recent completed row
   let fastTick = null;
+  let endFastArmed = false;
+  let endFastArmTimer = null;
+  let undoableFastId = null;
+  let undoTimer = null;
+
+  // The corner man: one line per view. Stage lines while fasting, a new-low
+  // callout the day it happens, otherwise one steady line per day.
+  const COACH_LINES = [
+    'You don’t need a good day. You need a logged day.',
+    'The grid doesn’t care how you feel. Fill the square.',
+    '56 pounds is 184 squares. Take today’s.',
+    'Nobody quits right after a win. Get one on the board.',
+    'Weigh in, tap it, walk away. Ten seconds.',
+    'The middle is boring. Boring is where it’s won.',
+    'You’ve never regretted a logged day.',
+    'Consistency looks like nothing daily and everything monthly.'
+  ];
+  const STAGE_LINES = [
+    'Fed and burning it down. The clock is running.',
+    'Glycogen’s draining. Stay busy, drink water.',
+    '16 hours in. You’re burning fat now.',
+    'Past 24. Ketosis and autophagy. This is the part that pays.',
+    '72 plus. Deep water. Few ever get here.'
+  ];
+  const NEW_LOW_LINE = 'New low weight. That’s the plan working.';
 
   const $ = id => document.getElementById(id);
   const todayKey = () => T.ymd(new Date());
@@ -382,6 +414,7 @@
 
   function handleSession(s) {
     session = s;
+    $('trackerLoading').style.display = 'none';
     if (s) {
       $('trackerAuth').style.display = 'none';
       $('trackerApp').style.display = 'block';
@@ -440,14 +473,24 @@
     renderAll();
   }
 
+  // Optimistic: flip the UI immediately, roll back if the write fails.
   async function toggleHabit(type) {
-    if (!session) return;
+    if (!session || habitInFlight[type]) return;
     const key = selectedDate();
-    const current = !!(daily[key] && daily[key][type]);
+    const before = daily[key] ? { ...daily[key] } : undefined;
+    const next = !(daily[key] && daily[key][type]);
+    daily[key] = { ...(daily[key] || {}), [type]: next };
+    habitInFlight[type] = true;
+    renderAll();
     const { error } = await db.from('daily_logs')
-      .upsert({ date: key, user_id: session.user.id, [type]: !current }, { onConflict: 'date,user_id' });
-    if (error) { console.error(error); showError('save your check-in'); return; }
-    await loadAndRender();
+      .upsert({ date: key, user_id: session.user.id, [type]: next }, { onConflict: 'date,user_id' });
+    habitInFlight[type] = false;
+    if (error) {
+      console.error(error);
+      if (before === undefined) delete daily[key]; else daily[key] = before;
+      renderAll();
+      showError('save your check-in');
+    }
   }
 
   async function logWeight() {
@@ -470,6 +513,23 @@
     await loadAndRender();
   }
 
+  // First tap arms, second tap deletes; disarms itself after a pause.
+  async function deleteWeight(id) {
+    if (!session) return;
+    if (armedDeleteId !== id) {
+      armedDeleteId = id;
+      renderLogTable();
+      clearTimeout(armedDeleteTimer);
+      armedDeleteTimer = setTimeout(() => { armedDeleteId = null; renderLogTable(); }, CONFIRM_WINDOW_MS);
+      return;
+    }
+    armedDeleteId = null;
+    clearTimeout(armedDeleteTimer);
+    const { error } = await db.from('weight_logs').delete().eq('id', id);
+    if (error) { console.error(error); showError('delete that entry'); return; }
+    await loadAndRender();
+  }
+
   // ---- Fasting ----
   const localDatetimeValue = d => {
     const p = n => String(n).padStart(2, '0');
@@ -488,10 +548,11 @@
 
   function fastStage(hours) {
     let prevBound = 0;
-    for (const stage of FAST_STAGES) {
+    for (let i = 0; i < FAST_STAGES.length; i++) {
+      const stage = FAST_STAGES[i];
       if (hours < stage.untilH) {
         const progress = stage.untilH === Infinity ? 1 : (hours - prevBound) / (stage.untilH - prevBound);
-        return { label: stage.label, progress };
+        return { index: i, label: stage.label, color: stage.color, progress };
       }
       prevBound = stage.untilH;
     }
@@ -533,21 +594,28 @@
   function parseFastStart(value) {
     if (!value) return { error: 'Pick the date and time your last meal ended.' };
     const start = new Date(value);
-    if (isNaN(start.getTime())) return { error: 'That date/time didn’t parse — try again.' };
+    if (isNaN(start.getTime())) return { error: 'That date/time didn’t parse. Try again.' };
     if (start.getTime() > Date.now()) return { error: 'Start time can’t be in the future.' };
-    if (Date.now() - start.getTime() > MAX_BACKDATE_DAYS * 86400000) return { error: 'That start is over ' + MAX_BACKDATE_DAYS + ' days ago — double-check it.' };
+    if (Date.now() - start.getTime() > MAX_BACKDATE_DAYS * 86400000) return { error: 'That start is over ' + MAX_BACKDATE_DAYS + ' days ago. Double-check it.' };
     return { start };
   }
 
-  function renderFasting() {
+  function renderFasting(fasted = fastedDaySet()) {
     if (fastTick) { clearInterval(fastTick); fastTick = null; }
-    const streak = fastingStreak(fastedDaySet());
+    endFastArmed = false;
+    const streak = fastingStreak(fasted);
     $('fastStreakLabel').textContent = streak > 0 ? '🔥 ' + streak + '-day fasting streak' : '';
+    $('fastMsg').innerHTML = '';
+    if (undoableFastId && lastFast && lastFast.id === undoableFastId) {
+      $('fastMsg').innerHTML = '<button class="btn" onclick="undoEndFast()">Undo end fast</button>';
+    }
     if (!activeFast) {
       $('fastIdle').style.display = 'flex';
       $('fastActive').style.display = 'none';
       $('fastElapsed').textContent = '—';
-      $('fastStage').textContent = 'not fasting';
+      const stageEl = $('fastStage');
+      stageEl.textContent = 'not fasting';
+      stageEl.style.color = 'var(--muted)';
       $('fastSince').textContent = '';
       $('fastRingFill').style.strokeDashoffset = RING_CIRCUMFERENCE;
       $('fastStartInput').value = localDatetimeValue(new Date());
@@ -559,6 +627,7 @@
     }
     $('fastIdle').style.display = 'none';
     $('fastActive').style.display = 'flex';
+    $('endFastBtn').textContent = 'End fast';
     $('fastEditStart').value = localDatetimeValue(new Date(activeFast.started_at));
     tickFast();
     fastTick = setInterval(tickFast, 1000);
@@ -568,28 +637,59 @@
     if (!activeFast) return;
     const started = new Date(activeFast.started_at);
     const ms = Date.now() - started.getTime();
-    const stage = fastStage(ms / 3600000);
+    const stage = fastStage(ms / MS_PER_HOUR);
     $('fastElapsed').textContent = fmtClock(ms);
-    $('fastStage').textContent = stage.label;
+    const stageEl = $('fastStage');
+    stageEl.textContent = stage.label;
+    stageEl.style.color = stage.color;
     $('fastSince').textContent = 'since ' + started.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' });
-    $('fastRingFill').style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - Math.min(1, Math.max(0, stage.progress)));
+    const fill = $('fastRingFill');
+    fill.style.stroke = stage.color;
+    fill.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - Math.min(1, Math.max(0, stage.progress)));
   }
 
   async function startFast() {
     if (!session || activeFast) return;
     const { start, error: parseError } = parseFastStart($('fastStartInput').value);
-    if (parseError) { $('fastLastLabel').textContent = parseError; return; }
+    if (parseError) { $('fastMsg').textContent = parseError; return; }
     const { error } = await db.from('fasts').insert({ user_id: session.user.id, started_at: start.toISOString() });
     if (error) { console.error(error); showError('start your fast'); return; }
+    undoableFastId = null;
     await loadAndRender();
   }
 
+  // Two-step inline confirm, then a one-minute undo window.
   async function endFast() {
     if (!session || !activeFast) return;
     const elapsed = fmtDuration(Date.now() - new Date(activeFast.started_at).getTime());
-    if (!confirm('End this fast at ' + elapsed + '?')) return;
-    const { error } = await db.from('fasts').update({ ended_at: new Date().toISOString() }).eq('id', activeFast.id);
+    if (!endFastArmed) {
+      endFastArmed = true;
+      $('endFastBtn').textContent = 'Sure? End at ' + elapsed;
+      clearTimeout(endFastArmTimer);
+      endFastArmTimer = setTimeout(() => {
+        endFastArmed = false;
+        const btn = $('endFastBtn');
+        if (btn) btn.textContent = 'End fast';
+      }, CONFIRM_WINDOW_MS);
+      return;
+    }
+    endFastArmed = false;
+    clearTimeout(endFastArmTimer);
+    const endedId = activeFast.id;
+    const { error } = await db.from('fasts').update({ ended_at: new Date().toISOString() }).eq('id', endedId);
     if (error) { console.error(error); showError('end your fast'); return; }
+    undoableFastId = endedId;
+    clearTimeout(undoTimer);
+    undoTimer = setTimeout(() => { undoableFastId = null; if (session) renderAll(); }, UNDO_WINDOW_MS);
+    await loadAndRender();
+  }
+
+  async function undoEndFast() {
+    if (!session || !undoableFastId) return;
+    const { error } = await db.from('fasts').update({ ended_at: null }).eq('id', undoableFastId);
+    if (error) { console.error(error); showError('restore your fast'); return; }
+    undoableFastId = null;
+    clearTimeout(undoTimer);
     await loadAndRender();
   }
 
@@ -597,7 +697,7 @@
     if (!session || !activeFast) return;
     const { start, error: parseError } = parseFastStart($('fastEditStart').value);
     if (parseError) {
-      alert(parseError);
+      $('fastMsg').textContent = parseError;
       $('fastEditStart').value = localDatetimeValue(new Date(activeFast.started_at));
       return;
     }
@@ -608,15 +708,37 @@
 
   // ---- Render ----
   function renderAll() {
+    const fasted = fastedDaySet();
+    renderCoach();
     renderHeaderAndBars();
-    renderLogTable();
-    renderCheckin();
-    renderStreak();
-    renderCountdown();
-    renderCalendar();
+    renderCheckin(fasted);
+    renderStreak(fasted);
+    renderFasting(fasted);
+    renderCountdown(fasted);
+    renderCalendar(fasted);
     renderWeightChart();
+    renderLogTable();
     renderMilestones();
-    renderFasting();
+  }
+
+  function renderCoach() {
+    let line = null;
+    if (weights.length > 1) {
+      const latest = weights[weights.length - 1];
+      const cur = parseFloat(latest.weight);
+      const prevMin = Math.min(...weights.slice(0, -1).map(r => parseFloat(r.weight)));
+      if (cur < prevMin && String(latest.logged_at).slice(0, 10) === todayKey()) line = NEW_LOW_LINE;
+    }
+    if (!line && activeFast) {
+      const stage = fastStage((Date.now() - new Date(activeFast.started_at).getTime()) / MS_PER_HOUR);
+      line = STAGE_LINES[stage.index];
+    }
+    if (!line) {
+      let hash = 0;
+      for (const ch of todayKey()) hash += ch.charCodeAt(0);
+      line = COACH_LINES[hash % COACH_LINES.length];
+    }
+    $('coachLine').textContent = line;
   }
 
   function renderHeaderAndBars() {
@@ -633,31 +755,20 @@
     $('kpiWeight').textContent = w.toFixed(1);
     $('kpiLost').textContent = Math.max(0, lost).toFixed(1);
     $('kpiToGo').textContent = Math.max(0, toGo).toFixed(1);
-    $('kpiFat').textContent = fat.toFixed(1);
-    $('bfDisplay').textContent = bf.toFixed(1) + '%';
-    $('weightBar').style.width = pct.toFixed(1) + '%';
-    $('bfBar').style.width = bfPct.toFixed(1) + '%';
+    $('kpiBF').textContent = bf.toFixed(1) + '%';
+    $('kpiFatSub').textContent = fat.toFixed(1) + ' lb fat mass · goal: 15%';
+    $('weightBar').style.transform = 'scaleX(' + (pct / 100).toFixed(3) + ')';
+    $('bfBar').style.transform = 'scaleX(' + (bfPct / 100).toFixed(3) + ')';
     $('pctLabel').textContent = Math.round(pct) + '%';
     $('bfBarLabel').textContent = Math.round(bfPct) + '%';
     $('estDate').textContent = 'Est. goal: ' + T.estDateLabel(startKey, wks);
     $('startedLabel').textContent = (startKey <= todayKey() ? 'started ' : 'starts ') + fmtShort(startKey);
-
-    if (!donutChart && typeof Chart !== 'undefined') {
-      donutChart = new Chart($('donut').getContext('2d'), {
-        type: 'doughnut',
-        data: { labels: ['Fat mass', 'Lean mass'], datasets: [{ data: [fat, LEAN_MASS], backgroundColor: ['#fbbf24', '#6ea8ff'], borderWidth: 0, hoverOffset: 4 }] },
-        options: { responsive: false, cutout: '72%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + c.label + ': ' + Number(c.raw).toFixed(1) + ' lb' } } } }
-      });
-    } else if (donutChart) {
-      donutChart.data.datasets[0].data = [parseFloat(fat.toFixed(1)), parseFloat(LEAN_MASS.toFixed(1))];
-      donutChart.update();
-    }
   }
 
   function renderLogTable() {
     const tbody = $('logBody');
     if (!weights.length) {
-      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:16px;">No entries yet — log your first weight above.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:16px;">No entries yet — log your first weight above.</td></tr>';
       return;
     }
     const rows = weights.map((e, i) => {
@@ -666,31 +777,40 @@
       const change = wt - prev;
       const changeStr = change === 0 ? '—' : (change > 0 ? '+' : '') + change.toFixed(1) + ' lb';
       const color = change < 0 ? 'var(--green)' : change > 0 ? 'var(--red)' : 'var(--muted)';
+      const delLabel = armedDeleteId === e.id ? 'sure?' : '×';
       return '<tr><td>' + String(e.logged_at).slice(0, 10) + '</td><td>' + wt.toFixed(1) + ' lb</td>' +
-        '<td style="color:' + color + '">' + changeStr + '</td><td>' + T.calcBF(wt).toFixed(1) + '%</td></tr>';
+        '<td style="color:' + color + '">' + changeStr + '</td><td>' + T.calcBF(wt).toFixed(1) + '%</td>' +
+        '<td style="text-align:right;"><button class="row-del" aria-label="Delete this entry" onclick="deleteWeight(\'' + e.id + '\')">' + delLabel + '</button></td></tr>';
     });
     tbody.innerHTML = rows.reverse().join('');
   }
 
-  function renderCheckin() {
-    const d = daily[selectedDate()] || {};
+  function renderCheckin(fasted = fastedDaySet()) {
+    const key = selectedDate();
+    const d = daily[key] || {};
+    const fastedDay = fasted.has(key);
+    $('checkinDate').textContent = fmtLong(key);
+    $('logDateChip').textContent = 'for ' + fmtLong(key);
+    const mealDone = !!d.meal || fastedDay;
     $('btnWorkout').classList.toggle('done', !!d.workout);
-    $('btnMeal').classList.toggle('done', !!d.meal);
-    $('statusWorkout').textContent = d.workout ? 'Done ✓' : 'Tap to log';
-    $('statusMeal').textContent = d.meal ? 'Done ✓' : 'Tap to log';
+    $('btnWorkout').setAttribute('aria-pressed', String(!!d.workout));
+    $('btnMeal').classList.toggle('done', mealDone);
+    $('btnMeal').setAttribute('aria-pressed', String(mealDone));
+    $('statusWorkout').textContent = d.workout ? 'Done ✓' : (T.isWorkoutWeekday(key) ? 'Tap to log' : 'Rest day');
+    $('statusMeal').textContent = d.meal ? 'Done ✓' : fastedDay ? 'Fasting ✓' : 'Tap to log';
   }
 
-  function renderStreak() {
-    const s = T.planStreak(daily, todayKey());
+  function renderStreak(fasted = fastedDaySet()) {
+    const s = T.planStreak(daily, todayKey(), fasted);
     $('streakBadge').textContent = s + ' day' + (s !== 1 ? 's' : '');
   }
 
-  function renderCountdown() {
-    const cells = T.gridCells(startKey, endKey, daily, todayKey());
+  function renderCountdown(fasted = fastedDaySet()) {
+    const cells = T.gridCells(startKey, endKey, daily, todayKey(), fasted);
     const summary = T.gridSummary(cells, startKey, todayKey());
     let html = '';
     for (let i = 0; i < cells[0].weekday; i++) html += '<div class="cd-cell cd-pad"></div>';
-    cells.forEach(c => { html += '<div class="cd-cell cd-' + c.status + '" title="' + c.key + '"></div>'; });
+    cells.forEach(c => { html += '<div class="cd-cell cd-' + c.status + '" title="' + c.key + ' · ' + c.status + '"></div>'; });
     const cols = Math.ceil((cells[0].weekday + cells.length) / 7);
     const grid = $('cdGrid');
     grid.style.setProperty('--cols', cols);
@@ -703,11 +823,10 @@
     }
   }
 
-  function renderCalendar() {
+  function renderCalendar(fasted = fastedDaySet()) {
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const start = new Date(today); start.setDate(start.getDate() - 27); start.setDate(start.getDate() - start.getDay());
     const weighed = new Set(weights.map(r => String(r.logged_at).slice(0, 10)));
-    const fasted = fastedDaySet();
     const sel = selectedDate();
     let html = '<div class="cal-grid">';
     ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(l => { html += '<div class="cal-head">' + l + '</div>'; });
@@ -767,12 +886,14 @@
 
   function renderMilestones() {
     const w = currentWeight();
+    const pace = parseFloat(document.querySelector('input[name="pace"]:checked').value);
+    $('msEstHead').textContent = 'Est. date (' + pace + ' lb/wk)';
     $('milestonesBody').innerHTML = T.MILESTONES.map(m => {
       const hit = w <= m.weight;
       const next = !hit && weights.length > 0 && (w - m.weight) < 10;
       const cls = hit ? 'milestone-row hit' : next ? 'milestone-row next' : 'milestone-row';
       const status = hit ? '✓ Done' : next ? '← Next' : '—';
-      return '<tr class="' + cls + '"><td>' + m.label + '</td><td>' + m.weight.toFixed(1) + ' lb</td><td>' + T.milestoneDate(m.weight, startKey, 1.5) + '</td><td>' + status + '</td></tr>';
+      return '<tr class="' + cls + '"><td>' + m.label + '</td><td>' + m.weight.toFixed(1) + ' lb</td><td>' + T.milestoneDate(m.weight, startKey, pace) + '</td><td style="text-align:right;">' + status + '</td></tr>';
     }).join('');
   }
 
@@ -780,7 +901,8 @@
   document.addEventListener('DOMContentLoaded', () => {
     $('trackerLogDate').value = todayKey();
     $('trackerLogDate').addEventListener('change', () => { renderCheckin(); renderCalendar(); });
-    document.querySelectorAll('input[name="pace"]').forEach(r => r.addEventListener('change', renderHeaderAndBars));
+    $('weighForm').addEventListener('submit', e => { e.preventDefault(); logWeight(); });
+    document.querySelectorAll('input[name="pace"]').forEach(r => r.addEventListener('change', () => { renderHeaderAndBars(); renderMilestones(); }));
     initAuth();
   });
 </script>
