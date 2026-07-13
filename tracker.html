@@ -101,6 +101,7 @@
   .dot-w { background: var(--accent); }
   .dot-m { background: var(--green); }
   .dot-wt { background: var(--yellow); }
+  .dot-f { background: #c084fc; }
 
   /* Weight chart */
   .wstat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 14px 0 16px; }
@@ -215,6 +216,7 @@
         <input type="datetime-local" id="fastEditStart" onchange="updateFastStart()" />
         <button class="btn fast-end-btn" onclick="endFast()">End fast</button>
       </div>
+      <div class="fast-sub" id="fastStreakLabel" style="text-align:center; margin-top:10px;"></div>
     </section>
 
     <div class="top-main">
@@ -297,7 +299,8 @@
     <p class="sub" style="margin-bottom:10px;">
       <span class="dot dot-w" style="display:inline-block;vertical-align:middle;margin-right:4px;"></span>Workout &nbsp;
       <span class="dot dot-m" style="display:inline-block;vertical-align:middle;margin-right:4px;"></span>Ate clean &nbsp;
-      <span class="dot dot-wt" style="display:inline-block;vertical-align:middle;margin-right:4px;"></span>Weighed in
+      <span class="dot dot-wt" style="display:inline-block;vertical-align:middle;margin-right:4px;"></span>Weighed in &nbsp;
+      <span class="dot dot-f" style="display:inline-block;vertical-align:middle;margin-right:4px;"></span>Fasted (16h+)
     </p>
     <div id="trackerCalendar"></div>
   </section>
@@ -349,6 +352,11 @@
   const RING_RADIUS = 88; // must match the r= on #fastRingFill
   const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
   const MAX_BACKDATE_DAYS = 14;
+  // A calendar day counts as "fasted" once 16+ of its hours were spent fasting —
+  // covers the partial last day of a long fast and still marks OMAD-pattern days.
+  const FASTED_DAY_MIN_HOURS = 16;
+  const MS_PER_HOUR = 3600000;
+  let fasts = [];        // all rows, newest first
   let activeFast = null; // row with ended_at null
   let lastFast = null;   // most recent completed row
   let fastTick = null;
@@ -420,12 +428,12 @@
     const [d, w, f] = await Promise.all([
       db.from('daily_logs').select('date, workout, meal').order('date', { ascending: false }).limit(400),
       db.from('weight_logs').select('id, logged_at, weight').order('logged_at', { ascending: true }).limit(400),
-      db.from('fasts').select('id, started_at, ended_at').order('started_at', { ascending: false }).limit(20)
+      db.from('fasts').select('id, started_at, ended_at').order('started_at', { ascending: false }).limit(200)
     ]);
     if (d.error || w.error || f.error) { console.error(d.error || w.error || f.error); showError('load your data'); return; }
     daily = Object.fromEntries((d.data || []).map(r => [r.date, { workout: r.workout, meal: r.meal }]));
     weights = w.data || [];
-    const fasts = f.data || [];
+    fasts = f.data || [];
     activeFast = fasts.find(r => !r.ended_at) || null;
     lastFast = fasts.find(r => r.ended_at) || null;
     clearError();
@@ -489,6 +497,39 @@
     }
   }
 
+  // Set of 'YYYY-MM-DD' days with >= FASTED_DAY_MIN_HOURS fasting hours.
+  // Fast intervals are sliced at local midnight; the active fast counts up to now.
+  function fastedDaySet() {
+    const hoursPerDay = {};
+    const now = new Date();
+    for (const f of fasts) {
+      let cursor = new Date(f.started_at);
+      const end = f.ended_at ? new Date(f.ended_at) : now;
+      while (cursor < end) {
+        const dayEnd = new Date(cursor);
+        dayEnd.setHours(24, 0, 0, 0);
+        const sliceEnd = dayEnd < end ? dayEnd : end;
+        const key = T.ymd(cursor);
+        hoursPerDay[key] = (hoursPerDay[key] || 0) + (sliceEnd - cursor) / MS_PER_HOUR;
+        cursor = sliceEnd;
+      }
+    }
+    const marked = new Set();
+    for (const [key, hours] of Object.entries(hoursPerDay)) {
+      if (hours >= FASTED_DAY_MIN_HOURS) marked.add(key);
+    }
+    return marked;
+  }
+
+  // Consecutive fasted days ending today — or yesterday, since today may still be accruing hours.
+  function fastingStreak(fasted) {
+    const day = new Date();
+    if (!fasted.has(T.ymd(day))) day.setDate(day.getDate() - 1);
+    let streak = 0;
+    while (fasted.has(T.ymd(day))) { streak++; day.setDate(day.getDate() - 1); }
+    return streak;
+  }
+
   function parseFastStart(value) {
     if (!value) return { error: 'Pick the date and time your last meal ended.' };
     const start = new Date(value);
@@ -500,6 +541,8 @@
 
   function renderFasting() {
     if (fastTick) { clearInterval(fastTick); fastTick = null; }
+    const streak = fastingStreak(fastedDaySet());
+    $('fastStreakLabel').textContent = streak > 0 ? '🔥 ' + streak + '-day fasting streak' : '';
     if (!activeFast) {
       $('fastIdle').style.display = 'flex';
       $('fastActive').style.display = 'none';
@@ -664,6 +707,7 @@
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const start = new Date(today); start.setDate(start.getDate() - 27); start.setDate(start.getDate() - start.getDay());
     const weighed = new Set(weights.map(r => String(r.logged_at).slice(0, 10)));
+    const fasted = fastedDaySet();
     const sel = selectedDate();
     let html = '<div class="cal-grid">';
     ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(l => { html += '<div class="cal-head">' + l + '</div>'; });
@@ -675,6 +719,7 @@
       if (e.workout) dots += '<span class="dot dot-w"></span>';
       if (e.meal) dots += '<span class="dot dot-m"></span>';
       if (weighed.has(k)) dots += '<span class="dot dot-wt"></span>';
+      if (fasted.has(k)) dots += '<span class="dot dot-f"></span>';
       html += '<div class="cal-day' + (k === sel ? ' cal-today' : '') + '"><div class="cal-date">' + cur.getDate() + '</div><div class="cal-dots">' + dots + '</div></div>';
       cur.setDate(cur.getDate() + 1);
     }
