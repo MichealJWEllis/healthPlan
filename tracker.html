@@ -4,6 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Micheal — Health Goal Tracker</title>
+<link rel="manifest" href="./manifest.json" />
+<meta name="theme-color" content="#0b1220" />
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
 <style>
   :root {
     --bg: #0b1220; --text: #e9eefc; --muted: #9fb0d0; --line: rgba(255,255,255,.10);
@@ -967,6 +970,7 @@
     document.querySelectorAll('input[name="pace"]').forEach(r => r.addEventListener('change', () => { renderHeaderAndBars(); renderMilestones(); }));
     surfaceAuthRedirectError();
     initAuth();
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
   });
 </script>
 </body>
